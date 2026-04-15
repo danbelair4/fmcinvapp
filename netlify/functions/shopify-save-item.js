@@ -1,7 +1,8 @@
 /**
  * Netlify Function: create one Shopify product from the inventory app's item JSON.
  *
- * Field mapping is aligned to index.html `exportToCSV` parent row (CSV = source of truth).
+ * Field mapping follows index.html `exportToCSV` (CSV = source of truth), including
+ * description + disclaimer, photo URLs + alt text, then productCreateMedia + publishablePublish.
  *
  * Auth (Dev Dashboard — client credentials):
  *   SHOPIFY_STORE_DOMAIN, SHOPIFY_CLIENT_ID, SHOPIFY_CLIENT_SECRET
@@ -9,12 +10,8 @@
  * Inventory:
  *   SHOPIFY_LOCATION_ID   numeric or gid://shopify/Location/...
  *
- * Scopes (typical): write_products, read_products, write_inventory, read_inventory
- *
- * ---
- * TODO (parity gap): CSV "Image Src" / "Image Alt Text" / extra image rows are not mirrored here yet.
- * Shopify needs media create (e.g. productCreateMedia / staged uploads). Do not fake URLs.
- * ---
+ * Scopes: write_products, read_products, write_inventory, read_inventory,
+ *         read_publications, write_publications (for channel publish)
  */
 
 const {
@@ -28,6 +25,8 @@ const {
   computeCsvHandleParts,
   buildCsvVariantBulkFields,
   csvVariantInventoryQty,
+  validateCsvPhotosForShopify,
+  buildProductCreateMediaInputsFromCsvItem,
 } = require('./_shopifyItemMapper');
 
 const MUTATION_PRODUCT_CREATE = `#graphql
@@ -95,6 +94,75 @@ mutation InventorySet($input: InventorySetQuantitiesInput!) {
 }
 `;
 
+const MUTATION_PRODUCT_CREATE_MEDIA = `#graphql
+mutation ProductCreateMedia($productId: ID!, $media: [CreateMediaInput!]!) {
+  productCreateMedia(productId: $productId, media: $media) {
+    media {
+      id
+      alt
+      mediaContentType
+      status
+    }
+    mediaUserErrors {
+      field
+      message
+    }
+    product {
+      id
+    }
+  }
+}
+`;
+
+const QUERY_PUBLICATIONS = `#graphql
+query PublicationsForPublish {
+  publications(first: 50) {
+    edges {
+      node {
+        id
+        channels(first: 5) {
+          edges {
+            node {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
+/** Fallback if channels sub-query is not permitted. */
+const QUERY_PUBLICATIONS_IDS_ONLY = `#graphql
+query PublicationsIdsOnly {
+  publications(first: 50) {
+    edges {
+      node {
+        id
+      }
+    }
+  }
+}
+`;
+
+const MUTATION_PUBLISHABLE_PUBLISH = `#graphql
+mutation PublishablePublish($id: ID!, $publicationInput: [PublicationInput!]!) {
+  publishablePublish(id: $id, input: $publicationInput) {
+    publishable {
+      ... on Product {
+        id
+        title
+      }
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+`;
+
 const QUERY_PRODUCT_VARIANT = `#graphql
 query FirstVariant($id: ID!) {
   product(id: $id) {
@@ -120,12 +188,38 @@ function collectUserErrors(payload) {
   return list.map((e) => e.message || String(e)).join(' | ');
 }
 
+function collectMediaUserErrors(payload) {
+  const list = payload?.mediaUserErrors;
+  if (!Array.isArray(list) || !list.length) return null;
+  return list.map((e) => e.message || String(e)).join(' | ');
+}
+
 function firstVariantFromProduct(product) {
   const nodes = product?.variants?.nodes;
   if (Array.isArray(nodes) && nodes[0]) return nodes[0];
   const edges = product?.variants?.edges;
   if (Array.isArray(edges) && edges[0]?.node) return edges[0].node;
   return null;
+}
+
+function publicationNodesFromQuery(data) {
+  const conn = data?.publications;
+  if (!conn) return [];
+  if (Array.isArray(conn.nodes) && conn.nodes.length) {
+    return conn.nodes.filter((n) => n && n.id).map(normalizePublicationNode);
+  }
+  const edges = conn.edges;
+  if (!Array.isArray(edges)) return [];
+  return edges.map((e) => e && e.node).filter((n) => n && n.id).map(normalizePublicationNode);
+}
+
+function normalizePublicationNode(node) {
+  const chEdges = node.channels?.edges;
+  let label = null;
+  if (Array.isArray(chEdges) && chEdges[0]?.node?.name) {
+    label = chEdges.map((e) => e?.node?.name).filter(Boolean).join(', ');
+  }
+  return { id: node.id, name: label };
 }
 
 exports.handler = async (event) => {
@@ -184,6 +278,18 @@ exports.handler = async (event) => {
     };
   }
 
+  const photoValidationError = validateCsvPhotosForShopify(item);
+  if (photoValidationError) {
+    return {
+      statusCode: 400,
+      headers,
+      body: JSON.stringify({
+        ok: false,
+        error: photoValidationError,
+      }),
+    };
+  }
+
   const locationGid = toLocationGid(process.env.SHOPIFY_LOCATION_ID);
   if (!locationGid) {
     return {
@@ -208,9 +314,16 @@ exports.handler = async (event) => {
   const { shopDomain, accessToken } = auth;
   const gql = (query, variables) => shopifyGraphqlWithToken(shopDomain, accessToken, query, variables);
 
-  /** Same default as CSV when this is the only row for that handle base in an export. */
   const HANDLE_SEQ = 1;
   const handleParts = computeCsvHandleParts(item, HANDLE_SEQ);
+
+  /** @type {{ mediaAttached: number, mediaError: string|null, publications: Array<{id: string, name: string|null, published: boolean, error?: string}>, publishQueryError: string|null }} */
+  const meta = {
+    mediaAttached: 0,
+    mediaError: null,
+    publications: [],
+    publishQueryError: null,
+  };
 
   try {
     const productInput = buildProductCreateInput(item, HANDLE_SEQ);
@@ -321,6 +434,78 @@ exports.handler = async (event) => {
       }
     }
 
+    const mediaInputs = buildProductCreateMediaInputsFromCsvItem(item);
+    if (mediaInputs.length) {
+      try {
+        const mRes = await gql(MUTATION_PRODUCT_CREATE_MEDIA, {
+          productId: product.id,
+          media: mediaInputs,
+        });
+        const mPayload = mRes?.data?.productCreateMedia;
+        const mErr = collectMediaUserErrors(mPayload);
+        if (mErr) {
+          meta.mediaError = mErr;
+        } else {
+          meta.mediaAttached = Array.isArray(mPayload?.media) ? mPayload.media.length : mediaInputs.length;
+        }
+      } catch (me) {
+        meta.mediaError = me && me.message ? me.message : String(me);
+      }
+    }
+
+    let publicationNodes = [];
+    try {
+      const pubRes = await gql(QUERY_PUBLICATIONS, {});
+      publicationNodes = publicationNodesFromQuery(pubRes?.data);
+    } catch (pe) {
+      try {
+        const pubRes2 = await gql(QUERY_PUBLICATIONS_IDS_ONLY, {});
+        publicationNodes = publicationNodesFromQuery(pubRes2?.data);
+      } catch (pe2) {
+        meta.publishQueryError = (pe && pe.message ? pe.message : String(pe)) || String(pe2);
+      }
+    }
+
+    if (publicationNodes.length) {
+      const publicationInput = publicationNodes.map((n) => ({ publicationId: n.id }));
+      try {
+        const pubMut = await gql(MUTATION_PUBLISHABLE_PUBLISH, {
+          id: product.id,
+          publicationInput,
+        });
+        const pubPayload = pubMut?.data?.publishablePublish;
+        const pubErr = collectUserErrors(pubPayload);
+        if (pubErr) {
+          for (const n of publicationNodes) {
+            meta.publications.push({
+              id: n.id,
+              name: n.name || null,
+              published: false,
+              error: pubErr,
+            });
+          }
+        } else {
+          for (const n of publicationNodes) {
+            meta.publications.push({
+              id: n.id,
+              name: n.name || null,
+              published: true,
+            });
+          }
+        }
+      } catch (pme) {
+        const msg = pme && pme.message ? pme.message : String(pme);
+        for (const n of publicationNodes) {
+          meta.publications.push({
+            id: n.id,
+            name: n.name || null,
+            published: false,
+            error: msg,
+          });
+        }
+      }
+    }
+
     return {
       statusCode: 200,
       headers,
@@ -335,6 +520,10 @@ exports.handler = async (event) => {
         price: csvBulk.price,
         quantitySet: qty,
         inventoryTracked: Boolean(updated?.inventoryItem?.tracked),
+        mediaAttached: meta.mediaAttached,
+        mediaError: meta.mediaError,
+        publications: meta.publications,
+        publishQueryError: meta.publishQueryError,
       }),
     };
   } catch (e) {

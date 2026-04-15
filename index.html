@@ -1098,7 +1098,7 @@ function setupPhotoHandler() {
       category: crystal.category || '',
       chakra: crystal.chakra || '',
       hardness: crystal.hardness || '',
-      photos: [],
+      photos: sanitizePhotosForPersist(currentPhotos.slice()),
       user: currentUser,
       dateAdded: new Date().toISOString(),
       barcode: `${sku}`,
@@ -1123,7 +1123,17 @@ function setupPhotoHandler() {
         alert('Shopify save failed.\n\n' + msg);
         return;
       }
-      alert('Saved to Shopify.\n\nProduct: ' + (data.title || '') + '\nID: ' + (data.productId || ''));
+      let okMsg = 'Saved to Shopify.\n\nProduct: ' + (data.title || '') + '\nID: ' + (data.productId || '');
+      if (data.mediaAttached != null && Number(data.mediaAttached) > 0) {
+        okMsg += '\n\nPhotos attached: ' + data.mediaAttached;
+      }
+      if (data.mediaError) okMsg += '\n\nMedia warning: ' + data.mediaError;
+      if (Array.isArray(data.publications) && data.publications.length) {
+        const pubOk = data.publications.filter(function(p){ return p && p.published; }).length;
+        okMsg += '\n\nSales channels published: ' + pubOk + ' / ' + data.publications.length;
+      }
+      if (data.publishQueryError) okMsg += '\n\nPublication query: ' + data.publishQueryError;
+      alert(okMsg);
     } catch (e) {
       alert('Shopify save failed (network or server).\n\n' + (e && e.message ? e.message : String(e)));
     } finally {

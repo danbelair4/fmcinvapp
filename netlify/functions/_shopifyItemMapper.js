@@ -2,7 +2,7 @@
  * Shopify mappings derived ONLY from the CSV export contract in index.html `exportToCSV`.
  * Do not add fields or marketing copy that the CSV does not define.
  *
- * Reference: index.html lines ~1186–1321 (exportToCSV parent row).
+ * Reference: index.html lines ~1186–1321 (exportToCSV parent row + image rows).
  */
 
 function trimStr(v) {
@@ -80,6 +80,94 @@ function buildCsvBodyHtml(item) {
     return `${baseDesc}\n\n${disclaimer}`;
   }
   return disclaimer;
+}
+
+/**
+ * Same URL filter as exportToCSV: only http(s) links from item.photos[].url.
+ * @param {Record<string, unknown>} item
+ * @returns {string[]}
+ */
+function csvHttpsPhotoUrls(item) {
+  return (Array.isArray(item.photos) ? item.photos : [])
+    .map((p) => (p && p.url) || '')
+    .filter((u) => /^https?:\/\//i.test(String(u).trim()));
+}
+
+/**
+ * CSV Image Alt Text base: `${title}${item.sku ? ' – ' + item.sku : ''}`
+ * (exportToCSV uses template literal with title from same row).
+ * @param {Record<string, unknown>} item
+ */
+function buildCsvImageAltBase(item) {
+  const title = buildCsvTitle(item);
+  const sku = trimStr(item.sku);
+  return sku ? `${title} – ${sku}` : title;
+}
+
+/**
+ * Reject Google Drive / Docs *view or share* links that are not direct image URLs.
+ * CSV would still emit the string; Shopify cannot fetch those for product media.
+ * @param {string} url
+ * @returns {{ ok: true } | { ok: false, reason: string }}
+ */
+function validatePhotoUrlForShopify(url) {
+  const raw = trimStr(url);
+  let u;
+  try {
+    u = new URL(raw);
+  } catch {
+    return { ok: false, reason: 'Invalid URL.' };
+  }
+  if (!/^https?:$/i.test(u.protocol)) {
+    return { ok: false, reason: 'Only http(s) URLs are allowed (same filter as CSV export).' };
+  }
+  const host = u.hostname.toLowerCase();
+  if (host === 'drive.google.com' || host === 'docs.google.com') {
+    const href = u.href;
+    const looksDirect =
+      /export=download|uc\?[^#]*export=download|googleusercontent\.com\/|\/thumbnail|id=[^&]+&export=download/.test(
+        href
+      );
+    const looksViewOrShare =
+      /\/file\/d\/[^/]+\/view|\/file\/d\/[^/?]+\?|\/open\?id=|\/sharing/.test(href) ||
+      (/\/file\/d\//.test(u.pathname) && !looksDirect);
+    if (looksViewOrShare && !looksDirect) {
+      return {
+        ok: false,
+        reason:
+          'Google Drive sharing or view URL is not a direct image link. Use a public https URL that returns image bytes (same requirement as Shopify importing Image Src from CSV).',
+      };
+    }
+  }
+  return { ok: true };
+}
+
+/**
+ * @param {Record<string, unknown>} item
+ * @returns {string|null} single error message or null if all listed https URLs are acceptable
+ */
+function validateCsvPhotosForShopify(item) {
+  const urls = csvHttpsPhotoUrls(item);
+  for (const url of urls) {
+    const r = validatePhotoUrlForShopify(url);
+    if (!r.ok) return `${r.reason} (${url})`;
+  }
+  return null;
+}
+
+/**
+ * CreateMediaInput[] for productCreateMedia — alt text matches CSV parent + extra image rows.
+ * @param {Record<string, unknown>} item
+ * @returns {Array<{ alt: string, mediaContentType: string, originalSource: string }>}
+ */
+function buildProductCreateMediaInputsFromCsvItem(item) {
+  const urls = csvHttpsPhotoUrls(item);
+  const altBase = buildCsvImageAltBase(item);
+  return urls.map((url, i) => ({
+    alt: i === 0 ? altBase : `${altBase} (${i + 1})`,
+    mediaContentType: 'IMAGE',
+    originalSource: String(url).trim(),
+  }));
 }
 
 /**
@@ -168,11 +256,7 @@ function buildProductCreateInput(item, handleSequenceForBase = 1) {
 }
 
 /**
- * InventoryItem nested input for productVariantsBulkUpdate — only what CSV implies for variant/inventory:
- * - Tracker 'shopify' → tracked true
- * - Fulfillment 'manual' / shipping: not expressible on InventoryItemInput; requiresShipping TRUE matches CSV Requires Shipping TRUE
- * - Cost per item on inventory item
- * - Grams from CSV → weight on inventory measurement
+ * InventoryItem nested input for productVariantsBulkUpdate — CSV-implied variant/inventory fields.
  * @param {Record<string, unknown>} item
  */
 function buildVariantInventoryItemInput(item) {
@@ -200,7 +284,6 @@ function buildVariantInventoryItemInput(item) {
 
 /**
  * Variant-level fields from CSV: price, barcode, taxable TRUE, inventory policy deny.
- * Caller merges `id` and may merge compareAt later.
  * @param {Record<string, unknown>} item
  * @param {{ base: string, suffix4: string }} parts
  */
@@ -265,6 +348,11 @@ module.exports = {
   buildCsvTagsString,
   buildCsvTagsArray,
   buildCsvBodyHtml,
+  csvHttpsPhotoUrls,
+  buildCsvImageAltBase,
+  validatePhotoUrlForShopify,
+  validateCsvPhotosForShopify,
+  buildProductCreateMediaInputsFromCsvItem,
   csvVariantGrams,
   csvCostPerItem,
   buildCsvBarcode,
