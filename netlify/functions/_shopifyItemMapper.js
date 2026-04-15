@@ -8,6 +8,129 @@ function trimStr(v) {
   return String(v).trim();
 }
 
+/** @type {Record<string, string>} lowercase name → ISO 3166-1 alpha-2 */
+const COUNTRY_NAME_TO_CODE = {
+  afghanistan: 'AF',
+  australia: 'AU',
+  bolivia: 'BO',
+  brazil: 'BR',
+  burma: 'MM',
+  canada: 'CA',
+  chile: 'CL',
+  china: 'CN',
+  colombia: 'CO',
+  france: 'FR',
+  germany: 'DE',
+  india: 'IN',
+  indonesia: 'ID',
+  madagascar: 'MG',
+  mexico: 'MX',
+  morocco: 'MA',
+  myanmar: 'MM',
+  namibia: 'NA',
+  nepal: 'NP',
+  pakistan: 'PK',
+  peru: 'PE',
+  russia: 'RU',
+  'south africa': 'ZA',
+  'sri lanka': 'LK',
+  tanzania: 'TZ',
+  thailand: 'TH',
+  turkey: 'TR',
+  uk: 'GB',
+  usa: 'US',
+  us: 'US',
+  'united states': 'US',
+  'united states of america': 'US',
+  'united kingdom': 'GB',
+  uruguay: 'UY',
+  zambia: 'ZM',
+  zimbabwe: 'ZW',
+};
+
+function escapeHtml(s) {
+  return trimStr(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Map free-text origin to Shopify CountryCode, or null if unknown.
+ * @param {unknown} raw
+ * @returns {string|null}
+ */
+function normalizeCountryCodeForShopify(raw) {
+  const s = trimStr(raw);
+  if (!s) return null;
+  if (/^[A-Za-z]{2}$/.test(s)) return s.toUpperCase();
+  const key = s.toLowerCase().replace(/\s+/g, ' ').trim();
+  if (COUNTRY_NAME_TO_CODE[key]) return COUNTRY_NAME_TO_CODE[key];
+  const compact = key.replace(/[^a-z]/g, '');
+  for (const [name, code] of Object.entries(COUNTRY_NAME_TO_CODE)) {
+    if (name.replace(/[^a-z]/g, '') === compact) return code;
+  }
+  return null;
+}
+
+/**
+ * Simple factual HTML body for the product (admin + Online Store).
+ * @param {Record<string, unknown>} item
+ * @returns {string}
+ */
+function buildDescriptionHtml(item) {
+  const crystal = escapeHtml(item.crystalType);
+  const ptype = escapeHtml(item.productType);
+  const vendor = trimStr(item.vendor);
+  const origin = trimStr(item.originCountry);
+  const mode = escapeHtml(item.pricingMode || '');
+
+  const parts = [
+    `<p><strong>Crystal type:</strong> ${crystal}</p>`,
+    `<p><strong>Product type:</strong> ${ptype}</p>`,
+  ];
+  if (vendor) parts.push(`<p><strong>Vendor:</strong> ${escapeHtml(vendor)}</p>`);
+  if (origin) parts.push(`<p><strong>Country of origin:</strong> ${escapeHtml(origin)}</p>`);
+  if (mode) parts.push(`<p><strong>Pricing mode:</strong> ${mode}</p>`);
+  return parts.join('\n');
+}
+
+/**
+ * InventoryItem fields for productVariantsBulkUpdate (nested under variant).
+ * Enables tracking, unit cost, origin (when mappable), weight only when weight kg is positive.
+ * @param {Record<string, unknown>} item
+ * @returns {Record<string, unknown>}
+ */
+function buildVariantInventoryItemInput(item) {
+  const sku = trimStr(item.sku);
+  const cost = Number(item.cost);
+  /** @type {Record<string, unknown>} */
+  const o = {
+    tracked: true,
+    requiresShipping: true,
+  };
+  if (sku) o.sku = sku;
+  if (Number.isFinite(cost) && cost > 0) {
+    o.cost = cost;
+  }
+
+  const cc = normalizeCountryCodeForShopify(item.originCountry);
+  if (cc) o.countryCodeOfOrigin = cc;
+
+  const w = Number(item.weight);
+  if (Number.isFinite(w) && w > 0) {
+    o.measurement = {
+      weight: {
+        value: w,
+        unit: 'KILOGRAMS',
+      },
+    };
+  }
+
+  return o;
+}
+
 /**
  * @param {Record<string, unknown>} item
  * @returns {string|null} error message or null if ok
@@ -55,6 +178,8 @@ function buildTags(item) {
   add(item.productType);
   add(item.originCountry);
   add(item.pricingMode);
+  const cc = normalizeCountryCodeForShopify(item.originCountry);
+  if (cc) tags.add(`origin:${cc}`);
   return Array.from(tags);
 }
 
@@ -75,6 +200,7 @@ function formatMoneyAmount(n) {
 function buildProductCreateInput(item) {
   return {
     title: buildTitle(item),
+    descriptionHtml: buildDescriptionHtml(item),
     vendor: trimStr(item.vendor) || undefined,
     productType: trimStr(item.productType) || undefined,
     status: shopifyStatus(item),
@@ -96,5 +222,8 @@ module.exports = {
   shopifyStatus,
   formatMoneyAmount,
   buildProductCreateInput,
+  buildDescriptionHtml,
+  buildVariantInventoryItemInput,
+  normalizeCountryCodeForShopify,
   toLocationGid,
 };

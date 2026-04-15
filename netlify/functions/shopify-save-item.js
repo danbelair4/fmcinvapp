@@ -21,6 +21,7 @@ const {
   buildProductCreateInput,
   formatMoneyAmount,
   toLocationGid,
+  buildVariantInventoryItemInput,
 } = require('./_shopifyItemMapper');
 
 const MUTATION_PRODUCT_CREATE = `#graphql
@@ -55,6 +56,14 @@ mutation VariantsBulkUpdate($productId: ID!, $variants: [ProductVariantsBulkInpu
       id
       sku
       price
+      inventoryItem {
+        id
+        tracked
+        countryCodeOfOrigin
+        unitCost {
+          amount
+        }
+      }
     }
     userErrors {
       field
@@ -89,6 +98,7 @@ query FirstVariant($id: ID!) {
         price
         inventoryItem {
           id
+          tracked
         }
       }
     }
@@ -230,9 +240,12 @@ exports.handler = async (event) => {
     const price = formatMoneyAmount(item.retailPrice);
     const barcode = String(item.barcode || item.sku || '').trim();
 
-    const variantPatch = { id: variant.id, price };
+    const variantPatch = {
+      id: variant.id,
+      price,
+      inventoryItem: buildVariantInventoryItemInput(item),
+    };
     if (barcode) variantPatch.barcode = barcode;
-    if (sku) variantPatch.inventoryItem = { sku };
 
     const bulkRes = await gql(MUTATION_VARIANTS_BULK_UPDATE, {
       productId: product.id,
@@ -254,7 +267,11 @@ exports.handler = async (event) => {
       };
     }
 
-    let inventoryItemId = variant.inventoryItem?.id;
+    const updatedList = bulkPayload?.productVariants;
+    const updated =
+      Array.isArray(updatedList) && updatedList.length ? updatedList[0] : variant;
+
+    let inventoryItemId = updated?.inventoryItem?.id || variant.inventoryItem?.id;
     if (!inventoryItemId) {
       const refreshed = await gql(QUERY_PRODUCT_VARIANT, { id: product.id });
       const v2 = firstVariantFromProduct(refreshed?.data?.product);
@@ -302,12 +319,13 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         ok: true,
         productId: product.id,
-        variantId: variant.id,
+        variantId: updated?.id || variant.id,
         inventoryItemId: inventoryItemId || null,
         title: product.title,
         sku,
         price,
         quantitySet: qty,
+        inventoryTracked: Boolean(updated?.inventoryItem?.tracked),
       }),
     };
   } catch (e) {
