@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Feather Moon Crystals Inventory</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23d8a092'/%3E%3Cpath fill='%23fbf7f4' d='M16 8a8 8 0 1 1 0 16 10 10 0 1 0 0-16z'/%3E%3C/svg%3E" type="image/svg+xml">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  :root{--bg-1:#fbf7f4;
+        --text:#1f2a37;
+        --muted:#6b7280;
+        --accent:#d8a092;
+        --border:#e8e1db}
+
+
+.app-header{
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--bg-1); color:var(--text);
+  border-bottom:1px solid var(--border);
+  padding:12px 14px;
+}
+
+.header-left{display:flex; align-items:center; gap:10px; min-width:0;}
+.header-title{font-weight:700; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.header-select{height:34px; border:1px solid var(--border); border-radius:8px; padding:0 8px; background:#fff; color:var(--text);}
+
+.bottom-nav{
+  position:sticky; bottom:0; left:0; right:0;
+  background:var(--bg-1); border-top:1px solid var(--border);
+  display:flex; gap:6px; justify-content:space-around; align-items:center;
+  height:56px; z-index:50;
+}
+.bottom-tab{
+  flex:1; height:40px; margin:0 6px; border-radius:10px; border:1px solid var(--border);
+  background:#fff; color:var(--muted); font-weight:600; cursor:pointer;
+}
+.bottom-tab.active{ color:#fff; background:var(--accent); border-color:var(--accent); }
+
+.main-content{ padding-bottom:72px; } /* space for bottom nav */
+
+  body{ background:var(--bg-1) !important; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; padding:10px }
+  .container{max-width:500px;margin:0 auto;background:#fff;border-radius:15px;box-shadow:0 20px 40px rgba(0,0,0,.1);overflow:hidden}
+  .header{ display:none; }
+  .header h1{font-size:1.5rem;margin-bottom:5px}
+  .user-select{background:#2d3748;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .user-btn{padding:10px;border:2px solid transparent;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;cursor:pointer;text-align:center;font-size:14px;font-weight:600;transition:all .3s ease}
+  .user-btn.active{background:#667eea;border-color:#fff}
+  .tabs{display:flex;background:#2d3748}
+  .tab{flex:1;padding:15px;background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:14px;font-weight:600;transition:all .3s ease}
+  .tab.active{color:#fff;background:rgba(255,255,255,.1)}
+  .tab-content{display:none}
+  .tab-content.active{display:block}
+  .main-content{padding:20px 20px 72px}
+  .quick-stats{background:#f8f9fa;padding:15px;border-radius:10px;margin-bottom:20px;text-align:center;border-left:5px solid #667eea}
+  .photo-section{border:3px dashed #cbd5e0;border-radius:10px;padding:30px 20px;text-align:center;margin-bottom:20px;cursor:pointer;transition:all .3s ease}
+  .photo-section:hover{border-color:#667eea;background:#f7fafc}
+  .photo-preview{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px;justify-content:center}
+  .photo-thumbnail{width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid #e2e8f0}
+  .form-section{background:#f8f9fa;padding:20px;border-radius:10px;margin-bottom:20px;border-left:5px solid #667eea}
+  .form-group{margin-bottom:15px}
+  label{font-weight:600;margin-bottom:8px;color:#4a5568;display:block;font-size:16px}
+  input,select,textarea{width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:8px;font-size:16px;transition:border-color .3s ease}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
+  .crystal-preview{background:#e6fffa;padding:15px;border-radius:8px;margin-top:10px;display:none}
+  .crystal-preview.show{display:block}
+  .two-column{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+  .three-column{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px}
+  .price-display{background:#fff;padding:15px;border-radius:8px;text-align:center;border:2px solid #38b2ac;margin-top:15px}
+  .price-large{font-size:1.8rem;font-weight:700;color:#2d3748}
+  .price-input{width:120px;text-align:center;border:none;background:transparent;font-size:1.8rem;font-weight:700}
+  .sku-display{background:#fff3cd;padding:15px;border-radius:8px;text-align:center;margin-top:15px;border:2px solid #ffc107}
+  .barcode{font-family:'Courier New',monospace;font-size:14px;font-weight:700;margin:8px 0}
+  .recent-item{background:#fff;border-radius:8px;padding:12px;margin-bottom:10px;border-left:4px solid #667eea}
+  .recent-item h4{color:#2d3748;margin-bottom:8px}
+  .recent-meta{font-size:14px;color:#718096}
+  .button{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text);font-weight:600;cursor:pointer}
+  .button:hover{background:#f7f7f7}
+  .button-secondary{background:#f9fafb}
+  .button-success{background:var(--accent);color:#fff;border-color:var(--accent)}
+  @media (max-width:480px){.two-column,.three-column{grid-template-columns:1fr}}
+  .app-header{position:relative;height:125px;background:#fff;border-bottom:1px solid #eee;}
+  .app-logo-slot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-height:100px;max-width:min(92vw,280px);text-align:center;}
+  .app-logo-img{max-height:100px;width:auto;max-width:100%;display:block;margin:0 auto;object-fit:contain;}
+  .app-logo-svg{max-height:100px;width:100%;max-width:280px;display:none;margin:0 auto;}
+  .icon-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:1px solid #e5e7eb;border-radius:8px;background:#1f2937;color:#fff;}
+  .user-row{display:flex;justify-content:center;padding:10px;background:#f9fafb;border-bottom:1px solid #eee;}
+  .user-select{appearance:none;font-size:16px;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;background:#fff;}
+  .tagline{position:absolute;left:50%;top:calc(50% + 28px);transform:translateX(-50%);font-size:13px;color:#6b7280;}
+  body{background:var(--bg-1)!important;color:var(--text)}
+  .container,.form-section,.price-display,.sku-display,.quick-stats{background:#fff;border-color:var(--border)}
+  input,select,textarea{background:#fff;border:1px solid var(--border);border-radius:10px}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(216,160,146,.25)}
+  .button,.button-success{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}
+  .button-secondary{background:#fff;color:var(--text)}
+  .bottom-tab{background:#fff;border:1px solid var(--border);color:var(--muted)}
+  .bottom-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .photo-section{border:2px dashed var(--border)!important;background:transparent}
+  .umodal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:999}
+  .umodal.show{display:flex}
+  .umodal-card{background:#fff;padding:18px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.2);width:min(420px,92vw);text-align:center}
+  .umodal-sub{color:#6b7280;margin:6px 0 12px}
+  .umodal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .umodal-btn{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text);font-weight:600;cursor:pointer}
+  .umodal-btn:hover{border-color:var(--accent);box-shadow:0 0 0 2px rgba(216,160,146,.2)}
+  .icon-link{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:var(--muted);font-weight:600;cursor:pointer}
+  .icon-link:hover{color:var(--accent)}
+  .umodal{display:none;pointer-events:none}
+  .umodal.show{display:flex;pointer-events:auto}
+  .btn-toggle{display:flex;gap:8px}
+  .btn-toggle button{padding:.55rem .9rem;border:1px solid var(--border);border-radius:8px;background:#fff;}
+  .btn-toggle button.is-active{background:var(--accent-1);color:#fff;border-color:var(--accent-1);}
+  .form-actions{display:flex;gap:12px;justify-content:center;margin:10px 0;flex-wrap:wrap}
+  .seg{display:flex;gap:8px}
+  .seg-btn{padding:.6rem 1rem;border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer}
+  .seg-btn.is-active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .button-row {display:flex;gap:12px;flex-wrap: wrap;margin-top: 10px;}
+  .button-row .button {flex: 1;min-width: 160px;justify-content: center;}
+
+
+  .crystal-type-row{display:flex;gap:8px;align-items:center}
+  .crystal-type-row #crystal-type{flex:1;cursor:pointer;background:#fafafa}
+  .crystal-type-clear{width:44px;height:44px;padding:0;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:1.35rem;line-height:1;color:var(--muted);font-weight:700;cursor:pointer}
+  .crystal-picker{position:fixed;inset:0;z-index:1000;display:none;align-items:flex-end;justify-content:center}
+  .crystal-picker.show{display:flex}
+  .crystal-picker-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+  .crystal-picker-sheet{position:relative;width:100%;max-width:500px;max-height:min(78vh,640px);background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.15);display:flex;flex-direction:column;overflow:hidden}
+  .crystal-picker-head{padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+  .crystal-picker-head h3{margin:0 0 10px;font-size:1.05rem}
+  .crystal-picker-close{float:right;margin:0 0 8px 8px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;font-weight:600;cursor:pointer}
+  .crystal-picker-search{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;font-size:16px}
+  .crystal-picker-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 8px 14px}
+  .crystal-picker-item{display:block;width:100%;text-align:left;padding:12px 10px;margin:2px 0;border:0;border-radius:10px;background:#f9fafb;font-size:16px;font-weight:500;cursor:pointer;color:var(--text)}
+  .crystal-picker-item:active{background:#ede9e6}
+
+</style>
+</head>
+<body>
+  <div id="add" class="tab-content active"> 
+  <div class="container">
+      <!-- Clean centered header -->
+    <header class="app-header">
+    <div class="app-logo-slot">
+      <img class="app-logo-img" src="./logo.png" alt="Feather Moon Crystals" decoding="async"
+           onerror="this.style.display='none';var s=this.nextElementSibling;if(s)s.style.display='block';">
+      <svg class="app-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 72" role="img" aria-label="Feather Moon Crystals">
+        <defs><linearGradient id="fm-moon" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9b8e8"/><stop offset="1" stop-color="#d8a092"/></linearGradient></defs>
+        <circle cx="38" cy="36" r="24" fill="url(#fm-moon)"/>
+        <path fill="#fbf7f4" d="M38 16a18 18 0 0 1 0 40 22 22 0 1 0 0-40z"/>
+        <text x="78" y="42" fill="#374151" font-family="Georgia,Times New Roman,serif" font-size="22" font-weight="700">Feather Moon</text>
+        <text x="78" y="58" fill="#6b7280" font-family="Segoe UI,system-ui,sans-serif" font-size="11" letter-spacing="0.15em">CRYSTALS</text>
+      </svg>
+    </div>
+    </header>
+
+  <!-- User Picker Modal -->
+  <div id="user-modal" class="umodal">
+    <div class="umodal-card">
+      <h3>Select User</h3>
+      <p class="umodal-sub">Choose who’s adding inventory this session.</p>
+      <div class="umodal-grid" id="user-choices"></div>
+    </div>
+  </div>
+
+  <!-- Crystal picker: searchable sheet (no native datalist) -->
+  <div id="crystal-picker" class="crystal-picker" aria-hidden="true">
+    <div class="crystal-picker-backdrop" id="crystal-picker-backdrop"></div>
+    <div class="crystal-picker-sheet" role="dialog" aria-modal="true" aria-labelledby="crystal-picker-title">
+      <div class="crystal-picker-head">
+        <button type="button" class="crystal-picker-close" id="crystal-picker-close">Close</button>
+        <h3 id="crystal-picker-title">Crystal type</h3>
+        <input type="search" id="crystal-picker-search" class="crystal-picker-search" placeholder="Search crystals…" autocomplete="off" autocorrect="off" spellcheck="false">
+      </div>
+      <div id="crystal-picker-list" class="crystal-picker-list"></div>
+    </div>
+  </div>
+
+  <div class="photo-section">
+  <div style="font-size:2rem; margin-bottom:10px;">📸</div>
+  <h3 id="photo-section-title">Add Photos</h3>
+  <p>Use camera or choose from library</p>
+
+  <!-- Hidden inputs -->
+  <input type="file" id="photo-input-library" accept="image/*" multiple style="display:none;">
+  <input type="file" id="photo-input-camera"  accept="image/*" capture="environment" multiple style="display:none;">
+
+  <!-- Action buttons -->
+  <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
+    <button type="button" class="button" style="width:auto;padding:10px 14px;" onclick="document.getElementById('photo-input-library').click()">Choose from Library</button>
+    <button type="button" class="button button-secondary" style="width:auto;padding:10px 14px;" onclick="document.getElementById('photo-input-camera').click()">Take Photo</button>
+  </div>
+
+  <div id="photo-preview" class="photo-preview"></div>
+</div>
+
+
+        <div class="form-section">
+          <div class="form-group">
+            <label for="crystal-type">Crystal Type *</label>
+            <div class="crystal-type-row">
+            <input type="text" id="crystal-type" readonly inputmode="none" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="Tap to choose crystal…" aria-haspopup="dialog" aria-expanded="false">
+            <button type="button" id="crystal-type-clear" class="crystal-type-clear" title="Clear">×</button>
+          </div>
+
+          </div>
+
+          <div class="crystal-preview" id="crystal-preview">
+            <div style="font-weight:700;margin-bottom:8px" id="crystal-name-display"></div>
+            <div style="font-size:14px" id="crystal-info-display"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="product-type">Product Type *</label>
+            <select id="product-type" onchange="generateSKU()">
+              <option value="">Select Product Type...</option>
+              <option value="Tower">Tower</option><option value="Sphere">Sphere</option><option value="Coin">Coin</option>
+              <option value="Freeform">Freeform</option><option value="Flame">Flame</option><option value="Tumble">Tumbled Stone</option>
+              <option value="Beads">Beads</option><option value="Carving">Carving</option>
+              <option value="Palm">Palm Stone</option><option value="Cluster">Cluster</option>
+              <option value="Raw">Raw Stone</option><option value="Point">Point</option>
+              <option value="Geode">Geode</option><option value="Egg">Egg</option>
+              <option value="Heart">Heart</option><option value="Pyramid">Pyramid</option><option value="Cut Base">Cut Base</option><option value="On Stand">On Stand</option>
+            </select>
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label for="origin-country">Country of Origin</label>
+              <input id="origin-country" placeholder="e.g., Brazil, India, Madagascar"/>
+            </div>
+            <div class="form-group">
+              <label for="vendor">Wholesale Vendor</label>
+              <input id="vendor" placeholder="e.g., Crystal Suppliers LLC"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Pricing Mode</label>
+            <div class="seg" id="pricing-mode">
+              <button type="button" class="seg-btn is-active" data-mode="per_kilo">Per Kilo</button>
+              <button type="button" class="seg-btn" data-mode="per_piece">Per Piece</button>
+            </div>
+          </div>
+
+                    <div class="three-column">
+            <div class="form-group">
+              <label for="weight">Weight (kg)</label>
+              <input type="number" id="weight" step="0.001" placeholder="0.500" onchange="calculatePrice()"/>
+            </div>
+            <div class="form-group">
+              <label for="cost">Cost per kg ($)</label>
+              <input type="number" id="cost" step="0.01" placeholder="25.00" onchange="calculatePrice()"/>
+            </div>
+            <div class="form-group">
+              <label for="markup">Markup</label>
+              <select id="markup" onchange="calculatePrice()">
+                <option value="2">2x</option><option value="2.5">2.5x</option>
+                <option value="3" selected>3x</option><option value="3.5">3.5x</option>
+                <option value="4">4x</option><option value="4.5">4.5x</option>
+                <option value="5">5x</option><option value="6">6x</option>
+                <option value="7">7x</option><option value="8">8x</option>
+                <option value="9">9x</option><option value="10">10x</option>
+              </select>
+            </div>
+          </div>
+            <div class="form-group">
+              <label for="quantity">Inventory Quantity</label>
+              <input type="number" id="quantity" min="0" placeholder="1" value="1" oninput="updateProfit()"/>
+            </div>
+           <label>Publish Status</label>
+            <div class="seg" id="publish-status" role="group" aria-label="Publish status">
+              <button type="button" data-status="active" class="seg-btn is-active">Active</button>
+              <button type="button" data-status="draft"  class="seg-btn">Draft</button>
+            </div>
+
+          <div class="price-display">
+            <div>Retail Price</div>
+            <div class="price-large">$<input type="number" id="retail-price" class="price-input" step="0.01" value="0.00" onchange="updateProfit()"/></div>
+            <div style="font-size:14px;color:#718096">Profit: $<span id="profit">0.00</span></div>
+          </div>
+
+          <div class="sku-display">
+            <div><strong>SKU:</strong> <span id="generated-sku">Select crystal & type</span></div>
+            <div class="barcode">*<span id="barcode">BARCODE</span>*</div>
+                      <!-- ADD THIS: Manual SKU override -->
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid #e8e1db;">
+              <label style="font-size:14px; margin-bottom:4px;">Manual SKU Override (optional)</label>
+              <input type="text" id="manual-sku" placeholder="Leave blank for auto-generated" 
+                    style="font-family:'Courier New',monospace; text-align:center;"
+                    oninput="updateManualSKU()">
+              <div style="font-size:12px;color:#6b7280;margin-top:4px;">
+                Enter a custom SKU to override auto-generation
+              </div>
+            </div>
+          </div>
+
+          <button type="button" id="btn-add"   class="button button-success">✅ Add to Inventory</button>
+          <button type="button" id="btn-shopify" class="button button-secondary">🛍️ Save to Shopify</button>
+          <button type="button" id="btn-clear" class="button button-secondary">🔄 Clear Weight & Photos</button>
+          <button type="button" id="btn-clear-all" class="button button-secondary">🗑️ Clear All Fields</button>
+          <button type="button" id="btn-user"  class="button button-secondary">👤 Change User</button>
+        </div>
+      </div>
+    </div> 
+
+      <!-- Recent -->
+    <div id="recent" class="tab-content">
+      <div class="container">
+        <div class="form-section">
+          <div id="session-summary" style="margin-bottom:12px"></div>
+          <h3 style="margin-bottom:15px">Recent Items (Last 10)</h3>
+          <div id="recent-items">
+            <p style="text-align:center;color:#718096;padding:20px">No items added yet</p>
+          </div>
+        </div>
+      </div>
+    </div>
+      <!-- Export --> 
+    <div id="export" class="tab-content">
+        <div class="container">
+          <div class="form-section">
+            <h3 style="margin-bottom:15px">Export Data</h3>
+          
+          <div class="button-row">
+            <button id="btn-export-clear" class="button button-secondary">🧹 Clear All Data</button>
+            <button id="btn-export-csv"   class="button button-success">📄 Export to CSV</button>
+            <button id="btn-export-bar"   class="button button-secondary">🖨️ Print Barcodes</button>
+          </div>
+
+          <div style="background:#fff3cd;padding:15px;border-radius:8px;border-left:4px solid #ffc107;margin-top:15px">
+            <strong>📱 System Ready:</strong>
+            <div style="margin-top:8px;font-size:14px">
+              Photos saved or to GCS <br/>
+              CSV uses Shopify-friendly format<br/>
+              Barcodes ready for printing<br/>
+              Total Items: <strong id="total-items">0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+  <nav class="bottom-nav" id="bottom-nav">
+  <button class="bottom-tab active" data-tab="add">Add Item</button>
+  <button class="bottom-tab" data-tab="recent">Recent (<span id="item-count">0</span>)</button>
+  <button class="bottom-tab" data-tab="export">Export</button>
+</nav>
+
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+  // ========= Config =========
+  const SIGN_FN = '/.netlify/functions/sign-upload'; // optional; app falls back if missing
+  const SHOPIFY_SAVE_URL = '/.netlify/functions/shopify-save-item';
+
+  // ========= App State =========
+  let inventory = [];
+  let currentUser = 'Allie';
+  let currentPhotos = [];
+   
+  // ===== Numeric SKU config (per user) =====
+  const USER_SKU_STARTS = { Stevie: 100000, Allie: 500013, Dan: 800000, Matt: 900000 };
+  const getSkuBaseFor = (user) => Number(USER_SKU_STARTS[user]) || 100000;
+  const getSkuKeyFor  = (user) => `skuCounterGlobal:${user}`; // per-user counter key
+
+  // ========= Photo Upload Function =========
+  async function trySignAndUpload(file, objectName){
+    try{
+      const r = await fetch(SIGN_FN, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ objectName, contentType: file.type || 'application/octet-stream' })
+      });
+      if (!r.ok) return null;
+      const { uploadUrl, publicUrl } = await r.json();
+      const put = await fetch(uploadUrl, { method:'PUT', headers:{'Content-Type': file.type||'application/octet-stream'}, body:file });
+      if (!put.ok) return null;
+      return { url: publicUrl };
+    }catch{ return null; }
+  }
+
+  // ========= Crystal DB =========
+    const crystalDatabase = {
+    "Clear Quartz":{"intentions":"Clarity, amplification, healing, manifestation, focus","description":"Master healer that amplifies energy and intentions for any purpose.","category":"Quartz","chakra":"All","hardness":"7"},
+    "Amethyst":{"intentions":"Calm, spiritual growth, intuition, protection, sobriety","description":"Purple quartz used for calm, intuition, and spiritual protection.","category":"Quartz","chakra":"Third Eye, Crown","hardness":"7"},
+    "Rose Quartz":{"intentions":"Love, compassion, forgiveness, emotional healing, trust","description":"Soft pink quartz linked with unconditional love and heart healing.","category":"Quartz","chakra":"Heart","hardness":"7"},
+    "Citrine":{"intentions":"Abundance, manifestation, creativity, confidence, joy","description":"Golden quartz that supports abundance, confidence, and joy.","category":"Quartz","chakra":"Solar Plexus","hardness":"7"},
+    "Smoky Quartz":{"intentions":"Grounding, protection, clearing, stability, stress relief","description":"Protective quartz that grounds and clears heavy energy.","category":"Quartz","chakra":"Root","hardness":"7"},
+    "Black Tourmaline":{"intentions":"Protection, grounding, cleansing, security, stability","description":"Schorl that shields from negativity and grounds energy.","category":"Tourmaline","chakra":"Root","hardness":"7-7.5"},
+    "Labradorite":{"intentions":"Transformation, intuition, protection, magic, insight","description":"Iridescent feldspar that awakens intuition and shields the aura.","category":"Feldspar","chakra":"Third Eye, Crown","hardness":"6-6.5"},
+    "Selenite":{"intentions":"Cleansing, clarity, peace, purification, angelic connection","description":"Translucent gypsum used to cleanse spaces.","category":"Sulfate","chakra":"Crown","hardness":"2"},
+    "Fluorite":{"intentions":"Mental clarity, focus, learning, decision making","description":"Protective stone that enhances mental clarity.","category":"Halide","chakra":"Third Eye","hardness":"4"},
+    "Carnelian":{"intentions":"Courage, confidence, motivation, creativity, vitality","description":"Orange chalcedony that boosts confidence and creative energy.","category":"Chalcedony","chakra":"Sacral, Root","hardness":"6.5-7"},
+    "Green Aventurine":{"intentions":"Luck, prosperity, growth, healing, optimism","description":"Fuchsite-rich quartz called the stone of opportunity.","category":"Quartz","chakra":"Heart","hardness":"6.5-7"},
+    "Moonstone":{"intentions":"Intuition, new beginnings, balance, calm","description":"Adularescent feldspar tied to lunar rhythms and intuition.","category":"Feldspar","chakra":"Sacral, Third Eye","hardness":"6-6.5"},
+    "Sunstone":{"intentions":"Joy, vitality, leadership, confidence","description":"Sparkling feldspar that radiates warmth and optimism.","category":"Feldspar","chakra":"Solar Plexus","hardness":"6-7"},
+    "Hematite":{"intentions":"Grounding, protection, strength, balance, focus","description":"Metallic iron oxide that anchors and balances energy.","category":"Oxide","chakra":"Root","hardness":"5.5-6.5"},
+    "Pyrite":{"intentions":"Confidence, protection, abundance, vitality","description":"Brassy sulfide known as fool's gold.","category":"Sulfide","chakra":"Solar Plexus","hardness":"6-6.5"},
+    "Malachite":{"intentions":"Transformation, protection, healing, power","description":"Green copper carbonate linked to transformation and protection.","category":"Carbonate","chakra":"Heart, Solar Plexus","hardness":"3.5-4"},
+    "Lapis Lazuli":{"intentions":"Wisdom, truth, intuition, clarity","description":"Royal blue rock rich in lazurite and pyrite.","category":"Rock","chakra":"Third Eye, Throat","hardness":"5-5.5"},
+    "Turquoise":{"intentions":"Protection, truth, communication, healing","description":"Copper phosphate prized for protection and true voice.","category":"Phosphate","chakra":"Throat, Heart","hardness":"5-6"},
+    "Amazonite":{"intentions":"Calm, truth, harmony, communication","description":"Green-blue microcline promoting calm expression.","category":"Feldspar","chakra":"Heart, Throat","hardness":"6-6.5"},
+    "Rhodochrosite":{"intentions":"Love, inner child, joy, compassion","description":"Pink carbonate that heals the heart and invites joy.","category":"Carbonate","chakra":"Heart","hardness":"3.5-4"},
+    "Tiger's Eye":{"intentions":"Protection, grounding, practicality, integrity","description":"Chatoyant quartz providing protection and integrity.","category":"Quartz","chakra":"Solar Plexus, Root","hardness":"7"},
+    "Jade":{"intentions":"Prosperity, wisdom, balance, peace","description":"Green stone valued for good fortune and wisdom.","category":"Silicate","chakra":"Heart","hardness":"6-7"},
+    "Obsidian":{"intentions":"Protection, grounding, truth, cleansing","description":"Volcanic glass that provides strong protection.","category":"Volcanic Glass","chakra":"Root","hardness":"5-5.5"},
+    "Sodalite":{"intentions":"Logic, rationality, efficiency, truthfulness","description":"Blue stone that enhances logical thinking and truth.","category":"Silicate","chakra":"Throat, Third Eye","hardness":"5.5-6"},
+    "Calcite":{"intentions":"Energy amplification, cleansing, study, memory","description":"Soft mineral that amplifies and cleanses energy.","category":"Carbonate","chakra":"All Chakras","hardness":"3"},
+    "Bloodstone":{"intentions":"Courage, vitality, strength, purification","description":"Dark green jasper with red spots for courage.","category":"Jasper","chakra":"Root, Heart","hardness":"6.5-7"},
+    "Lepidolite":{"intentions":"Calming, stress relief, emotional balance, sleep","description":"Lilac mica for gentle emotional healing.","category":"Mica","chakra":"Heart, Third Eye, Crown","hardness":"2.5-3"},
+    "Actinolite":{"intentions":"Protection, balance, grounding, healing","description":"Green amphibole crystal that aids protection and physical healing.","category":"Silicate","chakra":"Heart, Root","hardness":"5-6"},
+    "Aegirine":{"intentions":"Protection, energy, empowerment, cleansing","description":"Dark green pyroxene crystal that shields against negativity.","category":"Silicate","chakra":"Root, Solar Plexus","hardness":"6"},
+    "Agate":{"intentions":"Stability, balance, grounding, protection","description":"A banded chalcedony stone that promotes harmony, calm, and emotional healing.","category":"Silicate","chakra":"Root, Sacral, Solar Plexus","hardness":"6.5-7"},
+    "Agate (Blue Chalcedony)":{"intentions":"Calm, clarity, communication, peace","description":"Light blue chalcedony that soothes and enhances communication.","category":"Chalcedony","chakra":"Throat","hardness":"6-7"},
+    "Agate (Blue Lace)":{"intentions":"Calm, communication, stress relief, peace","description":"Soft blue banded chalcedony that soothes and supports communication.","category":"Chalcedony","chakra":"Throat","hardness":"6.5-7"},
+    "Agate (Botswana)":{"intentions":"Protection, grounding, stability, emotional healing","description":"Striped chalcedony from Botswana, aids comfort and resilience.","category":"Chalcedony","chakra":"Root, Sacral","hardness":"6.5-7"},
+    "Agate (Crazy Lace)":{"intentions":"Joy, laughter, balance, vitality","description":"Colorful banded agate that brings joy and optimism.","category":"Chalcedony","chakra":"Solar Plexus, Crown","hardness":"6.5-7"},
+    "Agate (Fire)":{"intentions":"Protection, vitality, passion, creativity","description":"Fiery patterned chalcedony with grounding and energizing properties.","category":"Chalcedony","chakra":"Root, Sacral, Solar Plexus","hardness":"6.5-7"},
+    "Agate (Firework)":{"intentions":"Creativity, passion, energy, transformation","description":"Explosive patterned agate that inspires vitality and creative flow.","category":"Chalcedony","chakra":"Sacral, Solar Plexus","hardness":"6.5-7"},
+    "Agate (Moss)":{"intentions":"Growth, grounding, abundance, connection to Earth","description":"Agate with green moss-like inclusions for grounding and prosperity.","category":"Chalcedony","chakra":"Heart, Root","hardness":"6.5-7"},
+    "Agate (Tree)":{"intentions":"Grounding, growth, abundance, connection to nature","description":"Green dendritic agate resembling trees, supports growth and balance.","category":"Chalcedony","chakra":"Heart, Root","hardness":"6.5-7"},
+    "Ajoite in Quartz":{"intentions":"Healing, communication, spiritual growth, compassion","description":"Rare blue-green inclusion in quartz that enhances communication and spiritual awareness.","category":"Quartz","chakra":"Heart, Throat, Crown","hardness":"7"},
+    "Ajoite":{"intentions":"Spiritual growth, peace, love, communication","description":"Rare blue-green mineral linked to healing and angelic connection.","category":"Silicate","chakra":"Heart, Crown","hardness":"3.5-4"},
+    "Amazonite (Blue Green)":{"intentions":"Calm, truth, harmony, communication","description":"Blue-green feldspar for balance and emotional healing.","category":"Feldspar","chakra":"Throat, Heart","hardness":"6-6.5"},
+    "Amazonite (Peru)":{"intentions":"Calm, communication, balance, empowerment","description":"Peruvian amazonite with soothing blue-green energy.","category":"Feldspar","chakra":"Throat, Heart","hardness":"6-6.5"},
+    "Amazonite (Russian)":{"intentions":"Harmony, communication, courage, balance","description":"High-quality green-blue feldspar known for soothing energy.","category":"Feldspar","chakra":"Heart, Throat","hardness":"6-6.5"},
+    "Amber":{"intentions":"Purification, healing, vitality, protection","description":"Fossilized tree resin associated with warmth, healing, and energy flow.","category":"Organic","chakra":"Solar Plexus, Sacral","hardness":"2-2.5"},
+    "Ametrine":{"intentions":"Balance, clarity, creativity, transformation","description":"Natural blend of amethyst and citrine, balances spirit and mind.","category":"Quartz","chakra":"Solar Plexus, Third Eye","hardness":"7"},
+    "Ammonite Fossil":{"intentions":"Transformation, stability, grounding, past life insight","description":"Fossilized ammonite shell symbolizing cycles and earth energy.","category":"Fossil","chakra":"Root, Third Eye","hardness":"3.5-4"},
+    "Andalusite":{"intentions":"Balance, clarity, transformation, strength","description":"Multicolored silicate gemstone promoting balance and insight.","category":"Silicate","chakra":"Solar Plexus, Heart","hardness":"7.5"},
+    "Andesine":{"intentions":"Balance, transformation, insight, vitality","description":"Red to green plagioclase feldspar gemstone with balancing energy.","category":"Feldspar","chakra":"Heart, Solar Plexus","hardness":"6-6.5"},
+    "Angelite":{"intentions":"Peace, angelic connection, serenity, communication","description":"Soft blue stone that connects to higher realms and calms emotions.","category":"Sulfate","chakra":"Throat, Crown","hardness":"3-3.5"},
+    "Apatite (Green)":{"intentions":"Growth, communication, clarity, healing","description":"Green apatite supports personal growth and truth.","category":"Phosphate","chakra":"Heart, Throat","hardness":"5"},
+    "Apatite (Purple)":{"intentions":"Spiritual growth, clarity, transformation, wisdom","description":"Purple apatite enhances psychic abilities and spiritual connection.","category":"Phosphate","chakra":"Third Eye, Crown","hardness":"5"},
+    "Apatite (Yellow)":{"intentions":"Clarity, manifestation, learning, positivity","description":"Yellow apatite enhances focus, intellect, and personal power.","category":"Phosphate","chakra":"Solar Plexus","hardness":"5"},
+    "Apatite":{"intentions":"Inspiration, learning, communication, motivation","description":"Blue-green phosphate stone that boosts intellect and spiritual awareness.","category":"Phosphate","chakra":"Throat, Third Eye","hardness":"5"},
+    "Apophyllite":{"intentions":"Clarity, connection, spiritual awareness, peace","description":"Clear or greenish crystal that connects higher realms and intuition.","category":"Silicate","chakra":"Crown, Third Eye","hardness":"4.5-5"},
+    "Aquamarine":{"intentions":"Calm, communication, courage, clarity","description":"Sea-blue beryl that encourages clear communication and peace.","category":"Beryl","chakra":"Throat, Heart","hardness":"7.5-8"},
+    "Aragonite":{"intentions":"Stability, grounding, stress relief, balance","description":"Earthy carbonate mineral promoting balance and emotional stability.","category":"Carbonate","chakra":"Root, Sacral","hardness":"3.5-4"},
+    "Arfvedsonite": {"intentions": "Clarity, transformation, spiritual awakening, manifestation, protection","description": "Arfvedsonite is a rare sodium amphibole mineral known for its dark blue to black color with flashes of blue or green. It is believed to clear confusion, enhance intuition, and aid in manifesting positive changes.","category": "Amphibole Mineral","chakra": "Third Eye, Throat","hardness": "5.5-6"},
+    "Astrophyllite":{"intentions":"Transformation, higher awareness, truth, clarity","description":"Golden-bladed mineral symbolizing light and spiritual awakening.","category":"Silicate","chakra":"Crown, Third Eye","hardness":"3-4"},
+    "Atlantisite": {"intentions": "Emotional healing, peace, connection to nature, spiritual growth, protection","description": "Atlantisite is a unique combination of green serpentine and purple stichtite. It is believed to promote emotional balance, release stress, and connect the heart and crown chakras for deeper spiritual awareness.","category": "Combination Stone","chakra": "Heart, Crown","hardness": "3.5-4.5"},
+    "Auralite 23":{"intentions":"Spiritual awakening, transformation, higher awareness","description":"Rare crystal with 23 minerals, enhances spiritual growth and healing.","category":"Quartz","chakra":"Crown, Third Eye","hardness":"7"},
+    "Aventurine (Blue)":{"intentions":"Calm, communication, inner strength, confidence","description":"Blue-green quartz that promotes clarity, confidence, and open communication.","category":"Quartz","chakra":"Throat, Third Eye","hardness":"6.5-7"},
+    "Aventurine (Green and Blue)":{"intentions":"Healing, abundance, calm, balance","description":"Combination aventurine stone blending green and blue energy.","category":"Quartz","chakra":"Heart, Throat","hardness":"6.5-7"},
+    "Aventurine (Peach)":{"intentions":"Creativity, love, calm, balance","description":"Peach-colored aventurine that enhances emotional healing and optimism.","category":"Quartz","chakra":"Sacral, Heart","hardness":"6.5-7"},
+    "Aventurine (Red and Green)":{"intentions":"Balance, joy, vitality, creativity","description":"Multicolored aventurine that balances emotions and inspires optimism.","category":"Quartz","chakra":"Heart, Sacral","hardness":"6.5-7"},
+    "Aventurine (Red)":{"intentions":"Vitality, grounding, creativity, strength","description":"Reddish aventurine that increases motivation and life force energy.","category":"Quartz","chakra":"Root, Sacral","hardness":"6.5-7"},
+    "Aventurine (Silver Sheen)":{"intentions":"Balance, prosperity, calm, clarity","description":"Silvery variety of aventurine that brings peace and abundance.","category":"Quartz","chakra":"Crown, Heart","hardness":"6.5-7"},
+    "Axinite":{"intentions":"Grounding, strength, clarity, vitality","description":"Brown to violet crystal that aligns with Earth energy and endurance.","category":"Silicate","chakra":"Root, Solar Plexus","hardness":"6.5-7"},
+    "Azurite":{"intentions":"Intuition, insight, wisdom, spiritual awareness","description":"Deep blue copper carbonate mineral that enhances psychic abilities.","category":"Carbonate","chakra":"Third Eye, Throat","hardness":"3.5-4"},
+    "Azurite-Malachite":{"intentions":"Insight, healing, transformation, spiritual awareness","description":"Blue-green blend of azurite and malachite that balances energies.","category":"Carbonate/Silicate","chakra":"Throat, Heart, Third Eye","hardness":"3.5-4"},
+    "Black Obsidian (Apache Tear)":{"intentions":"Grief healing, protection, grounding, release","description":"Small rounded obsidian known for gentle grief support and emotional release.","category":"Volcanic Glass","chakra":"Root","hardness":"5-5.5"},
+    "Black Obsidian (Mahogany)":{"intentions":"Protection, grounding, strength, release","description":"Reddish-brown and black volcanic glass for strength and grounding.","category":"Volcanic Glass","chakra":"Root, Sacral","hardness":"5-5.5"},
+    "Black Onyx":{"intentions":"Protection, grounding, strength, self-control","description":"Deep black chalcedony stone for grounding and stability.","category":"Chalcedony","chakra":"Root","hardness":"6.5-7"},
+    "Bloodstone (Fancy Jasper)":{"intentions":"Healing, grounding, strength, courage","description":"Variety of jasper with red and green patterns, used for vitality.","category":"Jasper","chakra":"Root, Heart","hardness":"6.5-7"},
+    "Bloodstone (Heliotrope)":{"intentions":"Strength, courage, vitality, healing","description":"Green chalcedony with red inclusions, linked to vitality and protection.","category":"Chalcedony","chakra":"Root, Heart","hardness":"6.5-7"},
+    "Blue Apatite":{"intentions":"Inspiration, communication, motivation, manifestation","description":"Blue crystal that stimulates intellect, communication, and creativity.","category":"Phosphate","chakra":"Throat, Third Eye","hardness":"5"},
+    "Blue Calcite":{"intentions":"Calm, communication, emotional release, clarity","description":"Pale blue stone that reduces stress and enhances communication.","category":"Carbonate","chakra":"Throat, Third Eye","hardness":"3"},
+    "Blue Chalcedony (Gray)":{"intentions":"Calm, clarity, grounding, communication","description":"Gray-blue chalcedony that soothes emotions and aids communication.","category":"Chalcedony","chakra":"Throat, Third Eye","hardness":"6-7"},
+    "Blue Chalcedony (Purple Tint)":{"intentions":"Calm, spiritual growth, communication, intuition","description":"Lavender-blue chalcedony that aids emotional healing and balance.","category":"Chalcedony","chakra":"Throat, Third Eye","hardness":"6-7"},
+    "Blue Kyanite (Black)":{"intentions":"Grounding, protection, energy flow, clearing blockages","description":"Dark blue to black kyanite that grounds and balances energy flow.","category":"Silicate","chakra":"Root","hardness":"4.5-7"},
+    "Blue Kyanite":{"intentions":"Alignment, communication, truth, balance","description":"Blue bladed crystal that aligns chakras and enhances communication.","category":"Silicate","chakra":"Throat, Third Eye","hardness":"4.5-7"},
+    "Blue Lace Agate":{"intentions":"Calm, communication, peace, stress relief","description":"Delicate blue banded chalcedony that soothes emotions and encourages clear speech.","category":"Chalcedony","chakra":"Throat","hardness":"6.5-7"},
+    "Blue Opal":{"intentions":"Calm, communication, creativity, peace","description":"Blue opal stone enhancing communication and spiritual awareness.","category":"Opal","chakra":"Throat, Third Eye","hardness":"5.5-6"},
+    "Blue Tourmaline (Indicolite)":{"intentions":"Clarity, communication, intuition, truth","description":"Rare blue tourmaline linked with clarity, insight, and truth.","category":"Tourmaline","chakra":"Throat, Third Eye","hardness":"7-7.5"},
+    "Boulder Opal":{"intentions":"Creativity, grounding, spiritual insight","description":"Opal within ironstone matrix, linking Earth energy and inspiration.","category":"Opal","chakra":"Root, Third Eye","hardness":"5.5-6"},
+    "Bustamite":{"intentions":"Healing, calm, compassion, insight","description":"Pink to red silicate stone linked to heart-centered growth.","category":"Silicate","chakra":"Heart","hardness":"6-6.5"},
+    "Bytownite":{"intentions":"Clarity, creativity, energy, insight","description":"Rare golden feldspar that supports creativity and manifestation.","category":"Feldspar","chakra":"Solar Plexus","hardness":"6-6.5"},
+    "Carnelian (Red)":{"intentions":"Courage, strength, creativity, vitality","description":"Deep red-orange chalcedony boosting motivation and energy.","category":"Chalcedony","chakra":"Sacral, Root","hardness":"6.5-7"},
+    "Cavansite":{"intentions":"Clarity, intuition, communication, spiritual growth","description":"Bright blue crystal promoting insight and spiritual expansion.","category":"Silicate","chakra":"Third Eye, Throat","hardness":"3-4"},
+    "Celestite":{"intentions":"Peace, angelic connection, clarity, spiritual growth","description":"Heavenly blue crystal linked to higher realms and calming energy.","category":"Sulfate","chakra":"Throat, Crown","hardness":"3-3.5"},
+    "Chalcedony (Blue)":{"intentions":"Calm, communication, emotional balance, harmony","description":"Soft blue stone that enhances communication and peace.","category":"Chalcedony","chakra":"Throat","hardness":"6-7"},
+    "Chalcedony (Pink)":{"intentions":"Love, compassion, emotional healing, peace","description":"Soft pink chalcedony that nurtures relationships and emotional balance.","category":"Chalcedony","chakra":"Heart","hardness":"6-7"},
+    "Charoite (Purple)":{"intentions":"Transformation, healing, intuition, spiritual awareness","description":"Swirled purple mineral promoting courage and higher consciousness.","category":"Silicate","chakra":"Third Eye, Crown","hardness":"5-6"},
+    "Charoite":{"intentions":"Transformation, healing, spiritual growth, intuition","description":"Purple silicate stone that aids transformation and inner strength.","category":"Silicate","chakra":"Heart, Third Eye, Crown","hardness":"5-6"},
+    "Chrysanthemum Stone":{"intentions":"Joy, harmony, transformation, growth","description":"Black stone with white flower-like inclusions, symbolizing new beginnings.","category":"Rock","chakra":"Root, Heart","hardness":"6-7"},
+    "Chrysoberyl (Alexandrite)":{"intentions":"Transformation, intuition, joy, balance","description":"Color-changing chrysoberyl gemstone symbolizing transformation.","category":"Oxide","chakra":"Heart, Third Eye","hardness":"8.5"},
+    "Chrysoberyl (Cat’s Eye)":{"intentions":"Protection, clarity, intuition, insight","description":"Chatoyant gemstone providing clarity and spiritual awareness.","category":"Oxide","chakra":"Third Eye, Crown","hardness":"8.5"},
+    "Chrysoberyl (Golden)":{"intentions":"Confidence, clarity, abundance, strength","description":"Golden chrysoberyl gemstone that enhances positivity and willpower.","category":"Oxide","chakra":"Solar Plexus","hardness":"8.5"},
+    "Chrysoberyl":{"intentions":"Confidence, clarity, protection, discipline","description":"Yellow-green gemstone symbolizing strength and self-control.","category":"Oxide","chakra":"Solar Plexus, Heart","hardness":"8.5"},
+    "Chrysocolla (Blue Green)":{"intentions":"Calm, communication, healing, empowerment","description":"Blue-green stone that encourages balance and self-expression.","category":"Silicate","chakra":"Throat, Heart","hardness":"2-4"},
+    "Chrysocolla (Gem Silica with Quartz)":{"intentions":"Clarity, peace, communication, empowerment","description":"Gem silica with quartz, amplifying clarity and self-expression.","category":"Silicate","chakra":"Throat, Heart","hardness":"6-7"},
+    "Chrysocolla (Gem Silica)":{"intentions":"Clarity, communication, peace, empowerment","description":"Rare gem silica variety of chrysocolla, highly vibrant and spiritual.","category":"Silicate","chakra":"Throat, Heart","hardness":"6-7"},
+    "Chrysocolla (Malachite and Azurite)":{"intentions":"Balance, transformation, healing, communication","description":"Combination of chrysocolla, malachite, and azurite, uniting heart and mind.","category":"Silicate/Carbonate","chakra":"Heart, Throat, Third Eye","hardness":"3.5-7"},
+    "Chrysocolla (Malachite Chrysoprase)":{"intentions":"Balance, love, healing, empowerment","description":"Blend of chrysocolla, malachite, and chrysoprase for heart healing.","category":"Silicate/Carbonate","chakra":"Heart, Throat","hardness":"3-7"},
+    "Chrysocolla (Shattuckite Mix)":{"intentions":"Healing, intuition, communication, growth","description":"Chrysocolla with shattuckite, enhances spiritual awareness and harmony.","category":"Silicate","chakra":"Throat, Heart, Third Eye","hardness":"3-6"},
+    "Chrysocolla with Malachite":{"intentions":"Healing, balance, communication, transformation","description":"Combination stone of chrysocolla and malachite with deep energy.","category":"Silicate/Carbonate","chakra":"Heart, Throat","hardness":"3-7"},
+    "Chrysocolla":{"intentions":"Calm, communication, empowerment, emotional balance","description":"Blue-green copper silicate that promotes peace and expression.","category":"Silicate","chakra":"Throat, Heart","hardness":"2-4"},
+    "Chrysoprase (Apple Green)":{"intentions":"Love, prosperity, healing, forgiveness","description":"Vivid green chalcedony that nurtures love and abundance.","category":"Chalcedony","chakra":"Heart","hardness":"6-7"},
+    "Chrysoprase (Australian)":{"intentions":"Abundance, love, joy, compassion","description":"Vibrant green chalcedony from Australia associated with prosperity.","category":"Chalcedony","chakra":"Heart","hardness":"6-7"},
+    "Chrysoprase (Dark Apple Green)":{"intentions":"Healing, love, abundance, renewal","description":"Deep green chalcedony with strong heart healing properties.","category":"Chalcedony","chakra":"Heart","hardness":"6-7"},
+    "Chrysoprase (Dark Green)":{"intentions":"Abundance, compassion, forgiveness, healing","description":"Rich green chalcedony that inspires emotional renewal and prosperity.","category":"Chalcedony","chakra":"Heart","hardness":"6-7"},
+    "Chrysoprase (Lemon Chrysoprase)":{"intentions":"Joy, abundance, positivity, compassion","description":"Yellow-green chalcedony that inspires optimism and renewal.","category":"Chalcedony","chakra":"Heart, Solar Plexus","hardness":"6-7"},
+    "Chrysoprase (Lemon Magnesite)":{"intentions":"Positivity, healing, abundance, love","description":"A mix of chrysoprase and magnesite for balance and renewal.","category":"Chalcedony/Carbonate","chakra":"Heart, Solar Plexus","hardness":"3-7"},
+    "Chrysoprase (Lemon)":{"intentions":"Abundance, joy, emotional healing, growth","description":"Bright green-yellow chalcedony for love and prosperity.","category":"Chalcedony","chakra":"Heart, Solar Plexus","hardness":"6-7"},
+    "Chrysoprase (Nickel Green)":{"intentions":"Abundance, healing, love, growth","description":"Nickel-rich variety of green chalcedony associated with prosperity.","category":"Chalcedony","chakra":"Heart","hardness":"6-7"},
+    "Chrysoprase (Nickel)":{"intentions":"Joy, prosperity, emotional healing, growth","description":"Nickel-rich green chalcedony associated with renewal and abundance.","category":"Chalcedony","chakra":"Heart","hardness":"6-7"},
+    "Chrysoprase (Prase)":{"intentions":"Healing, growth, compassion, abundance","description":"Variety of green chalcedony symbolizing love and prosperity.","category":"Chalcedony","chakra":"Heart","hardness":"6-7"},
+    "Chrysoprase":{"intentions":"Joy, abundance, love, healing","description":"Bright green chalcedony that supports the heart and emotional healing.","category":"Chalcedony","chakra":"Heart","hardness":"6-7"},
+    "Chrysotile (Serpentine)":{"intentions":"Healing, protection, energy balance, renewal","description":"Fibrous serpentine variety supporting spiritual and emotional growth.","category":"Silicate","chakra":"Heart, Root","hardness":"2.5-5"},
+    "Chrysotile Serpentine":{"intentions":"Grounding, healing, energy balance, protection","description":"Serpentine variety for detox and grounding Earth energy.","category":"Silicate","chakra":"Root, Heart","hardness":"2.5-5"},
+    "Chrysotile Serpentine":{"intentions":"Healing, protection, energy flow, balance","description":"Green serpentine variety supporting detox and grounding.","category":"Silicate","chakra":"Heart, Root","hardness":"2.5-5"},
+    "Chrysotite (Serpentine)":{"intentions":"Grounding, healing, protection, spiritual growth","description":"Green serpentine variety that promotes balance and energy flow.","category":"Silicate","chakra":"Heart, Root","hardness":"2.5-5"},
+    "Cinnabar":{"intentions":"Transformation, prosperity, manifestation, vitality","description":"Red mercury sulfide mineral historically linked to wealth and power.","category":"Sulfide","chakra":"Root, Sacral","hardness":"2-2.5"},
+    "Copal":{"intentions":"Cleansing, purification, energy, healing","description":"Young fossilized tree resin with similar energy to amber but softer.","category":"Organic","chakra":"Solar Plexus, Sacral","hardness":"1.5-2"},
+    "Copper":{"intentions":"Energy flow, healing, amplification","description":"Conductive metal used to enhance energy, circulation, and vitality.","category":"Metal","chakra":"Root, Sacral","hardness":"2.5-3"},
+    "Covellite":{"intentions":"Transformation, communication, intuition, release","description":"Metallic blue copper sulfide supporting insight and transformation.","category":"Sulfide","chakra":"Third Eye, Throat","hardness":"1.5-2"},
+    "Crystallized Fossil Wood":{"intentions":"Transformation, resilience, ancestral connection","description":"Fossilized wood with quartz crystal growth, combining grounding with amplified energy.","category":"Silicate (Quartz)","chakra":"Root, Crown","hardness":"6.5-7"},
+    "Dalmatian Jasper":{"intentions":"Joy, playfulness, protection, grounding","description":"White stone with black spots that brings fun and protection.","category":"Jasper","chakra":"Root, Sacral","hardness":"6.5-7"},
+    "Danburite":{"intentions":"Clarity, angelic connection, peace, spiritual growth","description":"Clear to pinkish crystal that connects to higher realms and peace.","category":"Silicate","chakra":"Crown, Heart","hardness":"7-7.5"},
+    "Diaspore (Zultanite)":{"intentions":"Transformation, intuition, clarity, joy","description":"Color-changing gemstone that shifts between green and pink tones.","category":"Oxide","chakra":"Heart, Third Eye","hardness":"6.5-7"},
+    "Diopside (Chrome)":{"intentions":"Healing, growth, emotional balance, connection to Earth","description":"Rich green chrome diopside for heart-centered healing.","category":"Silicate","chakra":"Heart","hardness":"5.5-6.5"},
+    "Diopside":{"intentions":"Healing, emotional release, compassion, spiritual growth","description":"Green pyroxene mineral that supports emotional clarity and healing.","category":"Silicate","chakra":"Heart","hardness":"5.5-6.5"},
+    "Dioptase":{"intentions":"Emotional healing, compassion, heart opening, forgiveness","description":"Vivid green copper silicate crystal aiding emotional release and love.","category":"Silicate","chakra":"Heart","hardness":"5"},
+    "Dragon Bloodstone":{"intentions":"Strength, courage, vitality, healing","description":"Green and red stone symbolizing courage and life force energy.","category":"Jasper","chakra":"Root, Heart","hardness":"6.5-7"},
+    "Emerald (Colombian)":{"intentions":"Abundance, love, healing, prosperity","description":"High-quality Colombian emerald with vibrant green color.","category":"Beryl","chakra":"Heart","hardness":"7.5-8"},
+    "Emerald (Zambian)":{"intentions":"Healing, growth, balance, compassion","description":"Deep green Zambian emerald promoting love and prosperity.","category":"Beryl","chakra":"Heart","hardness":"7.5-8"},
+    "Emerald":{"intentions":"Love, healing, abundance, vision","description":"Green beryl gemstone symbolizing love and prosperity.","category":"Beryl","chakra":"Heart","hardness":"7.5-8"},
+    "Epidote":{"intentions":"Growth, healing, release, transformation","description":"Green silicate crystal that promotes renewal and emotional balance.","category":"Silicate","chakra":"Heart","hardness":"6-7"},
+    "Fire Opal":{"intentions":"Passion, creativity, energy, joy","description":"Fiery orange-red opal symbolizing inspiration and passion.","category":"Opal","chakra":"Sacral, Solar Plexus","hardness":"5.5-6.5"},
+    "Flower Agate": {"intentions": "Growth, transformation, self-discovery, motivation, emotional healing","description": "Flower Agate is a pink chalcedony with white plume-like inclusions resembling blooming flowers. It is believed to inspire personal growth, nurture dreams, and encourage living life to the fullest with courage and passion.","category": "Chalcedony","chakra": "Heart, Root","hardness": "6.5-7"},
+    "Fluorite (Blue)":{"intentions":"Calm, clarity, communication, intuition","description":"Blue fluorite that enhances focus and communication.","category":"Halide","chakra":"Throat, Third Eye","hardness":"4"},
+    "Fluorite (Clear Rainbow)":{"intentions":"Clarity, healing, balance, spiritual growth","description":"Transparent fluorite with rainbow flashes, enhances awareness.","category":"Halide","chakra":"All Chakras","hardness":"4"},
+    "Fluorite (Clear)":{"intentions":"Clarity, cleansing, spiritual growth, focus","description":"Clear fluorite that purifies energy and enhances mental clarity.","category":"Halide","chakra":"Crown","hardness":"4"},
+    "Fluorite (Green)":{"intentions":"Healing, clarity, growth, balance","description":"Green fluorite cleanses energy and promotes growth and focus.","category":"Halide","chakra":"Heart","hardness":"4"},
+    "Fluorite (Purple)":{"intentions":"Spirituality, intuition, peace, clarity","description":"Purple fluorite supports spiritual awareness and inner peace.","category":"Halide","chakra":"Third Eye, Crown","hardness":"4"},
+    "Fluorite (Rainbow)":{"intentions":"Balance, clarity, creativity, harmony","description":"Multicolored fluorite that harmonizes mind, body, and spirit.","category":"Halide","chakra":"All Chakras","hardness":"4"},
+    "Fluorite (Yellow)":{"intentions":"Creativity, abundance, clarity, positivity","description":"Yellow fluorite that inspires joy and strengthens mental clarity.","category":"Halide","chakra":"Solar Plexus","hardness":"4"},
+    "Fuchsite":{"intentions":"Healing, abundance, renewal, heart opening","description":"Green muscovite mica that brings vitality and growth.","category":"Mica","chakra":"Heart","hardness":"2-3"},
+    "Garnet (Almandine)":{"intentions":"Grounding, strength, protection, vitality","description":"Deep red-purple garnet that provides grounding and physical strength.","category":"Silicate","chakra":"Root, Heart","hardness":"7-7.5"},
+    "Garnet (Andradite)":{"intentions":"Protection, grounding, manifestation, strength","description":"Variety of garnet that promotes stability and manifestation.","category":"Silicate","chakra":"Root","hardness":"6.5-7"},
+    "Garnet (Green)":{"intentions":"Healing, abundance, growth, strength","description":"Green garnet that promotes health, prosperity, and vitality.","category":"Silicate","chakra":"Heart","hardness":"6.5-7.5"},
+    "Garnet (Grossular)":{"intentions":"Abundance, prosperity, healing, balance","description":"Green to yellow garnet variety that encourages growth and wealth.","category":"Silicate","chakra":"Heart, Solar Plexus","hardness":"6.5-7.5"},
+    "Garnet (Pyrope)":{"intentions":"Passion, vitality, strength, courage","description":"Fiery red garnet symbolizing energy and empowerment.","category":"Silicate","chakra":"Root, Sacral","hardness":"7-7.5"},
+    "Garnet (Spessartine)":{"intentions":"Creativity, passion, vitality, confidence","description":"Orange garnet that enhances joy, passion, and creative energy.","category":"Silicate","chakra":"Sacral, Solar Plexus","hardness":"6.5-7.5"},
+    "Garnet (Spessartine)":{"intentions":"Creativity, vitality, passion, confidence","description":"Orange-red garnet that enhances energy, joy, and motivation.","category":"Silicate","chakra":"Sacral, Solar Plexus","hardness":"6.5-7.5"},
+    "Garnet (Uvarovite)":{"intentions":"Prosperity, growth, healing, compassion","description":"Green garnet variety that enhances love and abundance.","category":"Silicate","chakra":"Heart","hardness":"6.5-7"},
+    "Garnet":{"intentions":"Passion, energy, strength, protection","description":"Deep red silicate crystal for vitality, grounding, and love.","category":"Silicate","chakra":"Root, Heart","hardness":"6.5-7.5"},
+    "Goldstone (Blue)":{"intentions":"Ambition, positivity, energy, communication","description":"Man-made glittering glass that inspires confidence and communication.","category":"Man-Made Glass","chakra":"Throat, Third Eye","hardness":"5.5-6"},
+    "Goldstone (Red)":{"intentions":"Ambition, vitality, energy, confidence","description":"Man-made red glittering glass symbolizing strength and motivation.","category":"Man-Made Glass","chakra":"Root, Sacral","hardness":"5.5-6"},
+    "Green Aventurine (Mica Rich)":{"intentions":"Luck, prosperity, healing, optimism","description":"Green aventurine with shimmering mica inclusions for abundance and renewal.","category":"Quartz","chakra":"Heart","hardness":"6.5-7"},
+    "Green Calcite":{"intentions":"Healing, release, renewal, prosperity","description":"Gentle green crystal that clears negativity and restores balance.","category":"Carbonate","chakra":"Heart","hardness":"3"},
+    "Green Fluorite":{"intentions":"Healing, focus, cleansing, balance","description":"Green fluorite that clears energy blockages and supports mental clarity.","category":"Halide","chakra":"Heart","hardness":"4"},
+    "Green Kyanite":{"intentions":"Healing, balance, communication, growth","description":"Green kyanite that connects the heart and mind for balance.","category":"Silicate","chakra":"Heart","hardness":"4.5-7"},
+    "Green Opal":{"intentions":"Healing, renewal, abundance, emotional clarity","description":"Green opal that encourages growth, peace, and emotional balance.","category":"Opal","chakra":"Heart","hardness":"5.5-6"},
+    "Green Tourmaline (Verdelite)":{"intentions":"Healing, vitality, abundance, compassion","description":"Green tourmaline that supports heart healing and prosperity.","category":"Tourmaline","chakra":"Heart","hardness":"7-7.5"},
+    "Healer’s Gold":{"intentions":"Healing, grounding, energy balance, strength","description":"Combination of pyrite and magnetite, balances energy and enhances vitality.","category":"Rock","chakra":"Root, Solar Plexus","hardness":"5.5-6.5"},
+    "Heulandite":{"intentions":"Healing, peace, emotional release, spiritual growth","description":"Zeolite mineral that calms emotions and enhances spiritual connection.","category":"Silicate","chakra":"Heart, Crown","hardness":"3.5-4"},
+    "Hiddenite":{"intentions":"Love, renewal, growth, compassion","description":"Green variety of spodumene that heals and energizes the heart.","category":"Spodumene","chakra":"Heart","hardness":"6.5-7"},
+    "Howlite (Dyed)":{"intentions":"Creativity, expression, calm, focus","description":"Dyed howlite often appears bright blue or green, used for communication and peace.","category":"Borate","chakra":"Throat, Heart","hardness":"3.5"},
+    "Howlite":{"intentions":"Calm, sleep, awareness, stress relief","description":"White stone with gray veining that calms the mind and encourages rest.","category":"Borate","chakra":"Crown, Third Eye","hardness":"3.5"},
+    "Hypersthene":{"intentions":"Clarity, insight, protection, calm","description":"Dark brown-black crystal that quiets the mind and enhances vision.","category":"Silicate","chakra":"Third Eye","hardness":"5.5-6"},
+    "Iolite (Cordierite)":{"intentions":"Vision, clarity, spiritual growth, insight","description":"Transparent cordierite stone used for navigation and intuition.","category":"Silicate","chakra":"Third Eye, Crown","hardness":"7-7.5"},
+    "Iolite (Water Sapphire)":{"intentions":"Vision, inner strength, clarity, intuition","description":"Blue-violet stone guiding inner journeys and spiritual growth.","category":"Silicate","chakra":"Third Eye","hardness":"7-7.5"},
+    "Iolite":{"intentions":"Vision, intuition, clarity, inner journey","description":"Blue-violet cordierite that enhances spiritual insight and direction.","category":"Silicate","chakra":"Third Eye, Crown","hardness":"7-7.5"},
+    "Jasper":{"intentions":"Nurturing, protection, grounding, courage","description":"Opaque chalcedony variety known as the 'supreme nurturer,' offering strength and stability.","category":"Silicate","chakra":"Root, Sacral, Heart","hardness":"6.5-7"},
+    "Jet":{"intentions":"Protection, purification, grounding, release","description":"Fossilized wood mineraloid used for shielding and cleansing energy.","category":"Mineraloid","chakra":"Root","hardness":"2.5-4"},
+    "Kambaba Jasper":{"intentions":"Peace, grounding, healing, ancient wisdom","description":"Green and black fossilized stromatolite stone for deep peace and wisdom.","category":"Jasper","chakra":"Heart, Root","hardness":"6.5-7"},
+    "Kernite":{"intentions":"Calm, balance, renewal, cleansing","description":"Soft borate mineral linked with emotional healing and balance.","category":"Borate","chakra":"Heart, Solar Plexus","hardness":"2.5-3"},
+    "Kunzite (Green Hiddenite)":{"intentions":"Growth, healing, prosperity, balance","description":"Green spodumene variety known for heart healing and abundance.","category":"Spodumene","chakra":"Heart","hardness":"6.5-7"},
+    "Kunzite (Lilac)":{"intentions":"Love, compassion, spiritual growth, healing","description":"Lilac-pink spodumene that opens the heart and inspires peace.","category":"Spodumene","chakra":"Heart, Crown","hardness":"6.5-7"},
+    "Kunzite (Pink)":{"intentions":"Love, compassion, emotional healing, peace","description":"Delicate pink spodumene that nurtures the heart and soothes emotions.","category":"Spodumene","chakra":"Heart","hardness":"6.5-7"},
+    "Kunzite":{"intentions":"Love, compassion, healing, peace","description":"Delicate pink to lilac gemstone that opens the heart and calms the mind.","category":"Spodumene","chakra":"Heart, Crown","hardness":"6.5-7"},
+    "Kyanite (Green with Black)":{"intentions":"Grounding, healing, balance, clarity","description":"Green kyanite with black inclusions for emotional stability and grounding.","category":"Silicate","chakra":"Heart, Root","hardness":"4.5-7"},
+    "Kyanite (Green with Blue)":{"intentions":"Balance, intuition, harmony, healing","description":"Variety of kyanite combining green and blue colors for balance and clarity.","category":"Silicate","chakra":"Heart, Throat, Third Eye","hardness":"4.5-7"},
+    "Kyanite (Green)":{"intentions":"Balance, emotional healing, inner truth","description":"Green kyanite connects heart and mind for spiritual harmony.","category":"Silicate","chakra":"Heart","hardness":"4.5-7"},
+    "Kyanite":{"intentions":"Alignment, communication, meditation, intuition","description":"Blue bladed crystal that aligns chakras and enhances meditation.","category":"Silicate","chakra":"Throat, Third Eye","hardness":"4.5-7"},
+    "Labradorite (Spectrolite)":{"intentions":"Magic, transformation, protection, awareness","description":"High-grade labradorite with full spectrum flash for intuition and strength.","category":"Feldspar","chakra":"Third Eye, Crown","hardness":"6-6.5"},
+    "Lapis Lazuli (Pyrite Rich)":{"intentions":"Wisdom, truth, manifestation, clarity","description":"Deep blue stone with golden pyrite inclusions symbolizing divine wisdom.","category":"Rock","chakra":"Third Eye, Throat","hardness":"5-5.5"},
+    "Larimar":{"intentions":"Calm, peace, communication, feminine energy","description":"Blue pectolite found only in the Dominican Republic, linked to water energy.","category":"Silicate","chakra":"Throat, Heart","hardness":"4.5-5"},
+    "Lepidocrocite":{"intentions":"Emotional healing, grounding, clarity, protection","description":"Reddish mineral often found in quartz, promotes emotional balance.","category":"Oxide","chakra":"Heart, Root","hardness":"5-5.5"},
+    "Lepidocrosite Quartz":{"intentions":"Emotional healing, grounding, love, clarity","description":"Quartz with lepidocrocite inclusions, balancing and heart-healing.","category":"Quartz","chakra":"Heart, Root","hardness":"7"},
+    "Lepidolite (Pink)":{"intentions":"Calm, peace, emotional healing, balance","description":"Pink variety of lepidolite that soothes stress and brings love.","category":"Mica","chakra":"Heart, Crown","hardness":"2.5-3"},
+    "Lepidolite":{"intentions":"Calm, balance, stress relief, spiritual growth","description":"Lilac mica crystal with lithium, supports emotional healing and peace.","category":"Mica","chakra":"Heart, Third Eye, Crown","hardness":"2.5-3"},
+    "Malachite (Azurite Mix)":{"intentions":"Transformation, healing, spiritual growth, protection","description":"Combination of malachite and azurite with deep spiritual power.","category":"Carbonate/Silicate","chakra":"Heart, Third Eye","hardness":"3.5-4"},
+    "Malachite (Fibrous)":{"intentions":"Transformation, healing, protection, emotional clarity","description":"Fibrous green malachite variety, powerful for transformation.","category":"Carbonate","chakra":"Heart, Solar Plexus","hardness":"3.5-4"},
+    "Malachite with Azurite":{"intentions":"Transformation, insight, healing, spiritual growth","description":"Combination of malachite and azurite, uniting heart and third eye energies.","category":"Carbonate/Silicate","chakra":"Heart, Third Eye","hardness":"3.5-4"},
+    "Malachite":{"intentions":"Protection, transformation, emotional healing, strength","description":"Green banded copper carbonate that shields and transforms energy.","category":"Carbonate","chakra":"Heart, Solar Plexus","hardness":"3.5-4"},
+    "Marcasite":{"intentions":"Clarity, willpower, focus, transformation","description":"Silvery sulfide mineral related to pyrite, inspires will and clarity.","category":"Sulfide","chakra":"Solar Plexus","hardness":"6-6.5"},
+    "Moldavite":{"intentions":"Transformation, spiritual growth, awakening, protection","description":"Green tektite formed from meteor impact, powerful for transformation.","category":"Tektite","chakra":"Heart, Third Eye, Crown","hardness":"5.5-7"},
+    "Mookaite Jasper":{"intentions":"Vitality, grounding, adventure, decision making","description":"Australian jasper with earthy tones promoting strength and exploration.","category":"Jasper","chakra":"Root, Solar Plexus","hardness":"6.5-7"},
+    "Moonstone (Black)":{"intentions":"Protection, grounding, intuition, mystery","description":"Dark moonstone that provides protection and deep inner awareness.","category":"Feldspar","chakra":"Root, Third Eye","hardness":"6-6.5"},
+    "Moonstone (Cat’s Eye)":{"intentions":"Intuition, clarity, protection, balance","description":"Moonstone variety with chatoyancy that enhances awareness.","category":"Feldspar","chakra":"Third Eye, Crown","hardness":"6-6.5"},
+    "Moonstone (Peach)":{"intentions":"Love, emotional healing, intuition, calm","description":"Peach-colored moonstone that nurtures and brings emotional balance.","category":"Feldspar","chakra":"Sacral, Heart","hardness":"6-6.5"},
+    "Moonstone (Rainbow)":{"intentions":"Intuition, balance, spiritual growth, insight","description":"Iridescent moonstone with rainbow flashes, enhances psychic gifts.","category":"Feldspar","chakra":"Third Eye, Crown","hardness":"6-6.5"},
+    "Moonstone (White)":{"intentions":"Peace, intuition, new beginnings, clarity","description":"White adularescent feldspar associated with purity and spiritual growth.","category":"Feldspar","chakra":"Crown","hardness":"6-6.5"},
+    "Moss Agate (Dendritic)":{"intentions":"Nature connection, growth, grounding, healing","description":"Agate with dendritic inclusions resembling plants and trees.","category":"Chalcedony","chakra":"Root, Heart","hardness":"6.5-7"},
+    "Moss Agate (Green with White)":{"intentions":"Growth, nature connection, abundance, healing","description":"Green and white moss-like agate for grounding and renewal.","category":"Chalcedony","chakra":"Heart, Root","hardness":"6.5-7"},
+    "Moss Agate":{"intentions":"Growth, abundance, grounding, connection to nature","description":"Green moss-like inclusions in chalcedony, linked to new beginnings and fertility.","category":"Chalcedony","chakra":"Heart","hardness":"6.5-7"},
+    "Natrolite":{"intentions":"Clarity, spiritual awakening, peace, intuition","description":"Clear to white zeolite mineral that awakens higher consciousness.","category":"Silicate","chakra":"Crown","hardness":"5-5.5"},
+    "Nuummite":{"intentions":"Protection, grounding, strength, transformation","description":"Rare black stone from Greenland known as the Sorcerer’s Stone.","category":"Metamorphic Rock","chakra":"Root, Solar Plexus","hardness":"5.5-6"},
+    "Obsidian (Golden Sheen)":{"intentions":"Protection, manifestation, personal power","description":"Black obsidian with golden sheen, enhances confidence and focus.","category":"Volcanic Glass","chakra":"Solar Plexus, Root","hardness":"5-5.5"},
+    "Obsidian (Rainbow)":{"intentions":"Protection, grounding, clarity, balance","description":"Dark volcanic glass with rainbow sheen for emotional and spiritual healing.","category":"Volcanic Glass","chakra":"Root, Third Eye","hardness":"5-5.5"},
+    "Obsidian (Silver Sheen)":{"intentions":"Intuition, grounding, clarity, balance","description":"Dark obsidian with silver sheen, enhances meditation and reflection.","category":"Volcanic Glass","chakra":"Third Eye, Root","hardness":"5-5.5"},
+    "Ocean Jasper":{"intentions":"Joy, peace, communication, emotional healing","description":"Orbicular patterned jasper that brings joy and emotional release.","category":"Jasper","chakra":"Heart, Throat","hardness":"6.5-7"},
+    "Okenite":{"intentions":"Peace, purity, calm, emotional release","description":"White fibrous crystal associated with healing and compassion.","category":"Silicate","chakra":"Crown, Heart","hardness":"4.5-5"},
+    "Onyx (Black)":{"intentions":"Protection, strength, grounding, willpower","description":"Dark chalcedony that absorbs and transforms negative energy.","category":"Chalcedony","chakra":"Root","hardness":"6.5-7"},
+    "Orange Calcite":{"intentions":"Creativity, joy, energy, passion","description":"Vibrant orange stone that boosts vitality and creative flow.","category":"Carbonate","chakra":"Sacral, Solar Plexus","hardness":"3"},
+    "Orpiment":{"intentions":"Insight, transformation, intellect, clarity","description":"Golden-yellow arsenic sulfide mineral that stimulates intellect.","category":"Sulfide","chakra":"Solar Plexus","hardness":"1.5-2"},
+    "Pentagonite":{"intentions":"Clarity, transformation, intuition, awareness","description":"Blue crystal closely related to cavansite, enhances clarity and vision.","category":"Silicate","chakra":"Third Eye","hardness":"3-4"},
+    "Peridot (Olivine Crystal)":{"intentions":"Abundance, renewal, protection, growth","description":"Olive-green crystal that enhances prosperity and healing.","category":"Silicate","chakra":"Heart, Solar Plexus","hardness":"6.5-7"},
+    "Peridot (Olivine)":{"intentions":"Growth, prosperity, healing, renewal","description":"Green olivine variety that attracts abundance and emotional healing.","category":"Silicate","chakra":"Heart, Solar Plexus","hardness":"6.5-7"},
+    "Peridot":{"intentions":"Abundance, healing, protection, renewal, positivity","description":"Green gemstone that attracts prosperity and supports emotional healing.","category":"Silicate","chakra":"Heart, Solar Plexus","hardness":"6.5-7"},
+    "Peruvian Blue Opal":{"intentions":"Calm, communication, healing, creativity","description":"Sky-blue opal from Peru, promotes peace and emotional clarity.","category":"Opal","chakra":"Throat","hardness":"5.5-6"},
+    "Peruvian Opal":{"intentions":"Calm, communication, emotional healing, creativity","description":"Blue-green opal from Peru known for soothing energy and clarity.","category":"Opal","chakra":"Throat, Heart","hardness":"5.5-6"},
+    "Petalite":{"intentions":"Calm, protection, spiritual awareness, peace","description":"Colorless to pink crystal known as the Angel Stone for its serenity.","category":"Silicate","chakra":"Crown, Heart","hardness":"6-6.5"},
+    "Petrified Wood":{"intentions":"Grounding, stability, past-life connection, patience","description":"Fossilized wood turned to stone, carrying ancient earth energy and wisdom.","category":"Silicate (Quartz replacement)","chakra":"Root, Sacral","hardness":"6.5-7"},
+    "Phosphosiderite":{"intentions":"Calm, spiritual growth, healing, insight","description":"Purple phosphate stone that promotes peace and higher awareness.","category":"Phosphate","chakra":"Heart, Crown","hardness":"3.5-4"},
+    "Picture Agate":{"intentions":"Vision, creativity, grounding, clarity","description":"Patterned agate that enhances imagination and connects to Earth.","category":"Chalcedony","chakra":"Third Eye, Root","hardness":"6.5-7"},
+    "Picture Jasper":{"intentions":"Grounding, creativity, connection to Earth","description":"Earth-patterned jasper that promotes stability and insight.","category":"Jasper","chakra":"Root","hardness":"6.5-7"},
+    "Picasso Jasper":{"intentions":"Creativity, grounding, transformation","description":"Striking patterned jasper that inspires creativity and supports change.","category":"Jasper","chakra":"Root, Sacral","hardness":"6.5-7"},
+    "Pietersite":{"intentions":"Transformation, vision, empowerment, grounding","description":"Swirled stone called the Tempest Stone, enhances intuition and strength.","category":"Quartz Aggregate","chakra":"Third Eye, Solar Plexus","hardness":"6.5-7"},
+    "Pink Opal":{"intentions":"Love, emotional healing, peace, compassion","description":"Soft pink opal that soothes the heart and promotes emotional clarity.","category":"Opal","chakra":"Heart","hardness":"5.5-6"},
+    "Pink Tourmaline":{"intentions":"Love, compassion, emotional healing, joy","description":"Gentle pink tourmaline that nurtures the heart and encourages love.","category":"Tourmaline","chakra":"Heart","hardness":"7-7.5"},
+    "Prehnite (Epidote Inclusions)":{"intentions":"Healing, growth, harmony, intuition","description":"Prehnite with epidote inclusions for balance and emotional clarity.","category":"Silicate","chakra":"Heart, Solar Plexus","hardness":"6-6.5"},
+    "Prehnite (Yellow Green)":{"intentions":"Healing, growth, protection, intuition","description":"Yellow-green prehnite that supports balance and renewal.","category":"Silicate","chakra":"Heart, Solar Plexus","hardness":"6-6.5"},
+    "Prehnite with Black Tourmaline":{"intentions":"Healing, grounding, protection, balance","description":"Green prehnite with black tourmaline inclusions balancing heart and root.","category":"Silicate","chakra":"Heart, Root","hardness":"6-6.5"},
+    "Prehnite with Epidote":{"intentions":"Healing, growth, balance, spiritual insight","description":"Green-yellow stone with epidote inclusions, aids intuition and renewal.","category":"Silicate","chakra":"Heart, Solar Plexus","hardness":"6-6.5"},
+    "Prehnite":{"intentions":"Healing, protection, intuition, growth","description":"Green to yellow-green mineral that promotes harmony and renewal.","category":"Silicate","chakra":"Heart, Solar Plexus","hardness":"6-6.5"},
+    "Realgar":{"intentions":"Transformation, passion, creativity, energy","description":"Bright red-orange arsenic sulfide mineral with powerful energy.","category":"Sulfide","chakra":"Sacral, Solar Plexus","hardness":"1.5-2"},
+    "Red Jasper":{"intentions":"Grounding, strength, stability, vitality","description":"Deep red jasper that provides stability, strength, and grounding.","category":"Jasper","chakra":"Root","hardness":"6.5-7"},
+    "Rhodizite":{"intentions":"Empowerment, positivity, manifestation, clarity","description":"Small but powerful crystal that boosts positivity and manifestation.","category":"Borate","chakra":"All Chakras","hardness":"7.5"},
+    "Rhodonite (Pink with Black)":{"intentions":"Compassion, love, healing, balance","description":"Pink and black stone aiding emotional healing and forgiveness.","category":"Silicate","chakra":"Heart, Root","hardness":"5.5-6.5"},
+    "Rhodonite (With Black Veins)":{"intentions":"Emotional balance, compassion, healing, strength","description":"Pink rhodonite with black veins for grounding and love.","category":"Silicate","chakra":"Heart, Root","hardness":"5.5-6.5"},
+    "Rhodonite":{"intentions":"Love, compassion, forgiveness, emotional healing","description":"Pink and black stone that heals emotional wounds and strengthens relationships.","category":"Silicate","chakra":"Heart, Root","hardness":"5.5-6.5"},
+    "Ruby (Pinkish Red)":{"intentions":"Love, vitality, courage, compassion","description":"Pink-red ruby gemstone associated with love and energy.","category":"Corundum","chakra":"Heart","hardness":"9"},
+    "Ruby (Star Ruby)":{"intentions":"Strength, passion, protection, love","description":"Ruby with star-like inclusions symbolizing divine love and power.","category":"Corundum","chakra":"Root, Heart","hardness":"9"},
+    "Ruby":{"intentions":"Passion, vitality, strength, love","description":"Brilliant red corundum gemstone associated with passion and courage.","category":"Corundum","chakra":"Root, Heart","hardness":"9"},
+    "Rutilated Quartz":{"intentions":"Amplification, clarity, spiritual growth, manifestation","description":"Quartz with golden rutile inclusions, enhances energy flow.","category":"Quartz","chakra":"All Chakras","hardness":"6-7"},
+    "Sapphire (Black)":{"intentions":"Protection, grounding, clarity, strength","description":"Dark sapphire that provides deep protection and insight.","category":"Corundum","chakra":"Root, Third Eye","hardness":"9"},
+    "Sapphire (Green)":{"intentions":"Healing, growth, prosperity, compassion","description":"Green sapphire that brings emotional healing and abundance.","category":"Corundum","chakra":"Heart","hardness":"9"},
+    "Sapphire (Padparadscha)":{"intentions":"Joy, love, creativity, spirituality","description":"Rare pink-orange sapphire symbolizing love and spiritual wisdom.","category":"Corundum","chakra":"Sacral, Heart, Crown","hardness":"9"},
+    "Sapphire (Pink)":{"intentions":"Love, compassion, emotional healing, strength","description":"Pink sapphire that encourages love and emotional balance.","category":"Corundum","chakra":"Heart","hardness":"9"},
+    "Sapphire (Purple)":{"intentions":"Spirituality, wisdom, intuition, transformation","description":"Purple sapphire enhancing higher awareness and inner peace.","category":"Corundum","chakra":"Crown, Third Eye","hardness":"9"},
+    "Sapphire (Star)":{"intentions":"Clarity, wisdom, protection, divine guidance","description":"Star sapphire with asterism symbolizing spiritual truth and insight.","category":"Corundum","chakra":"Third Eye, Crown","hardness":"9"},
+    "Sapphire (White)":{"intentions":"Clarity, truth, spiritual growth, peace","description":"White sapphire for spiritual clarity and higher awareness.","category":"Corundum","chakra":"Crown","hardness":"9"},
+    "Sapphire (Yellow)":{"intentions":"Abundance, clarity, joy, manifestation","description":"Yellow sapphire that supports prosperity, clarity, and optimism.","category":"Corundum","chakra":"Solar Plexus","hardness":"9"},
+    "Sapphire":{"intentions":"Wisdom, truth, protection, spiritual clarity","description":"Precious corundum gemstone, often blue, symbolizing wisdom and truth.","category":"Corundum","chakra":"Throat, Third Eye","hardness":"9"},
+    "Sardonyx":{"intentions":"Strength, protection, courage, stability","description":"Layered red and white chalcedony, linked to integrity and grounding.","category":"Chalcedony","chakra":"Root, Sacral","hardness":"6.5-7"},
+    "Scolecite":{"intentions":"Peace, unity, higher consciousness, calm","description":"White zeolite crystal promoting serenity and spiritual connection.","category":"Silicate","chakra":"Crown, Third Eye","hardness":"5-5.5"},
+    "Selenite (Peach)":{"intentions":"Peace, cleansing, emotional healing, renewal","description":"Peach-colored selenite that brings gentle cleansing and calm.","category":"Sulfate","chakra":"Sacral, Heart","hardness":"2"},
+    "Selenite (Satin Spar)":{"intentions":"Cleansing, clarity, peace, spiritual insight","description":"Fibrous form of gypsum with silky sheen, excellent for clearing energy.","category":"Sulfate","chakra":"Crown","hardness":"2"},
+    "Septarian Nodule":{"intentions":"Grounding, protection, communication, inner strength","description":"Brown, yellow, and gray nodule stone symbolizing strength and harmony.","category":"Rock","chakra":"Root, Solar Plexus","hardness":"3.5-4"},
+    "Septarian":{"intentions":"Protection, grounding, communication, strength","description":"Nodule stone of calcite, aragonite, and limestone, known as Dragon Stone.","category":"Rock","chakra":"Root, Solar Plexus","hardness":"3.5-4"},
+    "Seraphinite":{"intentions":"Healing, spiritual growth, angelic connection, renewal","description":"Green feathered seraphinite that connects to higher realms.","category":"Silicate","chakra":"Heart, Crown","hardness":"2-2.5"},
+    "Seraphinite":{"intentions":"Spiritual growth, healing, angelic connection","description":"Green feather-patterned stone connecting to higher realms and healing.","category":"Silicate","chakra":"Heart, Crown","hardness":"2-2.5"},
+    "Serpentine":{"intentions":"Grounding, protection, healing, meditation","description":"Green stone that supports balance and connection to Earth energy.","category":"Silicate","chakra":"Heart, Crown","hardness":"2.5-5"},
+    "Shungite":{"intentions":"Protection, purification, grounding, healing","description":"Ancient carbon-rich stone known for absorbing negativity and EMF protection.","category":"Mineraloid","chakra":"Root","hardness":"3.5-4"},
+    "Smithsonite":{"intentions":"Calm, emotional healing, balance, love","description":"Zinc carbonate stone that promotes peace and emotional clarity.","category":"Carbonate","chakra":"Heart, Throat","hardness":"4-5"},
+    "Snowflake Obsidian":{"intentions":"Balance, protection, grounding, clarity","description":"Black volcanic glass with white patches, balances mind and spirit.","category":"Volcanic Glass","chakra":"Root, Third Eye","hardness":"5-5.5"},
+    "Sodalite (Hackmanite)":{"intentions":"Intuition, protection, truth, insight","description":"Color-changing variety of sodalite that enhances awareness and intuition.","category":"Silicate","chakra":"Third Eye","hardness":"5.5-6"},
+    "Sodalite (Sunset)":{"intentions":"Creativity, intuition, peace, balance","description":"Orange and blue sodalite variety enhancing harmony and self-expression.","category":"Silicate","chakra":"Throat, Third Eye, Sacral","hardness":"5.5-6"},
+    "Spinel (Black Star)":{"intentions":"Protection, grounding, insight, clarity","description":"Black star spinel with asterism, provides strength and protection.","category":"Oxide","chakra":"Root","hardness":"7.5-8"},
+    "Spinel (Black)":{"intentions":"Protection, grounding, strength, clarity","description":"Black spinel that shields energy and promotes resilience.","category":"Oxide","chakra":"Root","hardness":"7.5-8"},
+    "Spinel (Blue Star)":{"intentions":"Truth, intuition, clarity, spiritual awareness","description":"Star blue spinel that enhances communication and wisdom.","category":"Oxide","chakra":"Throat, Third Eye","hardness":"7.5-8"},
+    "Spinel (Blue)":{"intentions":"Calm, truth, clarity, intuition","description":"Blue spinel gemstone that supports peace and clear communication.","category":"Oxide","chakra":"Throat, Third Eye","hardness":"7.5-8"},
+    "Spinel (Blue-Green)":{"intentions":"Healing, truth, balance, intuition","description":"Blue-green spinel crystal that encourages calm and clarity.","category":"Oxide","chakra":"Throat, Heart","hardness":"7.5-8"},
+    "Spinel (Brown)":{"intentions":"Stability, grounding, resilience, healing","description":"Brown spinel stone that supports stability and inner strength.","category":"Oxide","chakra":"Root","hardness":"7.5-8"},
+    "Spinel (Cobalt Blue)":{"intentions":"Clarity, communication, truth, focus","description":"Rare cobalt-blue spinel with powerful clarity and focus energy.","category":"Oxide","chakra":"Throat","hardness":"7.5-8"},
+    "Spinel (Color Varieties)":{"intentions":"Versatility, balance, spiritual growth","description":"Spinel occurs in many colors, each with unique metaphysical properties.","category":"Oxide","chakra":"Varies by color","hardness":"7.5-8"},
+    "Spinel (Colorless)":{"intentions":"Clarity, peace, purification, harmony","description":"Clear spinel gemstone that purifies energy and promotes peace.","category":"Oxide","chakra":"Crown","hardness":"7.5-8"},
+    "Spinel (Gray)":{"intentions":"Balance, grounding, clarity, calm","description":"Gray spinel stone promoting neutrality and emotional strength.","category":"Oxide","chakra":"Root, Crown","hardness":"7.5-8"},
+    "Spinel (Green Star)":{"intentions":"Healing, growth, balance, protection","description":"Star green spinel symbolizing vitality and harmony.","category":"Oxide","chakra":"Heart","hardness":"7.5-8"},
+    "Spinel (Green)":{"intentions":"Healing, abundance, renewal, vitality","description":"Green spinel that supports prosperity and emotional healing.","category":"Oxide","chakra":"Heart","hardness":"7.5-8"},
+    "Spinel (Greenish Blue)":{"intentions":"Balance, communication, calm, healing","description":"Teal spinel variety that harmonizes emotions and communication.","category":"Oxide","chakra":"Throat, Heart","hardness":"7.5-8"},
+    "Spinel (Lavender)":{"intentions":"Calm, love, spiritual growth, harmony","description":"Soft lavender spinel encouraging peace and compassion.","category":"Oxide","chakra":"Heart, Third Eye","hardness":"7.5-8"},
+    "Spinel (Orange)":{"intentions":"Creativity, energy, joy, vitality","description":"Orange spinel gemstone that enhances creativity and confidence.","category":"Oxide","chakra":"Sacral, Solar Plexus","hardness":"7.5-8"},
+    "Spinel (Orange-Red)":{"intentions":"Vitality, passion, courage, energy","description":"Bright orange-red spinel representing empowerment and life force.","category":"Oxide","chakra":"Root, Sacral","hardness":"7.5-8"},
+    "Spinel (Pink Star)":{"intentions":"Love, compassion, emotional healing, balance","description":"Star pink spinel enhancing love and inner strength.","category":"Oxide","chakra":"Heart","hardness":"7.5-8"},
+    "Spinel (Pink)":{"intentions":"Love, compassion, joy, renewal","description":"Pink spinel gemstone that enhances love and emotional healing.","category":"Oxide","chakra":"Heart","hardness":"7.5-8"},
+    "Spinel (Pink-Red)":{"intentions":"Love, vitality, strength, passion","description":"Vivid pink-red spinel stone symbolizing love and courage.","category":"Oxide","chakra":"Heart, Root","hardness":"7.5-8"},
+    "Spinel (Purple)":{"intentions":"Spiritual growth, transformation, intuition, calm","description":"Purple spinel gemstone that enhances spiritual awareness and balance.","category":"Oxide","chakra":"Third Eye, Crown","hardness":"7.5-8"},
+    "Spinel (Red)":{"intentions":"Passion, vitality, confidence, energy","description":"Red spinel gemstone that inspires vitality and strength.","category":"Oxide","chakra":"Root, Heart","hardness":"7.5-8"},
+    "Spinel (Reddish Brown)":{"intentions":"Grounding, strength, vitality, stability","description":"Brownish-red spinel supporting strength and grounding.","category":"Oxide","chakra":"Root","hardness":"7.5-8"},
+    "Spinel (Violet)":{"intentions":"Spiritual growth, intuition, transformation","description":"Violet spinel stone that deepens meditation and spiritual awareness.","category":"Oxide","chakra":"Third Eye, Crown","hardness":"7.5-8"},
+    "Spinel (Yellow)":{"intentions":"Joy, positivity, clarity, energy","description":"Yellow spinel that inspires confidence and creativity.","category":"Oxide","chakra":"Solar Plexus","hardness":"7.5-8"},
+    "Spinel":{"intentions":"Energy, vitality, renewal, strength","description":"Durable gemstone found in many colors, brings rejuvenation and balance.","category":"Oxide","chakra":"Varies by color","hardness":"7.5-8"},
+    "Stichtite": {"intentions": "Compassion, emotional resilience, forgiveness, calming energy, support during change","description": "Stichtite is a purple to pink mineral often found with serpentine. It is thought to soothe the nervous system, open the heart to compassion, and support emotional healing and spiritual development.","category": "Carbonate Mineral","chakra": "Heart, Crown","hardness": "1.5-2"},
+    "Stilbite":{"intentions":"Love, calm, spiritual connection, peace","description":"Soft peach to white zeolite mineral supporting spiritual awareness.","category":"Silicate","chakra":"Heart, Crown","hardness":"3.5-4"},
+    "Sugilite":{"intentions":"Love, healing, protection, spiritual growth","description":"Purple cyclosilicate crystal that enhances spiritual awareness and strength.","category":"Silicate","chakra":"Crown, Heart","hardness":"6-6.5"},
+    "Sunstone (Oregon)":{"intentions":"Joy, creativity, vitality, leadership","description":"Bright shimmering feldspar from Oregon that radiates positive energy.","category":"Feldspar","chakra":"Solar Plexus","hardness":"6-7"},
+    "Tai Chi Jasper":{"intentions":"Yin-yang balance, vitality, inner peace","description":"Unique jasper variety with contrasting light and dark patterns symbolizing harmony of opposites.","category":"Silicate","chakra":"Root, Heart, Crown","hardness":"6.5-7"},
+    "Tanzanite":{"intentions":"Transformation, spiritual growth, intuition, calm","description":"Blue-violet zoisite found only in Tanzania, enhances intuition and awareness.","category":"Silicate","chakra":"Third Eye, Crown","hardness":"6-6.5"},
+    "Thulite":{"intentions":"Love, compassion, vitality, joy","description":"Pink variety of zoisite that inspires love, passion, and positivity.","category":"Silicate","chakra":"Heart","hardness":"6-6.5"},
+    "Topaz (Blue)":{"intentions":"Calm, communication, clarity, focus","description":"Blue gemstone that enhances communication and peaceful expression.","category":"Silicate","chakra":"Throat","hardness":"8"},
+    "Topaz (Clear)":{"intentions":"Clarity, truth, healing, manifestation","description":"Clear topaz enhances spiritual growth, truth, and focus.","category":"Silicate","chakra":"Crown, Third Eye","hardness":"8"},
+    "Topaz (Golden)":{"intentions":"Abundance, manifestation, confidence, creativity","description":"Golden gemstone that promotes success, joy, and manifestation.","category":"Silicate","chakra":"Solar Plexus","hardness":"8"},
+    "Topaz (Imperial)":{"intentions":"Success, abundance, manifestation, joy","description":"Golden to pink-orange topaz symbolizing prosperity and creativity.","category":"Silicate","chakra":"Solar Plexus, Sacral","hardness":"8"},
+    "Topaz (Pink)":{"intentions":"Love, joy, compassion, emotional healing","description":"Pink topaz gemstone that inspires love and self-worth.","category":"Silicate","chakra":"Heart","hardness":"8"},
+    "Tourmaline (Black Schorl)":{"intentions":"Protection, grounding, security, cleansing","description":"Powerful black tourmaline that shields from negative energy.","category":"Tourmaline","chakra":"Root","hardness":"7-7.5"},
+    "Tourmaline (Blue Indicolite)":{"intentions":"Clarity, intuition, truth, communication","description":"Blue tourmaline supporting spiritual awareness and clarity.","category":"Tourmaline","chakra":"Throat, Third Eye","hardness":"7-7.5"},
+    "Tourmaline (Blue-Green)":{"intentions":"Clarity, communication, healing, balance","description":"Blue-green tourmaline that enhances spiritual awareness and calm.","category":"Tourmaline","chakra":"Throat, Heart","hardness":"7-7.5"},
+    "Tourmaline (Canary)":{"intentions":"Joy, creativity, energy, abundance","description":"Bright yellow tourmaline known as canary tourmaline for positivity and power.","category":"Tourmaline","chakra":"Solar Plexus","hardness":"7-7.5"},
+    "Tourmaline (Green and Pink)":{"intentions":"Love, harmony, healing, vitality","description":"Bi-colored tourmaline with green and pink, linked to compassion and balance.","category":"Tourmaline","chakra":"Heart","hardness":"7-7.5"},
+    "Tourmaline (Green Chrome)":{"intentions":"Healing, abundance, vitality, growth","description":"Bright green chrome-rich tourmaline supporting prosperity and health.","category":"Tourmaline","chakra":"Heart, Solar Plexus","hardness":"7-7.5"},
+    "Tourmaline (Paraiba)":{"intentions":"Spiritual growth, healing, communication, joy","description":"Bright neon blue-green tourmaline symbolizing joy and higher awareness.","category":"Tourmaline","chakra":"Heart, Throat","hardness":"7-7.5"},
+    "Tourmaline (Purple)":{"intentions":"Spirituality, transformation, love, intuition","description":"Purple tourmaline that enhances compassion and higher consciousness.","category":"Tourmaline","chakra":"Third Eye, Heart, Crown","hardness":"7-7.5"},
+    "Tourmaline (Red Rubellite)":{"intentions":"Passion, love, strength, joy","description":"Vibrant red-pink tourmaline that energizes love and vitality.","category":"Tourmaline","chakra":"Heart, Root","hardness":"7-7.5"},
+    "Tourmaline (Rubellite)":{"intentions":"Love, passion, vitality, emotional healing","description":"Deep pink-red tourmaline linked with love and strength.","category":"Tourmaline","chakra":"Heart","hardness":"7-7.5"},
+    "Tourmaline (Watermelon Crystal)":{"intentions":"Love, harmony, balance, joy","description":"Crystal form of watermelon tourmaline with strong heart energy.","category":"Tourmaline","chakra":"Heart","hardness":"7-7.5"},
+    "Tourmaline (Watermelon Slice)":{"intentions":"Joy, love, balance, growth","description":"Slice of watermelon tourmaline with visible color layers.","category":"Tourmaline","chakra":"Heart","hardness":"7-7.5"},
+    "Ulexite":{"intentions":"Clarity, insight, intuition, communication","description":"Fibrous mineral known as TV stone, enhances perception and clarity.","category":"Borate","chakra":"Third Eye","hardness":"2.5"},
+    "Unakite Jasper":{"intentions":"Balance, healing, growth, emotional release","description":"Green and pink jasper that supports healing and emotional well-being.","category":"Jasper","chakra":"Heart","hardness":"6-7"},
+    "Unakite":{"intentions":"Healing, balance, emotional release, growth","description":"Green and pink stone that encourages balance and emotional healing.","category":"Granite","chakra":"Heart","hardness":"6-7"},
+    "Vivianite":{"intentions":"Healing, compassion, renewal, peace","description":"Greenish phosphate crystal that encourages emotional healing and love.","category":"Phosphate","chakra":"Heart","hardness":"1.5-2"},
+    "Watermelon Tourmaline":{"intentions":"Balance, love, harmony, joy","description":"Tourmaline with pink and green layers, symbolizing love and balance.","category":"Tourmaline","chakra":"Heart","hardness":"7-7.5"},
+    "Yellow Calcite":{"intentions":"Joy, confidence, clarity, energy","description":"Golden calcite that inspires positivity and boosts personal willpower.","category":"Carbonate","chakra":"Solar Plexus","hardness":"3"},
+    "Yellow Jasper":{"intentions":"Confidence, energy, clarity, protection","description":"Sunny yellow jasper that encourages positivity and confidence.","category":"Jasper","chakra":"Solar Plexus","hardness":"6.5-7"},
+    "Zeolite":{"intentions":"Healing, cleansing, detox, renewal","description":"Group of silicate minerals that cleanse and purify energy.","category":"Silicate","chakra":"Crown, Heart","hardness":"3.5-5.5"},
+    "Zircon (Blue)":{"intentions":"Clarity, wisdom, protection, intuition","description":"Brilliant blue zircon gemstone that enhances clarity and insight.","category":"Silicate","chakra":"Throat, Third Eye","hardness":"6.5-7.5"},
+    "Zircon":{"intentions":"Clarity, protection, grounding, prosperity","description":"Natural gemstone in many colors, enhances clarity and spiritual growth.","category":"Silicate","chakra":"Root, Crown","hardness":"6.5-7.5"},
+    "Zoisite (Ruby in Zoisite)":{"intentions":"Passion, growth, healing, transformation","description":"Green zoisite with ruby inclusions, blending heart and root energy.","category":"Silicate","chakra":"Heart, Root","hardness":"6-7"},
+  };
+
+  const CRYSTAL_NAMES_ALL = Object.keys(crystalDatabase).sort((a, b) => a.localeCompare(b));
+
+  function openCrystalPicker(){
+    const root = document.getElementById('crystal-picker');
+    const search = document.getElementById('crystal-picker-search');
+    const field = document.getElementById('crystal-type');
+    if (!root || !search) return;
+    root.classList.add('show');
+    root.setAttribute('aria-hidden', 'false');
+    if (field) field.setAttribute('aria-expanded', 'true');
+    search.value = '';
+    renderCrystalPickerList('');
+    requestAnimationFrame(() => { try { search.focus(); } catch (_) {} });
+  }
+
+  function closeCrystalPicker(){
+    const root = document.getElementById('crystal-picker');
+    const field = document.getElementById('crystal-type');
+    if (root){
+      root.classList.remove('show');
+      root.setAttribute('aria-hidden', 'true');
+    }
+    if (field) field.setAttribute('aria-expanded', 'false');
+  }
+
+  function renderCrystalPickerList(query){
+    const listEl = document.getElementById('crystal-picker-list');
+    if (!listEl) return;
+    const q = (query || '').trim().toLowerCase();
+    const names = q ? CRYSTAL_NAMES_ALL.filter((n) => n.toLowerCase().includes(q)) : CRYSTAL_NAMES_ALL;
+    listEl.innerHTML = '';
+    if (!names.length){
+      listEl.innerHTML = '<p style="text-align:center;color:var(--muted);padding:16px">No matches</p>';
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < names.length; i++){
+      const name = names[i];
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'crystal-picker-item';
+      b.textContent = name;
+      b.addEventListener('click', () => selectCrystalFromPicker(name));
+      frag.appendChild(b);
+    }
+    listEl.appendChild(frag);
+  }
+
+  function selectCrystalFromPicker(name){
+    const el = document.getElementById('crystal-type');
+    if (el) el.value = name;
+    closeCrystalPicker();
+    updateCrystalPreview();
+  }
+
+  function setupCrystalPickerUI(){
+    const field = document.getElementById('crystal-type');
+    const clr = document.getElementById('crystal-type-clear');
+    const backdrop = document.getElementById('crystal-picker-backdrop');
+    const closeBtn = document.getElementById('crystal-picker-close');
+    const search = document.getElementById('crystal-picker-search');
+    if (field){
+      field.addEventListener('click', (e) => { e.preventDefault(); openCrystalPicker(); });
+    }
+    clr?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (field) field.value = '';
+      updateCrystalPreview();
+    });
+    backdrop?.addEventListener('click', () => closeCrystalPicker());
+    closeBtn?.addEventListener('click', () => closeCrystalPicker());
+    search?.addEventListener('input', () => renderCrystalPickerList(search.value));
+    if (!window.__crystalPickerEsc){
+      window.__crystalPickerEsc = true;
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.getElementById('crystal-picker')?.classList.contains('show')) closeCrystalPicker();
+      });
+    }
+  }
+
+  // ========= Users & Tabs =========
+  function selectUser(user){
+  // 1) set and persist the current user
+  currentUser = user;
+  try { localStorage.setItem('currentUser', currentUser); } catch(_) {}
+
+  // 2) reflect in the new header dropdown (if present)
+  const sel = document.getElementById('user-select');
+  if (sel && sel.value !== currentUser) sel.value = currentUser;
+
+  // 3) keep backward compat: update any old '#current-user' label if it still exists
+  const badge = document.getElementById('current-user');
+  if (badge) badge.textContent = currentUser;
+
+  // 4) refresh any per-user UI pieces
+  if (typeof generateSKU === 'function') generateSKU();
+  if (typeof updateStats === 'function') updateStats();
+}
+
+ function switchTab(id){
+  const panel = document.getElementById(id);
+  if (!panel) { console.warn('switchTab: missing panel', id); return; }
+   // Hide all panels, show the target
+   document.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
+   panel.classList.add('active');
+
+  // Sync bottom nav active state (if the button exists)
+   const btn = document.querySelector(`.bottom-tab[data-tab="${id}"]`);
+   document.querySelectorAll('.bottom-tab').forEach(b => b.classList.remove('active'));
+   if (btn) btn.classList.add('active');
+ }
+
+
+
+  // ========= Crystal / SKU / Pricing =========
+  function updateCrystalPreview(){
+    const selected = document.getElementById('crystal-type').value;
+    const preview = document.getElementById('crystal-preview');
+    if (selected && crystalDatabase[selected]){
+      const c = crystalDatabase[selected];
+      document.getElementById('crystal-name-display').textContent = selected;
+      document.getElementById('crystal-info-display').innerHTML =
+        `<strong>Intentions:</strong> ${c.intentions}<br>
+         <strong>Chakra:</strong> ${c.chakra}<br>
+         <strong>Category:</strong> ${c.category}`;
+      preview.classList.add('show');
+    } else {
+      preview.classList.remove('show');
+    }
+    generateSKU();
+  }
+  function generateSKU(){
+    const skuEl = document.getElementById('generated-sku');
+    const bcEl  = document.getElementById('barcode');
+    const key   = getSkuKeyFor(currentUser);
+    const base  = getSkuBaseFor(currentUser);
+    const current = parseInt(localStorage.getItem(key) || base, 10);
+    const nextSku = String(current + 1).padStart(6, '0');
+    skuEl.textContent = nextSku;
+    bcEl.textContent  = nextSku;
+  }
+
+  function calculatePrice(){
+    const mode = getPricingMode();
+    const w = parseAmountInput(document.getElementById('weight')) || 0;
+    const c = parseAmountInput(document.getElementById('cost')) || 0;
+    const m = parseFloat(document.getElementById('markup')?.value) || 3;
+    const unitRetail = computeUnitRetail(mode, w, c, m);
+    const retail = document.getElementById('retail-price');
+    if (retail) retail.value = formatMoney(unitRetail);
+    updateProfit();
+  }
+
+// ========= Pricing & Profit (mode-aware) =========
+function updateProfit(){
+  const mode = getPricingMode();
+  const cost = parseAmountInput(document.getElementById('cost')) || 0;
+  const weight = parseAmountInput(document.getElementById('weight')) || 0;
+  const qty = Math.max(1, parseInt(document.getElementById('quantity')?.value || '1', 10) || 1);
+  const markup = parseFloat(document.getElementById('markup')?.value || '1') || 1;
+
+  const unitCost = mode === 'per_piece'
+    ? round2(cost)
+    : round2(cost * weight);
+
+  const retailBox = document.getElementById('retail-price');
+  const profitBox = document.getElementById('profit');
+
+  let unitRetail = parseAmountInput(retailBox);
+  if (!Number.isFinite(unitRetail)){
+    unitRetail = computeUnitRetail(mode, weight, cost, markup);
+    if (retailBox) retailBox.value = formatMoney(unitRetail);
+  }
+
+  const totalRetail = round2(unitRetail * qty);
+  const totalCost = round2(unitCost * qty);
+  const profit = round2(totalRetail - totalCost);
+
+  if (profitBox) profitBox.textContent = formatMoney(profit);
+}
+
+function round2(n){ return Math.round((+n + Number.EPSILON) * 100) / 100; }
+function formatMoney(n){ return (isFinite(n) ? n : 0).toFixed(2); }
+function parseAmountInput(el){
+  if (!el) return NaN;
+  const raw = (el.value != null ? String(el.value) : '').trim();
+  if (!raw) return NaN;
+  const cleaned = raw.replace(/[$€£,\s]/g, '').replace(/,/g, '.');
+  const n = parseFloat(cleaned);
+  return n;
+}
+function computeUnitRetail(mode, weight, cost, markup){
+  const w = Number.isFinite(weight) ? weight : 0;
+  const c = Number.isFinite(cost) ? cost : 0;
+  const m = Number.isFinite(markup) ? markup : 1;
+  const base = (mode === 'per_piece') ? c : (w * c);
+  return round2(base * m);
+}
+
+function updateManualSKU(){}
+
+function setupPhotoHandler() {
+  const libInput = document.getElementById('photo-input-library');
+  const camInput = document.getElementById('photo-input-camera');
+  const preview  = document.getElementById('photo-preview');
+  const titleEl  = document.getElementById('photo-section-title');
+
+  async function processFiles(fileList){
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+
+    // Reset current batch
+    currentPhotos = [];
+    preview.innerHTML = '';
+
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      const ext = (f.name.split('.').pop() || 'jpg').toLowerCase();
+      const safeSku = (document.getElementById('generated-sku').textContent || 'UNSET').replace(/\s+/g,'_');
+      const objectName = `uploads/${safeSku}/${Date.now()}-${i}.${ext}`;
+
+      // Try GCS upload first
+      const uploaded = await trySignAndUpload(f, objectName);
+      if (uploaded) {
+        currentPhotos.push({ name: f.name, url: uploaded.url, size: f.size, contentType: f.type });
+        const img = document.createElement('img'); img.src = uploaded.url; img.className = 'photo-thumbnail'; img.title = f.name; preview.appendChild(img);
+      } else {
+        // Fallback to local data URL so you still see a preview & can export (no real URL)
+        await new Promise((res) => {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const dataUrl = ev.target.result;
+            currentPhotos.push({ name: f.name, url: dataUrl, size: f.size, contentType: f.type });
+            const img = document.createElement('img'); img.src = dataUrl; img.className = 'photo-thumbnail'; img.title = f.name; preview.appendChild(img);
+            res();
+          };
+          reader.readAsDataURL(f);
+        });
+      }
+    }
+
+    titleEl.textContent = `${currentPhotos.length} Photo(s) Selected`;
+  }
+
+  if (libInput) libInput.addEventListener('change', (e) => processFiles(e.target.files));
+  if (camInput) camInput.addEventListener('change', (e) => processFiles(e.target.files));
+}
+
+
+    // ========= Inventory =========
+  function addItem(){
+    const crystalType = (document.getElementById('crystal-type')?.value || '').trim();
+    const productType = document.getElementById('product-type')?.value || '';
+    const weightRaw = parseAmountInput(document.getElementById('weight'));
+    const cost = parseAmountInput(document.getElementById('cost'));
+    const retailPrice = parseAmountInput(document.getElementById('retail-price'));
+    const quantity = parseInt(document.getElementById('quantity')?.value || '1', 10) || 1;
+    const pricingMode = getPricingMode();
+    const weightKg = pricingMode === 'per_kilo' ? weightRaw : 0;
+
+    const needWeight = pricingMode === 'per_kilo' && (!Number.isFinite(weightRaw) || weightRaw <= 0);
+    if (!crystalType || !productType || !Number.isFinite(cost) || cost <= 0 || needWeight) {
+      alert("Please fill in crystal type, product type, and cost" + (pricingMode === 'per_kilo' ? ", and a positive weight (kg)." : "."));
+      return;
+    }
+
+    const crystal = crystalDatabase[crystalType] || {};
+
+    // CHECK FOR MANUAL SKU OVERRIDE
+    const manualSku = document.getElementById('manual-sku')?.value?.trim();
+    let sku;
+
+    if (manualSku) {
+      // Use manual SKU
+      sku = manualSku;
+      
+      // ALSO update the counter if the manual SKU is numeric and higher
+      const manualNum = parseInt(manualSku, 10);
+      if (!isNaN(manualNum)) {
+        const skuKey = getSkuKeyFor(currentUser);
+        const current = parseInt(localStorage.getItem(skuKey) || getSkuBaseFor(currentUser), 10);
+        // Only update if manual number is higher than current counter
+        if (manualNum > current) {
+          localStorage.setItem(skuKey, String(manualNum));
+        }
+      }
+    } else {
+      // Auto-generate SKU and increment counter
+      const skuKey = getSkuKeyFor(currentUser);
+      const skuBase = getSkuBaseFor(currentUser);
+      let current = parseInt(localStorage.getItem(skuKey) || skuBase, 10);
+      sku = String(current + 1).padStart(6, '0');
+      localStorage.setItem(skuKey, String(current + 1));
+    }
+
+    const item = {
+      id: Date.now(),
+      sku, crystalType, productType, weight: weightKg, cost, pricingMode,
+      status: (document.querySelector('#publish-status .is-active')?.dataset.status) || 'active',
+      retailPrice: Math.round(Number(retailPrice || 0)),
+      quantity: quantity,
+      originCountry: document.getElementById('origin-country').value,
+      vendor: document.getElementById('vendor').value,
+      intentions: crystal.intentions||'', description: crystal.description||'',
+      category: crystal.category||'', chakra: crystal.chakra||'', hardness: crystal.hardness||'',
+      photos: sanitizePhotosForPersist(currentPhotos.slice()),
+      user: currentUser,
+      dateAdded: new Date().toISOString(),
+      barcode: `${sku}`
+    };
+
+    inventory.push(item);
+    stripDataPhotosFromInventoryInPlace();
+    try {
+      localStorage.setItem('gemShowInventory', JSON.stringify(inventory));
+    } catch (err) {
+      inventory.pop();
+      alert('Could not save inventory (storage may be full). Camera/library previews are not kept on the phone—only uploaded https links are stored.\n\nTry: Export → clear old test items, or remove photos before add.\n\n' + (err && err.message ? err.message : String(err)));
+      return;
+    }
+
+    alert(`${crystalType} ${productType} added successfully!`);
+    
+    const manualEl = document.getElementById('manual-sku');
+    if (manualEl) manualEl.value = '';
+    
+    try {
+      clearForm();
+      displayRecentItems();
+      updateStats();
+      saveInventory();
+    } catch (err2) {
+      console.error(err2);
+      alert('Item was saved, but refreshing the form failed. Try reloading the page.\n' + (err2 && err2.message ? err2.message : String(err2)));
+    }
+  }
+  window.addItem = addItem;
+
+  function buildCurrentItemPayloadForShopify(){
+    const crystalType = (document.getElementById('crystal-type')?.value || '').trim();
+    const productType = document.getElementById('product-type')?.value || '';
+    const weightRaw = parseAmountInput(document.getElementById('weight'));
+    const cost = parseAmountInput(document.getElementById('cost'));
+    const retailPrice = parseAmountInput(document.getElementById('retail-price'));
+    const quantity = parseInt(document.getElementById('quantity')?.value || '1', 10) || 1;
+    const pricingMode = getPricingMode();
+    const weightKg = pricingMode === 'per_kilo' ? weightRaw : 0;
+
+    const needWeight = pricingMode === 'per_kilo' && (!Number.isFinite(weightRaw) || weightRaw <= 0);
+    if (!crystalType || !productType || !Number.isFinite(cost) || cost <= 0 || needWeight) {
+      alert("Please fill in crystal type, product type, and cost" + (pricingMode === 'per_kilo' ? ", and a positive weight (kg)." : "."));
+      return null;
+    }
+
+    const crystal = crystalDatabase[crystalType] || {};
+    const manualSku = document.getElementById('manual-sku')?.value?.trim();
+    let sku;
+    if (manualSku) sku = manualSku;
+    else sku = (document.getElementById('generated-sku')?.textContent || '').trim();
+    if (!sku || sku === 'Select crystal & type' || sku === 'BARCODE') {
+      alert('Choose crystal & product type (and optional manual SKU) so a SKU is available for Shopify.');
+      return null;
+    }
+
+    return {
+      id: Date.now(),
+      sku,
+      crystalType,
+      productType,
+      weight: weightKg,
+      cost,
+      pricingMode,
+      status: (document.querySelector('#publish-status .is-active')?.dataset.status) || 'active',
+      retailPrice: Math.round(Number(retailPrice || 0)),
+      quantity,
+      originCountry: document.getElementById('origin-country')?.value || '',
+      vendor: document.getElementById('vendor')?.value || '',
+      intentions: crystal.intentions || '',
+      description: crystal.description || '',
+      category: crystal.category || '',
+      chakra: crystal.chakra || '',
+      hardness: crystal.hardness || '',
+      photos: [],
+      user: currentUser,
+      dateAdded: new Date().toISOString(),
+      barcode: `${sku}`,
+    };
+  }
+
+  async function saveItemToShopify(){
+    const btn = document.getElementById('btn-shopify');
+    const item = buildCurrentItemPayloadForShopify();
+    if (!item) return;
+    if (btn){ btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
+    try{
+      const res = await fetch(SHOPIFY_SAVE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+      });
+      let data;
+      try { data = await res.json(); } catch (_) { data = { ok: false, error: 'Invalid response from server.' }; }
+      if (!res.ok || !data.ok) {
+        const msg = (data && data.error) ? data.error : ('HTTP ' + res.status);
+        alert('Shopify save failed.\n\n' + msg);
+        return;
+      }
+      alert('Saved to Shopify.\n\nProduct: ' + (data.title || '') + '\nID: ' + (data.productId || ''));
+    } catch (e) {
+      alert('Shopify save failed (network or server).\n\n' + (e && e.message ? e.message : String(e)));
+    } finally {
+      if (btn){ btn.disabled = false; btn.removeAttribute('aria-busy'); }
+    }
+  }
+  window.saveItemToShopify = saveItemToShopify;
+
+function clearForm(){
+    // Only clear: weight, quantity, photos
+    const wEl = document.getElementById('weight');
+    const qEl = document.getElementById('quantity');
+    const prev = document.getElementById('photo-preview');
+    const titleEl = document.getElementById('photo-section-title');
+    if (wEl) wEl.value = '';
+    if (qEl) qEl.value = '1';
+    currentPhotos = []; 
+    if (prev) prev.innerHTML = '';
+    if (titleEl) titleEl.textContent = 'Add Photos';
+    
+    // Keep: crystal-type, product-type, vendor, markup, cost, pricing mode, publish status
+    // Recalculate based on kept values
+    if (typeof calculatePrice === 'function') calculatePrice();
+    if (typeof generateSKU === 'function') generateSKU();
+  }
+
+function clearAllFields(){
+    document.getElementById('crystal-type').value = '';
+    document.getElementById('product-type').value = '';
+    document.getElementById('weight').value = '';
+    document.getElementById('cost').value = '';
+    document.getElementById('retail-price').value = '0.00';
+    document.getElementById('origin-country').value = '';
+    document.getElementById('vendor').value = '';
+    document.getElementById('markup').value = '3';
+    document.getElementById('crystal-preview').classList.remove('show');
+    const cn = document.getElementById('crystal-name-display');
+    const ci = document.getElementById('crystal-info-display');
+    if (cn) cn.textContent = '';
+    if (ci) ci.innerHTML = '';
+    document.getElementById('profit').textContent = '0.00';
+    document.getElementById('generated-sku').textContent = 'Select crystal & type';
+    document.getElementById('barcode').textContent = 'BARCODE';
+    document.getElementById('quantity').value = '1';
+    currentPhotos = []; 
+    document.getElementById('photo-preview').innerHTML = '';
+    document.getElementById('photo-section-title').textContent = 'Add Photos';
+    
+    // Reset pricing mode to default
+    document.querySelectorAll('#pricing-mode .seg-btn').forEach(b => b.classList.remove('is-active'));
+    document.querySelector('#pricing-mode .seg-btn[data-mode="per_kilo"]')?.classList.add('is-active');
+    
+    // Reset publish status to active
+    document.querySelectorAll('#publish-status .seg-btn').forEach(b => b.classList.remove('is-active'));
+    document.querySelector('#publish-status .seg-btn[data-status="active"]')?.classList.add('is-active');
+    
+    updatePricingLabels();
+    calculatePrice();
+  }
+    function exportToCSV() {
+    // ---------- Shopify headers (with Status & Compare At Price) ----------
+    const headers = [
+      'Handle','Title','Body (HTML)','Vendor','Type','Tags','Status',
+      'Option1 Name','Option1 Value',
+      'Option2 Name','Option2 Value','Option3 Name','Option3 Value',
+      'Variant SKU','Variant Grams','Variant Inventory Tracker','Variant Inventory Qty',
+      'Variant Inventory Policy','Variant Fulfillment Service','Variant Price','Variant Compare At Price',
+      'Variant Requires Shipping','Variant Taxable','Variant Barcode',
+      'Image Src','Image Alt Text',
+      'Gift Card','SEO Title','SEO Description',
+      'Cost per item'
+    ];
+
+      const rows = [];
+      loadInventory();
+      const inv = Array.isArray(inventory) ? inventory.slice() : [];
+      console.log('CSV Export - inv length:', inv.length);  // ADD THIS LINE
+
+      // Helpers
+      const slugify = s => (s || '')
+            .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80);
+
+    const money = n => Number(n || 0).toFixed(2);
+
+    // Track a per-base counter so handles are unique per material/type
+    const handleSeq = Object.create(null);
+
+    for (const item of inv) {
+    console.log('Processing item:', item.sku);  // ADD THIS LINE
+  
+    // Base handle from crystal + product type
+    const crystal = (item.crystalType || '').toString();
+      const type    = (item.productType || '').toString();
+      const base    = slugify([crystal, type].filter(Boolean).join('-')) || 'item';
+
+      // Unique suffix per base (0001, 0002, ...)
+      const seq = (handleSeq[base] = (handleSeq[base] || 0) + 1);
+      const suffix4 = String(seq).padStart(4, '0');
+      const skuDigits = (String(item.sku || '').match(/(\d+)\s*$/) || [])[1] || '';
+      const handle  = skuDigits ? `${base}-${skuDigits}` : `${base}-${suffix4}`;
+
+
+      // Title (human readable)
+      const title = (item.title && item.title.trim())
+        || [crystal, type].filter(Boolean).join(' ').trim()
+        || 'Crystal';
+
+      // Basic fields
+      const vendor = (item.vendor || '').toString().trim(); // left blank if not set
+      const tags = [type, ...(Array.isArray(item.tags) ? item.tags : (item.tags ? [item.tags] : []))].filter(Boolean).join(', ');
+      const status = (item.status || 'active').toString().trim();
+
+      // Grams (prefer explicit variantGrams, else kg → grams)
+      const grams = Number.isFinite(Number(item.variantGrams))
+      ? parseInt(item.variantGrams, 10)
+      : Math.round((Number(item.weight) || 0) * 1000);
+
+
+      // Quantity
+      const qty = Math.max(1, parseInt(item.quantity ?? item.qty ?? 1, 10) || 1);
+
+      // Prices
+      const price = Math.round(Number(item.retailPrice || 0));
+      const costPerItem = Number(
+        item.costPerItem != null
+          ? item.costPerItem
+          : (item.pricingMode === 'per_piece'
+              ? (item.cost || 0)
+              : ((item.weight || 0) * (item.cost || 0)))
+      );
+
+
+      // Description + disclaimer
+      const disclaimer = 'Color and appearance may vary; each crystal is unique.';
+      const baseDesc   = (item.description || '').trim();
+      const bodyHTML   = baseDesc ? `${baseDesc}\n\n${disclaimer}` : disclaimer;
+
+      // Images: only real http(s) links
+      const photos = (item.photos || [])
+        .map(p => (p && p.url) || '')
+        .filter(u => /^https?:\/\//.test(u));
+      const primaryImage = photos[0] || '';
+      const altBase = `${title}${item.sku ? ' – ' + item.sku : ''}`;
+
+      // Barcode preference: item.barcode → item.sku → fallback
+      const barcode = (item.barcode && String(item.barcode).trim())
+        || (item.sku && String(item.sku).trim())
+        || `${base.toUpperCase()}-${suffix4}`;
+
+      // ---------- Parent row ----------
+      const parent = [
+        handle,                             // Handle
+        title,                              // Title
+        bodyHTML,                           // Body (HTML)
+        vendor,                             // Vendor
+        type,                               // Type
+        tags,                               // Tags
+        'active',                             // Status
+        'Title','Default Title',            // Option1 Name/Value
+        '','','','',                        // Option2/3 placeholders
+        (item.sku || ''),                   // Variant SKU
+        grams,                              // Variant Grams
+        'shopify',                          // Variant Inventory Tracker
+        qty,                                // Variant Inventory Qty
+        'deny',                             // Variant Inventory Policy
+        'manual',                           // Variant Fulfillment Service
+        money(price),                       // Variant Price
+        '',                                 // Variant Compare At Price
+        'TRUE','TRUE',                      // Requires Shipping, Taxable
+        barcode,                            // Variant Barcode
+        primaryImage,                       // Image Src
+        primaryImage ? altBase : '',        // Image Alt Text
+        'FALSE',                            // Gift Card
+        title,                              // SEO Title (simple)
+        baseDesc.slice(0, 320),             // SEO Description (trimmed)
+        money(costPerItem)                  // Cost per item
+      ];
+      rows.push(parent);
+      console.log('Row added, total rows now:', rows.length); 
+
+      // ---------- Extra image rows (Handle, Image Src, Image Alt only) ----------
+      // (With Compare At Price present, image columns are 24/25)
+      if (photos.length > 1) {
+        for (let i = 1; i < photos.length; i++) {
+          const imgRow = Array(headers.length).fill('');
+          imgRow[0]  = handle;                           // Handle
+          imgRow[24] = photos[i];                        // Image Src
+          imgRow[25] = `${altBase} (${i+1})`;           // Image Alt Text
+          rows.push(imgRow);
+        }
+      }
+    }
+
+    
+    // ---------- Build CSV ----------
+    const csv = [headers.join(','), ...rows.map(r =>
+      r.map(v => {
+        const s = (v ?? '').toString();
+        return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+      }).join(',')
+    )].join('\n');
+
+    // ---------- Download ----------
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `feather-moon-inventory-${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function changeUser() {
+    try { localStorage.removeItem('currentUser'); } catch(_) {}
+    currentUser = '';
+    if (typeof showUserPicker === 'function') {
+      showUserPicker();
+    } else {
+      alert("User picker not available.");
+    }
+  }
+
+
+
+    // ========= Export: Niimbot/Shopify Labels (XLSX) =========
+    function exportBarcodes() {
+        if (!Array.isArray(inventory) || !inventory.length) {
+          alert('No items to export!');
+          return;
+        }
+
+        // Build rows from your inventory structure - barcode matches SKU
+        const rows = inventory.map(item => {
+          const title = (item.crystalType || 'Crystal').trim();
+          const price = Number(item.retailPrice || 0);
+          const sku   = String(item.sku ?? '').trim();
+          const barcode = sku; // Barcode = SKU for matching with Shopify
+
+          return {
+            'Title': title,
+            'Variant Price': price,
+            'Variant SKU': sku,
+            'Barcode': barcode
+          };
+        });
+
+        // Create worksheet with fixed header order
+        const ws = XLSX.utils.json_to_sheet(rows, {
+          header: ['Title', 'Variant Price', 'Variant SKU', 'Barcode']
+        });
+
+        // Force SKU and Barcode columns to text so Excel keeps leading zeros
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        for (let r = 1; r <= range.e.r; r++) {
+          const skuCell  = ws[XLSX.utils.encode_cell({ r, c: 2 })]; // col C = Variant SKU
+          if (skuCell) skuCell.t = 's';
+          const barcodeCell = ws[XLSX.utils.encode_cell({ r, c: 3 })]; // col D = Barcode
+          if (barcodeCell) barcodeCell.t = 's';
+        }
+
+        // Format price to two decimals with currency mask
+        for (let r = 1; r <= range.e.r; r++) {
+          const cell = ws[XLSX.utils.encode_cell({ r, c: 1 })]; // col B = Variant Price
+          if (cell && typeof cell.v === 'number') cell.z = '$0';
+        }
+
+        // Build workbook and download
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Labels');
+        const fname = `feather-moon-labels-${new Date().toISOString().slice(0,10)}.xlsx`;
+        XLSX.writeFile(wb, fname);
+    }
+
+
+
+
+  // ========= Data & UI =========
+function clearAllData(){
+  if (!confirm('Delete ALL local items and reset counters?')) return;
+  inventory = [];
+  try{
+    localStorage.removeItem('gemShowInventory');
+    // keep currentUser; if you also want to reset user, uncomment:
+    // localStorage.removeItem('currentUser');
+  }catch(_){}
+  displayRecentItems();
+  updateStats();
+  console.log('All data cleared');
+}
+
+
+
+  function updateStats(){
+  const today = new Date().toDateString();
+  const todays = inventory.filter(it =>
+    it.user === currentUser && new Date(it.dateAdded).toDateString() === today
+  );
+  const userCount = todays.length;
+  const userValue = todays.reduce((s, it) => s + Number(it.retailPrice || 0), 0);
+
+  const uc = document.getElementById('user-count'); if (uc) uc.textContent = userCount;
+  const uv = document.getElementById('user-value'); if (uv) uv.textContent = userValue.toFixed(2);
+  const ic = document.getElementById('item-count'); if (ic) ic.textContent = inventory.length;
+  const totalEl = document.getElementById('total-items'); if (totalEl) totalEl.textContent = inventory.length;
+
+  // Update bottom-tab “Recent (n)”
+  const recentBtn = document.querySelector('[data-tab="recent"]');
+  if (recentBtn) {
+    const n = Math.min(10, inventory.length);
+    recentBtn.textContent = `Recent (${n})`;
+  }
+}
+
+  function displayRecentItems(){
+    const recent = inventory.slice(-10).reverse();
+    const container = document.getElementById('recent-items');
+    if (!container) return;
+    if (!recent.length){
+      container.innerHTML = '<p style="text-align:center;color:#718096;padding:20px">No items added yet</p>';
+      return;
+    }
+    let html = '';
+    recent.forEach(item=>{
+      const rp = Number(item.retailPrice || 0);
+      const wLine = item.pricingMode === 'per_piece'
+        ? '—'
+        : `${Number(item.weight) || 0}kg`;
+      html += `<div class="recent-item">
+        <h4>${item.crystalType} ${item.productType}</h4>
+        <div class="recent-meta">
+          <strong>SKU:</strong> ${item.sku} |
+          <strong>Price:</strong> $${rp.toFixed(2)} |
+          <strong>Weight:</strong> ${wLine}<br/>
+          <strong>Added by:</strong> ${item.user} |
+          <strong>Date:</strong> ${new Date(item.dateAdded).toLocaleDateString()}
+          ${item.photos?.length ? ' | <strong>Photos:</strong> ' + item.photos.length : ''}
+        </div>
+        ${item.photos?.length ? `<div style="margin-top:8px">${item.photos.map((p,i)=>{
+          const u = (p && p.url) || '';
+          if (/^https?:\/\//i.test(u)) return `<a href="${u}" target="_blank" rel="noopener">Photo ${i+1}</a>`;
+          if (p && p.localPreviewDropped) return `<span style="color:#718096">Photo ${i+1} (preview not stored)</span>`;
+          return '';
+        }).filter(Boolean).join(' | ')}</div>` : ''}
+      </div>`;
+    });
+    container.innerHTML = html;
+  }
+  // ========= Init =========
+  function initApp(){
+    try{
+      const saved = localStorage.getItem('gemShowInventory'); if (saved) inventory = JSON.parse(saved)||[];
+      const sc = localStorage.getItem('skuCounter'); if (sc) skuCounter = parseInt(sc,10)||1;
+    }catch(e){ inventory = []; skuCounter = 1; }
+
+    if (typeof stripDataPhotosFromInventoryInPlace === 'function') stripDataPhotosFromInventoryInPlace();
+    if (typeof saveInventory === 'function') saveInventory();
+
+    // Restore user or prompt once
+    try{
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) currentUser = storedUser;
+    }catch(_){}
+
+    if (!currentUser) showUserPicker();
+    if (typeof generateSKU === 'function') generateSKU();
+    updateStats();setupPhotoHandler();
+  }
+
+if (document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', initApp); } else { initApp(); }
+
+// Wait for DOM to be fully loaded before attaching export handlers
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('btn-export-clear')?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if (typeof clearAllData === 'function') clearAllData();
+  });
+
+  document.getElementById('btn-export-csv')?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if (typeof exportToCSV === 'function') exportToCSV();
+  });
+
+  document.getElementById('btn-export-bar')?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if (typeof exportBarcodes === 'function') exportBarcodes();
+  });
+});
+
+// ========= Populate User Dropdown =========
+const users = ["Stevie", "Allie", "Matt", "Dan"]; // add/remove as needed
+
+// Build and show the modal
+function showUserPicker(){
+  const m = document.getElementById('user-modal');
+  const grid = document.getElementById('user-choices');
+  grid.innerHTML = users.map(u => `<button class="umodal-btn" data-user="${u}">${u}</button>`).join('');
+  grid.onclick = (e)=>{
+    const btn = e.target.closest('.umodal-btn'); if(!btn) return;
+    const u = btn.getAttribute('data-user');
+    currentUser = u;
+    try { localStorage.setItem('currentUser', u); } catch(_) {}
+    m.classList.remove('show');
+    if (typeof generateSKU === 'function') generateSKU();
+    updateStats();
+  };
+  m.classList.add('show');
+}
+
+function populateUserDropdown() {
+  const select = document.getElementById("current-user");if (!select) return;
+  select.innerHTML = ""; // clear old options
+  users.forEach(user => {
+    const opt = document.createElement("option");
+    opt.value = user;
+    opt.textContent = user;
+    if (user === currentUser) opt.selected = true;
+    select.appendChild(opt);
+  });
+
+  // Handle user switching
+  select.addEventListener("change", (e) => {
+    currentUser = e.target.value;
+    localStorage.setItem("currentUser", currentUser);
+    updateStats(); // keep your existing behavior
+  });
+}
+
+  // Set defaults on load
+  { const el = document.getElementById('user-select'); if (el) el.value = currentUser; }
+  if (typeof switchTab === 'function') 
+  { const first='add'; if (document.getElementById(first)) switchTab(first); }
+
+
+// --- Pricing helpers ---
+function getPricingMode(){
+  return document.querySelector('#pricing-mode .seg-btn.is-active')?.dataset.mode || 'per_kilo';
+}
+
+
+
+// ========= Inventory Persistence =========
+function sanitizePhotosForPersist(photos){
+  if (!Array.isArray(photos)) return [];
+  return photos.map((p) => {
+    if (!p || typeof p !== 'object') return p;
+    const u = String(p.url || '');
+    if (/^https?:\/\//i.test(u)) return { name: p.name, url: u, size: p.size, contentType: p.contentType };
+    if (/^data:/i.test(u)) return { name: p.name || 'photo', url: '', size: p.size, contentType: p.contentType, localPreviewDropped: true };
+    return { name: p.name, url: '', size: p.size, contentType: p.contentType };
+  });
+}
+
+function stripDataPhotosFromInventoryInPlace(){
+  for (const it of inventory || []) {
+    if (Array.isArray(it.photos)) it.photos = sanitizePhotosForPersist(it.photos);
+  }
+}
+
+function saveInventory(){
+  try{
+    stripDataPhotosFromInventoryInPlace();
+    localStorage.setItem('gemShowInventory', JSON.stringify(inventory || []));
+  }catch(e){ console.warn('saveInventory', e); }
+}
+
+function loadInventory(){
+  try{ inventory = JSON.parse(localStorage.getItem('gemShowInventory') || '[]'); }
+  catch(_){ inventory = []; }
+}
+
+
+  // Update cost/weight labels and placeholders when pricing mode changes
+function updatePricingLabels() {
+  const mode = getPricingMode();
+  const costLabel = document.querySelector("label[for='cost']");
+  const weightLabel = document.querySelector("label[for='weight']");
+  const costInput = document.getElementById('cost');
+  const weightInput = document.getElementById('weight');
+  const weightGroup = weightInput ? weightInput.closest('.form-group') : null;
+
+  if (mode === 'per_piece') {
+    if (costLabel) costLabel.textContent = 'Cost per piece ($)';
+    if (costInput) costInput.placeholder = 'e.g., 5.00 per piece';
+    if (weightGroup) weightGroup.style.display = 'none';
+    if (weightInput){ weightInput.disabled = true; weightInput.removeAttribute('required'); }
+    if (weightLabel) weightLabel.textContent = 'Weight (hidden for per-piece)';
+  } else {
+    if (costLabel) costLabel.textContent = 'Cost per kg ($)';
+    if (costInput) costInput.placeholder = 'e.g., 25.00 per kg';
+    if (weightGroup) weightGroup.style.display = '';
+    if (weightInput){ weightInput.disabled = false; }
+    if (weightLabel) weightLabel.textContent = 'Weight (kg)';
+  }
+}
+
+updatePricingLabels();
+
+  // Safety: show user picker on first load if none set
+  try{
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) window.currentUser = storedUser;
+  }catch(_){}
+  if (!window.currentUser && typeof showUserPicker==='function') showUserPicker();
+
+
+// ===== Wire UI safely =====
+(function wireUI(){
+  const $ = (id) => document.getElementById(id);
+
+  // Top buttons
+  const addBtn   = $('btn-add');
+  const clearBtn = $('btn-clear');
+  const userBtn = $('btn-user');
+
+  if (addBtn)   addBtn.addEventListener('click', (e)=>{ e.preventDefault(); const fn = window.addItem; if (typeof fn === 'function') fn(); });
+  const shopifyBtn = $('btn-shopify');
+  if (shopifyBtn) shopifyBtn.addEventListener('click', (e)=>{ e.preventDefault(); const fn = window.saveItemToShopify; if (typeof fn === 'function') fn(); });
+  if (clearBtn) clearBtn.addEventListener('click', (e)=>{ e.preventDefault(); if (typeof clearForm==='function') clearForm(); });
+  
+  const clearAllBtn = $('btn-clear-all');
+  if (clearAllBtn) clearAllBtn.addEventListener('click', (e)=>{ e.preventDefault(); if (typeof clearAllFields==='function') clearAllFields(); });
+  if (userBtn)  userBtn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    try{ localStorage.removeItem('currentUser'); }catch(_){}
+    window.currentUser = '';
+    if (typeof showUserPicker==='function') showUserPicker();
+  });
+
+
+
+  console.log('UI wired');
+})();
+
+
+// =========== WIRING (safe, id-based) ===========
+(function(){
+  const $ = (id)=>document.getElementById(id);
+
+    // restore saved items & paint UI
+  loadInventory();
+  stripDataPhotosFromInventoryInPlace();
+  saveInventory();
+  displayRecentItems();
+  updateStats();
+  setupCrystalPickerUI();
+  (function ensurePricingModeSelection(){
+    const wrap = document.getElementById('pricing-mode');
+    if (!wrap) return;
+    if (!wrap.querySelector('.seg-btn.is-active')){
+      wrap.querySelector('.seg-btn[data-mode="per_kilo"]')?.classList.add('is-active');
+    }
+  })();
+  if (typeof updatePricingLabels === 'function') updatePricingLabels();
+  if (typeof calculatePrice === 'function') calculatePrice();
+
+  // Bottom tabs (single delegated listener)
+  $('bottom-nav')?.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.bottom-tab'); if(!btn) return;
+    const id = btn.getAttribute('data-tab');
+    document.querySelectorAll('.bottom-tab').forEach(b=>b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.tab-content').forEach(p=>p.classList.toggle('active', p.id===id));
+  });
+
+  // Pricing Mode segmented control
+  (function(){
+    const wrap = document.getElementById('pricing-mode'); if(!wrap) return;
+    wrap.addEventListener('click', (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      const b = e.target.closest('.seg-btn'); if(!b) return;
+      wrap.querySelectorAll('.seg-btn').forEach(x=>x.classList.remove('is-active'));
+      b.classList.add('is-active');
+      // keep labels / price in sync (if you have these)
+      if (typeof updatePricingLabels==='function') updatePricingLabels();
+      if (typeof calculatePrice==='function') calculatePrice();
+    });
+  })();
+
+  // Publish Status segmented control
+  (function(){
+    const wrap = $('publish-status'); if(!wrap) return;
+    wrap.addEventListener('click', (e)=>{
+      const b = e.target.closest('.seg-btn'); if(!b) return;
+      wrap.querySelectorAll('.seg-btn').forEach(x=>x.classList.remove('is-active'));
+      b.classList.add('is-active');
+    });
+  })();
+})();
+
+
+
+</script>
+</body>
+</html>
