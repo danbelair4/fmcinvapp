@@ -9,7 +9,11 @@
  *   SHOPIFY_LOCATION_ID   (numeric or gid; echoed + matched against sample locations)
  */
 
-const API_VERSION = '2025-01';
+const {
+  normalizeShopDomain,
+  acquireClientCredentialsFromEnv,
+  API_VERSION,
+} = require('./_shopifyClient');
 
 const QUERY = `#graphql
 query ShopifyConnectionTest {
@@ -26,15 +30,6 @@ query ShopifyConnectionTest {
 }
 `;
 
-function normalizeShopDomain(raw) {
-  if (!raw || typeof raw !== 'string') return '';
-  let d = raw.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-  if (!d.endsWith('.myshopify.com') && !d.includes('.')) {
-    d = `${d}.myshopify.com`;
-  }
-  return d;
-}
-
 function toLocationGid(raw) {
   const s = (raw == null ? '' : String(raw)).trim();
   if (!s) return '';
@@ -47,59 +42,6 @@ function json(statusCode, body) {
     statusCode,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
-  };
-}
-
-/**
- * @returns {{ ok: boolean, accessToken?: string, scope?: string, expiresIn?: number, error?: string, httpStatus?: number }}
- */
-async function acquireClientCredentialsToken(shopDomain, clientId, clientSecret) {
-  const url = `https://${shopDomain}/admin/oauth/access_token`;
-  const body = new URLSearchParams({
-    grant_type: 'client_credentials',
-    client_id: clientId,
-    client_secret: clientSecret,
-  });
-
-  let res;
-  try {
-    res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body.toString(),
-    });
-  } catch (e) {
-    return {
-      ok: false,
-      error: `Token request failed (network): ${e && e.message ? e.message : String(e)}`,
-    };
-  }
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    const msg =
-      data?.error_description ||
-      data?.error ||
-      (typeof data === 'string' ? data : null) ||
-      `HTTP ${res.status}`;
-    return { ok: false, error: String(msg), httpStatus: res.status };
-  }
-
-  const accessToken = data.access_token;
-  if (!accessToken) {
-    return {
-      ok: false,
-      error: 'Token response missing access_token.',
-      httpStatus: res.status,
-    };
-  }
-
-  return {
-    ok: true,
-    accessToken,
-    scope: data.scope || '',
-    expiresIn: typeof data.expires_in === 'number' ? data.expires_in : undefined,
   };
 }
 
@@ -180,7 +122,7 @@ exports.handler = async (event) => {
     });
   }
 
-  const tokenResult = await acquireClientCredentialsToken(shopDomain, clientId, clientSecret);
+  const tokenResult = await acquireClientCredentialsFromEnv();
 
   const tokenAcquisition = {
     ok: tokenResult.ok,

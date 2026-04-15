@@ -1,15 +1,21 @@
 /**
  * Netlify Function: create one Shopify product from the inventory app's item JSON.
  *
- * Required Netlify env:
- *   SHOPIFY_STORE_DOMAIN        e.g. your-store.myshopify.com
- *   SHOPIFY_ADMIN_ACCESS_TOKEN  Custom app Admin API access token (server-side only)
- *   SHOPIFY_LOCATION_ID         Numeric location id OR gid://shopify/Location/...
+ * Auth (Dev Dashboard — client credentials):
+ *   SHOPIFY_STORE_DOMAIN
+ *   SHOPIFY_CLIENT_ID
+ *   SHOPIFY_CLIENT_SECRET
  *
- * Scopes: write_products, read_products, write_inventory, read_inventory (as needed)
+ * Inventory:
+ *   SHOPIFY_LOCATION_ID   numeric or gid://shopify/Location/...
+ *
+ * Scopes (typical): write_products, read_products, write_inventory, read_inventory
  */
 
-const { shopifyGraphql } = require('./_shopifyClient');
+const {
+  acquireClientCredentialsFromEnv,
+  shopifyGraphqlWithToken,
+} = require('./_shopifyClient');
 const {
   validateItemPayload,
   buildProductCreateInput,
@@ -90,7 +96,7 @@ query FirstVariant($id: ID!) {
 }
 `;
 
-function collectUserErrors(payload, path) {
+function collectUserErrors(payload) {
   const list = payload?.userErrors || payload?.UserErrors;
   if (!Array.isArray(list) || !list.length) return null;
   return list.map((e) => e.message || String(e)).join(' | ');
@@ -126,7 +132,8 @@ exports.handler = async (event) => {
 
   const missing = [];
   if (!process.env.SHOPIFY_STORE_DOMAIN) missing.push('SHOPIFY_STORE_DOMAIN');
-  if (!process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) missing.push('SHOPIFY_ADMIN_ACCESS_TOKEN');
+  if (!process.env.SHOPIFY_CLIENT_ID) missing.push('SHOPIFY_CLIENT_ID');
+  if (!process.env.SHOPIFY_CLIENT_SECRET) missing.push('SHOPIFY_CLIENT_SECRET');
   if (!process.env.SHOPIFY_LOCATION_ID) missing.push('SHOPIFY_LOCATION_ID');
   if (missing.length) {
     return {
@@ -168,9 +175,24 @@ exports.handler = async (event) => {
     };
   }
 
+  const auth = await acquireClientCredentialsFromEnv();
+  if (!auth.ok || !auth.accessToken || !auth.shopDomain) {
+    return {
+      statusCode: 503,
+      headers,
+      body: JSON.stringify({
+        ok: false,
+        error: `Shopify authentication failed: ${auth.error || 'unknown error'}`,
+      }),
+    };
+  }
+
+  const { shopDomain, accessToken } = auth;
+  const gql = (query, variables) => shopifyGraphqlWithToken(shopDomain, accessToken, query, variables);
+
   try {
     const productInput = buildProductCreateInput(item);
-    const createRes = await shopifyGraphql(MUTATION_PRODUCT_CREATE, { product: productInput });
+    const createRes = await gql(MUTATION_PRODUCT_CREATE, { product: productInput });
     const createPayload = createRes?.data?.productCreate;
     const createErr = collectUserErrors(createPayload);
     if (createErr) {
@@ -187,7 +209,7 @@ exports.handler = async (event) => {
 
     let variant = firstVariantFromProduct(product);
     if (!variant?.id) {
-      const q = await shopifyGraphql(QUERY_PRODUCT_VARIANT, { id: product.id });
+      const q = await gql(QUERY_PRODUCT_VARIANT, { id: product.id });
       const p2 = q?.data?.product;
       variant = firstVariantFromProduct(p2);
     }
@@ -212,7 +234,7 @@ exports.handler = async (event) => {
     if (barcode) variantPatch.barcode = barcode;
     if (sku) variantPatch.inventoryItem = { sku };
 
-    const bulkRes = await shopifyGraphql(MUTATION_VARIANTS_BULK_UPDATE, {
+    const bulkRes = await gql(MUTATION_VARIANTS_BULK_UPDATE, {
       productId: product.id,
       variants: [variantPatch],
     });
@@ -234,7 +256,7 @@ exports.handler = async (event) => {
 
     let inventoryItemId = variant.inventoryItem?.id;
     if (!inventoryItemId) {
-      const refreshed = await shopifyGraphql(QUERY_PRODUCT_VARIANT, { id: product.id });
+      const refreshed = await gql(QUERY_PRODUCT_VARIANT, { id: product.id });
       const v2 = firstVariantFromProduct(refreshed?.data?.product);
       inventoryItemId = v2?.inventoryItem?.id;
     }
@@ -256,7 +278,7 @@ exports.handler = async (event) => {
         ],
       };
 
-      const invRes = await shopifyGraphql(MUTATION_INVENTORY_SET, { input: invInput });
+      const invRes = await gql(MUTATION_INVENTORY_SET, { input: invInput });
       const invPayload = invRes?.data?.inventorySetQuantities;
       const invErr = collectUserErrors(invPayload);
       if (invErr) {
