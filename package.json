@@ -1,0 +1,8 @@
+{
+  "name": "feather-moon-inventory-site",
+  "private": true,
+  "description": "Netlify site root: static app + functions (sign-upload uses @google-cloud/storage)",
+  "dependencies": {
+    "@google-cloud/storage": "^7.14.0"
+  }
+}

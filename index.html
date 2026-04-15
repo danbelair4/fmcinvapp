@@ -374,7 +374,10 @@
         body: JSON.stringify({ objectName, contentType: file.type || 'application/octet-stream' })
       });
       if (!r.ok) return null;
-      const { uploadUrl, publicUrl } = await r.json();
+      const j = await r.json();
+      const uploadUrl = j && typeof j.uploadUrl === 'string' ? j.uploadUrl : '';
+      const publicUrl = j && typeof j.publicUrl === 'string' ? j.publicUrl.trim() : '';
+      if (!uploadUrl || !publicUrl || !/^https:\/\//i.test(publicUrl)) return null;
       const put = await fetch(uploadUrl, { method:'PUT', headers:{'Content-Type': file.type||'application/octet-stream'}, body:file });
       if (!put.ok) return null;
       return { url: publicUrl };
