@@ -1,6 +1,8 @@
 /**
- * Maps the single-page app's inventory item shape to Shopify GraphQL inputs.
- * Keep in sync with index.html `item` object built in addItem().
+ * Shopify mappings derived ONLY from the CSV export contract in index.html `exportToCSV`.
+ * Do not add fields or marketing copy that the CSV does not define.
+ *
+ * Reference: index.html lines ~1186–1321 (exportToCSV parent row).
  */
 
 function trimStr(v) {
@@ -8,127 +10,208 @@ function trimStr(v) {
   return String(v).trim();
 }
 
-/** @type {Record<string, string>} lowercase name → ISO 3166-1 alpha-2 */
-const COUNTRY_NAME_TO_CODE = {
-  afghanistan: 'AF',
-  australia: 'AU',
-  bolivia: 'BO',
-  brazil: 'BR',
-  burma: 'MM',
-  canada: 'CA',
-  chile: 'CL',
-  china: 'CN',
-  colombia: 'CO',
-  france: 'FR',
-  germany: 'DE',
-  india: 'IN',
-  indonesia: 'ID',
-  madagascar: 'MG',
-  mexico: 'MX',
-  morocco: 'MA',
-  myanmar: 'MM',
-  namibia: 'NA',
-  nepal: 'NP',
-  pakistan: 'PK',
-  peru: 'PE',
-  russia: 'RU',
-  'south africa': 'ZA',
-  'sri lanka': 'LK',
-  tanzania: 'TZ',
-  thailand: 'TH',
-  turkey: 'TR',
-  uk: 'GB',
-  usa: 'US',
-  us: 'US',
-  'united states': 'US',
-  'united states of america': 'US',
-  'united kingdom': 'GB',
-  uruguay: 'UY',
-  zambia: 'ZM',
-  zimbabwe: 'ZW',
-};
-
-function escapeHtml(s) {
-  return trimStr(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+/** Same as CSV `slugify` helper (exportToCSV). */
+function slugify(s) {
+  return (s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
 }
 
 /**
- * Map free-text origin to Shopify CountryCode, or null if unknown.
- * @param {unknown} raw
- * @returns {string|null}
+ * CSV handle + supporting parts. `sequenceForBase` mirrors `handleSeq[base]` for one export
+ * when `skuDigits` is empty (default 1 = first row for that base).
+ * @param {Record<string, unknown>} item
+ * @param {number} [sequenceForBase]
  */
-function normalizeCountryCodeForShopify(raw) {
-  const s = trimStr(raw);
-  if (!s) return null;
-  if (/^[A-Za-z]{2}$/.test(s)) return s.toUpperCase();
-  const key = s.toLowerCase().replace(/\s+/g, ' ').trim();
-  if (COUNTRY_NAME_TO_CODE[key]) return COUNTRY_NAME_TO_CODE[key];
-  const compact = key.replace(/[^a-z]/g, '');
-  for (const [name, code] of Object.entries(COUNTRY_NAME_TO_CODE)) {
-    if (name.replace(/[^a-z]/g, '') === compact) return code;
+function computeCsvHandleParts(item, sequenceForBase = 1) {
+  const crystal = (item.crystalType || '').toString();
+  const type = (item.productType || '').toString();
+  const base = slugify([crystal, type].filter(Boolean).join('-')) || 'item';
+  const seq = Math.max(1, parseInt(String(sequenceForBase), 10) || 1);
+  const suffix4 = String(seq).padStart(4, '0');
+  const skuDigits = (String(item.sku || '').match(/(\d+)\s*$/) || [])[1] || '';
+  const handle = skuDigits ? `${base}-${skuDigits}` : `${base}-${suffix4}`;
+  return { crystal, type, base, suffix4, skuDigits, handle };
+}
+
+/**
+ * CSV Title column: (item.title && trim) || crystal + type || 'Crystal'
+ * @param {Record<string, unknown>} item
+ */
+function buildCsvTitle(item) {
+  const t = item.title != null ? trimStr(item.title) : '';
+  if (t) return t;
+  const crystal = (item.crystalType || '').toString();
+  const type = (item.productType || '').toString();
+  const joined = [crystal, type].filter(Boolean).join(' ').trim();
+  return joined || 'Crystal';
+}
+
+/**
+ * CSV tags string: [type, ...item.tags].join(', ')
+ * @param {Record<string, unknown>} item
+ */
+function buildCsvTagsString(item) {
+  const type = (item.productType || '').toString();
+  const extra = Array.isArray(item.tags) ? item.tags : item.tags ? [item.tags] : [];
+  return [type, ...extra].filter(Boolean).join(', ');
+}
+
+/**
+ * GraphQL wants tag list; CSV stores one comma-space-joined cell (same join as export).
+ * @param {Record<string, unknown>} item
+ */
+function buildCsvTagsArray(item) {
+  const s = buildCsvTagsString(item);
+  if (!s) return [];
+  return s.split(', ').map((t) => t.trim()).filter(Boolean);
+}
+
+/**
+ * CSV Body (HTML) column (exportToCSV): baseDesc + disclaimer, or disclaimer only.
+ * Same template and strings as index.html — no extra rewriting.
+ */
+function buildCsvBodyHtml(item) {
+  const disclaimer = 'Color and appearance may vary; each crystal is unique.';
+  const baseDesc = trimStr(item.description);
+  if (baseDesc) {
+    return `${baseDesc}\n\n${disclaimer}`;
   }
-  return null;
+  return disclaimer;
 }
 
 /**
- * Simple factual HTML body for the product (admin + Online Store).
- * @param {Record<string, unknown>} item
- * @returns {string}
+ * CSV Variant Grams: variantGrams if finite, else round(weight kg * 1000).
  */
-function buildDescriptionHtml(item) {
-  const crystal = escapeHtml(item.crystalType);
-  const ptype = escapeHtml(item.productType);
-  const vendor = trimStr(item.vendor);
-  const origin = trimStr(item.originCountry);
-  const mode = escapeHtml(item.pricingMode || '');
-
-  const parts = [
-    `<p><strong>Crystal type:</strong> ${crystal}</p>`,
-    `<p><strong>Product type:</strong> ${ptype}</p>`,
-  ];
-  if (vendor) parts.push(`<p><strong>Vendor:</strong> ${escapeHtml(vendor)}</p>`);
-  if (origin) parts.push(`<p><strong>Country of origin:</strong> ${escapeHtml(origin)}</p>`);
-  if (mode) parts.push(`<p><strong>Pricing mode:</strong> ${mode}</p>`);
-  return parts.join('\n');
+function csvVariantGrams(item) {
+  if (Number.isFinite(Number(item.variantGrams))) {
+    return parseInt(String(item.variantGrams), 10);
+  }
+  return Math.round((Number(item.weight) || 0) * 1000);
 }
 
 /**
- * InventoryItem fields for productVariantsBulkUpdate (nested under variant).
- * Enables tracking, unit cost, origin (when mappable), weight only when weight kg is positive.
+ * CSV Cost per item column.
+ */
+function csvCostPerItem(item) {
+  return Number(
+    item.costPerItem != null
+      ? item.costPerItem
+      : item.pricingMode === 'per_piece'
+        ? Number(item.cost || 0)
+        : (Number(item.weight) || 0) * Number(item.cost || 0)
+  );
+}
+
+/**
+ * CSV Variant Barcode column.
+ */
+function buildCsvBarcode(item, parts) {
+  const fromItem = item.barcode && String(item.barcode).trim();
+  if (fromItem) return fromItem;
+  const fromSku = item.sku && String(item.sku).trim();
+  if (fromSku) return fromSku;
+  return `${parts.base.toUpperCase()}-${parts.suffix4}`;
+}
+
+/**
+ * CSV Variant Price: money(Math.round(retailPrice)) → two decimals string.
+ */
+function csvVariantPriceString(item) {
+  return Math.round(Number(item.retailPrice || 0)).toFixed(2);
+}
+
+/**
+ * CSV Variant Inventory Qty: max(1, parseInt(quantity|qty|1)).
+ */
+function csvVariantInventoryQty(item) {
+  return Math.max(1, parseInt(String(item.quantity ?? item.qty ?? 1), 10) || 1);
+}
+
+/**
+ * CSV Status column in parent row is literal 'active' (not item.status).
+ * @returns {'ACTIVE'}
+ */
+function csvProductStatus() {
+  return 'ACTIVE';
+}
+
+/**
+ * ProductCreateInput aligned to CSV parent row (Handle, Title, Body, Vendor, Type, Tags, Status,
+ * gift card FALSE, SEO title/description).
  * @param {Record<string, unknown>} item
- * @returns {Record<string, unknown>}
+ * @param {number} [handleSequenceForBase]
+ */
+function buildProductCreateInput(item, handleSequenceForBase = 1) {
+  const parts = computeCsvHandleParts(item, handleSequenceForBase);
+  const title = buildCsvTitle(item);
+  const baseDesc = trimStr(item.description);
+  /** CSV SEO Description column: raw slice, same as exportToCSV (not HTML-escaped). */
+  const seoDescription = baseDesc.slice(0, 320);
+
+  return {
+    handle: parts.handle,
+    title,
+    descriptionHtml: buildCsvBodyHtml(item),
+    vendor: trimStr(item.vendor) || undefined,
+    productType: (item.productType || '').toString().trim() || undefined,
+    tags: buildCsvTagsArray(item),
+    status: csvProductStatus(),
+    giftCard: false,
+    seo: {
+      title,
+      description: seoDescription,
+    },
+  };
+}
+
+/**
+ * InventoryItem nested input for productVariantsBulkUpdate — only what CSV implies for variant/inventory:
+ * - Tracker 'shopify' → tracked true
+ * - Fulfillment 'manual' / shipping: not expressible on InventoryItemInput; requiresShipping TRUE matches CSV Requires Shipping TRUE
+ * - Cost per item on inventory item
+ * - Grams from CSV → weight on inventory measurement
+ * @param {Record<string, unknown>} item
  */
 function buildVariantInventoryItemInput(item) {
+  const grams = csvVariantGrams(item);
+  const cost = csvCostPerItem(item);
   const sku = trimStr(item.sku);
-  const cost = Number(item.cost);
+
   /** @type {Record<string, unknown>} */
   const o = {
     tracked: true,
     requiresShipping: true,
   };
   if (sku) o.sku = sku;
-  if (Number.isFinite(cost) && cost > 0) {
+  if (Number.isFinite(cost) && cost >= 0) {
     o.cost = cost;
   }
-
-  const cc = normalizeCountryCodeForShopify(item.originCountry);
-  if (cc) o.countryCodeOfOrigin = cc;
-
-  const w = Number(item.weight);
-  if (Number.isFinite(w) && w > 0) {
-    o.measurement = {
-      weight: {
-        value: w,
-        unit: 'KILOGRAMS',
-      },
-    };
-  }
-
+  o.measurement = {
+    weight: {
+      value: grams,
+      unit: 'GRAMS',
+    },
+  };
   return o;
+}
+
+/**
+ * Variant-level fields from CSV: price, barcode, taxable TRUE, inventory policy deny.
+ * Caller merges `id` and may merge compareAt later.
+ * @param {Record<string, unknown>} item
+ * @param {{ base: string, suffix4: string }} parts
+ */
+function buildCsvVariantBulkFields(item, parts) {
+  return {
+    price: csvVariantPriceString(item),
+    barcode: buildCsvBarcode(item, parts),
+    taxable: true,
+    inventoryPolicy: 'DENY',
+    inventoryItem: buildVariantInventoryItemInput(item),
+  };
 }
 
 /**
@@ -163,49 +246,8 @@ function validateItemPayload(item) {
   return null;
 }
 
-function buildTitle(item) {
-  const t = `${trimStr(item.crystalType)} ${trimStr(item.productType)}`.replace(/\s+/g, ' ').trim();
-  return t || 'Inventory item';
-}
-
-function buildTags(item) {
-  const tags = new Set();
-  const add = (v) => {
-    const s = trimStr(v);
-    if (s) tags.add(s);
-  };
-  add(item.crystalType);
-  add(item.productType);
-  add(item.originCountry);
-  add(item.pricingMode);
-  const cc = normalizeCountryCodeForShopify(item.originCountry);
-  if (cc) tags.add(`origin:${cc}`);
-  return Array.from(tags);
-}
-
-function shopifyStatus(item) {
-  const s = (trimStr(item.status) || 'active').toLowerCase();
-  return s === 'draft' ? 'DRAFT' : 'ACTIVE';
-}
-
 function formatMoneyAmount(n) {
-  const x = Number(n);
-  if (!Number.isFinite(x)) return '0.00';
-  return x.toFixed(2);
-}
-
-/**
- * @param {Record<string, unknown>} item
- */
-function buildProductCreateInput(item) {
-  return {
-    title: buildTitle(item),
-    descriptionHtml: buildDescriptionHtml(item),
-    vendor: trimStr(item.vendor) || undefined,
-    productType: trimStr(item.productType) || undefined,
-    status: shopifyStatus(item),
-    tags: buildTags(item),
-  };
+  return csvVariantPriceString({ retailPrice: n });
 }
 
 function toLocationGid(raw) {
@@ -217,13 +259,21 @@ function toLocationGid(raw) {
 
 module.exports = {
   validateItemPayload,
-  buildTitle,
-  buildTags,
-  shopifyStatus,
-  formatMoneyAmount,
+  slugify,
+  computeCsvHandleParts,
+  buildCsvTitle,
+  buildCsvTagsString,
+  buildCsvTagsArray,
+  buildCsvBodyHtml,
+  csvVariantGrams,
+  csvCostPerItem,
+  buildCsvBarcode,
+  csvVariantPriceString,
+  csvVariantInventoryQty,
+  csvProductStatus,
   buildProductCreateInput,
-  buildDescriptionHtml,
   buildVariantInventoryItemInput,
-  normalizeCountryCodeForShopify,
+  buildCsvVariantBulkFields,
+  formatMoneyAmount,
   toLocationGid,
 };

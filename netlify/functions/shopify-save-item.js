@@ -1,15 +1,20 @@
 /**
  * Netlify Function: create one Shopify product from the inventory app's item JSON.
  *
+ * Field mapping is aligned to index.html `exportToCSV` parent row (CSV = source of truth).
+ *
  * Auth (Dev Dashboard — client credentials):
- *   SHOPIFY_STORE_DOMAIN
- *   SHOPIFY_CLIENT_ID
- *   SHOPIFY_CLIENT_SECRET
+ *   SHOPIFY_STORE_DOMAIN, SHOPIFY_CLIENT_ID, SHOPIFY_CLIENT_SECRET
  *
  * Inventory:
  *   SHOPIFY_LOCATION_ID   numeric or gid://shopify/Location/...
  *
  * Scopes (typical): write_products, read_products, write_inventory, read_inventory
+ *
+ * ---
+ * TODO (parity gap): CSV "Image Src" / "Image Alt Text" / extra image rows are not mirrored here yet.
+ * Shopify needs media create (e.g. productCreateMedia / staged uploads). Do not fake URLs.
+ * ---
  */
 
 const {
@@ -19,9 +24,10 @@ const {
 const {
   validateItemPayload,
   buildProductCreateInput,
-  formatMoneyAmount,
   toLocationGid,
-  buildVariantInventoryItemInput,
+  computeCsvHandleParts,
+  buildCsvVariantBulkFields,
+  csvVariantInventoryQty,
 } = require('./_shopifyItemMapper');
 
 const MUTATION_PRODUCT_CREATE = `#graphql
@@ -30,6 +36,7 @@ mutation ProductCreate($product: ProductCreateInput!) {
     product {
       id
       title
+      handle
       variants(first: 5) {
         nodes {
           id
@@ -56,10 +63,11 @@ mutation VariantsBulkUpdate($productId: ID!, $variants: [ProductVariantsBulkInpu
       id
       sku
       price
+      taxable
+      inventoryPolicy
       inventoryItem {
         id
         tracked
-        countryCodeOfOrigin
         unitCost {
           amount
         }
@@ -200,8 +208,12 @@ exports.handler = async (event) => {
   const { shopDomain, accessToken } = auth;
   const gql = (query, variables) => shopifyGraphqlWithToken(shopDomain, accessToken, query, variables);
 
+  /** Same default as CSV when this is the only row for that handle base in an export. */
+  const HANDLE_SEQ = 1;
+  const handleParts = computeCsvHandleParts(item, HANDLE_SEQ);
+
   try {
-    const productInput = buildProductCreateInput(item);
+    const productInput = buildProductCreateInput(item, HANDLE_SEQ);
     const createRes = await gql(MUTATION_PRODUCT_CREATE, { product: productInput });
     const createPayload = createRes?.data?.productCreate;
     const createErr = collectUserErrors(createPayload);
@@ -237,15 +249,11 @@ exports.handler = async (event) => {
     }
 
     const sku = String(item.sku || '').trim();
-    const price = formatMoneyAmount(item.retailPrice);
-    const barcode = String(item.barcode || item.sku || '').trim();
-
+    const csvBulk = buildCsvVariantBulkFields(item, handleParts);
     const variantPatch = {
       id: variant.id,
-      price,
-      inventoryItem: buildVariantInventoryItemInput(item),
+      ...csvBulk,
     };
-    if (barcode) variantPatch.barcode = barcode;
 
     const bulkRes = await gql(MUTATION_VARIANTS_BULK_UPDATE, {
       productId: product.id,
@@ -278,7 +286,7 @@ exports.handler = async (event) => {
       inventoryItemId = v2?.inventoryItem?.id;
     }
 
-    const qty = Math.max(0, parseInt(String(item.quantity ?? 0), 10) || 0);
+    const qty = csvVariantInventoryQty(item);
 
     if (inventoryItemId) {
       const invInput = {
@@ -321,9 +329,10 @@ exports.handler = async (event) => {
         productId: product.id,
         variantId: updated?.id || variant.id,
         inventoryItemId: inventoryItemId || null,
+        handle: product.handle || handleParts.handle,
         title: product.title,
         sku,
-        price,
+        price: csvBulk.price,
         quantitySet: qty,
         inventoryTracked: Boolean(updated?.inventoryItem?.tracked),
       }),
