@@ -114,18 +114,16 @@ mutation ProductCreateMedia($productId: ID!, $media: [CreateMediaInput!]!) {
 }
 `;
 
+/** Publication has no `channels` field in Admin API — use `catalog.title` for a human label when present. */
 const QUERY_PUBLICATIONS = `#graphql
 query PublicationsForPublish {
   publications(first: 50) {
     edges {
       node {
         id
-        channels(first: 5) {
-          edges {
-            node {
-              name
-            }
-          }
+        autoPublish
+        catalog {
+          title
         }
       }
     }
@@ -133,13 +131,14 @@ query PublicationsForPublish {
 }
 `;
 
-/** Fallback if channels sub-query is not permitted. */
+/** Fallback if `catalog { title }` is not permitted for this token/API version. */
 const QUERY_PUBLICATIONS_IDS_ONLY = `#graphql
 query PublicationsIdsOnly {
   publications(first: 50) {
     edges {
       node {
         id
+        autoPublish
       }
     }
   }
@@ -214,12 +213,12 @@ function publicationNodesFromQuery(data) {
 }
 
 function normalizePublicationNode(node) {
-  const chEdges = node.channels?.edges;
-  let label = null;
-  if (Array.isArray(chEdges) && chEdges[0]?.node?.name) {
-    label = chEdges.map((e) => e?.node?.name).filter(Boolean).join(', ');
-  }
-  return { id: node.id, name: label };
+  const t = node.catalog && typeof node.catalog.title === 'string' ? node.catalog.title.trim() : '';
+  return {
+    id: node.id,
+    name: t || null,
+    autoPublish: Boolean(node.autoPublish),
+  };
 }
 
 exports.handler = async (event) => {
@@ -467,40 +466,28 @@ exports.handler = async (event) => {
     }
 
     if (publicationNodes.length) {
-      const publicationInput = publicationNodes.map((n) => ({ publicationId: n.id }));
-      try {
-        const pubMut = await gql(MUTATION_PUBLISHABLE_PUBLISH, {
-          id: product.id,
-          publicationInput,
-        });
-        const pubPayload = pubMut?.data?.publishablePublish;
-        const pubErr = collectUserErrors(pubPayload);
-        if (pubErr) {
-          for (const n of publicationNodes) {
-            meta.publications.push({
-              id: n.id,
-              name: n.name || null,
-              published: false,
-              error: pubErr,
-            });
-          }
-        } else {
-          for (const n of publicationNodes) {
-            meta.publications.push({
-              id: n.id,
-              name: n.name || null,
-              published: true,
-            });
-          }
-        }
-      } catch (pme) {
-        const msg = pme && pme.message ? pme.message : String(pme);
-        for (const n of publicationNodes) {
+      for (const n of publicationNodes) {
+        try {
+          const pubMut = await gql(MUTATION_PUBLISHABLE_PUBLISH, {
+            id: product.id,
+            publicationInput: [{ publicationId: n.id }],
+          });
+          const pubPayload = pubMut?.data?.publishablePublish;
+          const pubErr = collectUserErrors(pubPayload);
           meta.publications.push({
             id: n.id,
             name: n.name || null,
+            autoPublish: n.autoPublish,
+            published: !pubErr,
+            error: pubErr || undefined,
+          });
+        } catch (pme) {
+          meta.publications.push({
+            id: n.id,
+            name: n.name || null,
+            autoPublish: n.autoPublish,
             published: false,
-            error: msg,
+            error: pme && pme.message ? pme.message : String(pme),
           });
         }
       }

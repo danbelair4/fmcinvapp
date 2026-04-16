@@ -368,17 +368,19 @@
   // ========= Photo Upload Function =========
   async function trySignAndUpload(file, objectName){
     try{
+      const ct = file.type;
       const r = await fetch(SIGN_FN, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ objectName, contentType: file.type || 'application/octet-stream' })
+        body: JSON.stringify({ objectName, contentType: ct })
       });
       if (!r.ok) return null;
       const j = await r.json();
       const uploadUrl = j && typeof j.uploadUrl === 'string' ? j.uploadUrl : '';
       const publicUrl = j && typeof j.publicUrl === 'string' ? j.publicUrl.trim() : '';
       if (!uploadUrl || !publicUrl || !/^https:\/\//i.test(publicUrl)) return null;
-      const put = await fetch(uploadUrl, { method:'PUT', headers:{'Content-Type': file.type||'application/octet-stream'}, body:file });
+      const putHeaders = ct ? { 'Content-Type': ct } : {};
+      const put = await fetch(uploadUrl, { method:'PUT', headers: putHeaders, body:file });
       if (!put.ok) return null;
       return { url: publicUrl };
     }catch{ return null; }
