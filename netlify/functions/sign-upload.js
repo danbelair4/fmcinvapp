@@ -4,16 +4,18 @@
  * Env:
  *   GCS_BUCKET          — bucket name (required)
  *   GCP_SA_KEY_JSON     — optional JSON string of a service account with storage write (recommended on Netlify)
- *   SIGN_UPLOAD_DEBUG=1 — optional: log non-secret diagnostics (no secrets, no signed URL)
+ *   SIGN_UPLOAD_DEBUG=1 — optional: log non-secret diagnostics (no secrets, no full signed URL)
  *
  * If GCP_SA_KEY_JSON is unset, falls back to keyFilename 'service-account.json' (local dev only).
  *
  * Success JSON: { uploadUrl, publicUrl }
  *
- * V4 write signing: when the client sends a non-empty contentType, it is embedded in the
- * signature — the browser PUT must send the same Content-Type string and no other signed headers.
- * When contentType is "" (empty string), contentType is omitted from signing so PUT must not
- * send a Content-Type header (matches File.type === "").
+ * V4 write: when JSON body contentType is a non-empty string, it is passed to getSignedUrl and
+ * appears in X-Goog-SignedHeaders — the browser PUT MUST include the same Content-Type value.
+ * When contentType is "", signing omits contentType — PUT must not send Content-Type.
+ *
+ * Bucket CORS must allow PUT and typically list Content-Type in allowed request headers so the
+ * browser is permitted to send it after preflight.
  */
 
 const { Storage } = require('@google-cloud/storage');
@@ -37,6 +39,16 @@ function debugLog(payload) {
     console.log('[sign-upload]', JSON.stringify({ ...payload, at: new Date().toISOString() }));
   } catch (_) {
     console.log('[sign-upload]', payload);
+  }
+}
+
+/** Extract X-Goog-SignedHeaders query value only (for logs; not the full URL). */
+function signedHeadersFromUrl(href) {
+  try {
+    const m = String(href).match(/[?&]X-Goog-SignedHeaders=([^&]+)/);
+    return m ? decodeURIComponent(m[1]) : '';
+  } catch {
+    return '';
   }
 }
 
@@ -107,13 +119,14 @@ exports.handler = async (event) => {
     return json(400, { error: 'Missing contentType (must be File.type string, possibly empty).' });
   }
 
+  const signWithContentType = contentType.length > 0;
   const hasKeyEnv = Boolean(process.env.GCP_SA_KEY_JSON && String(process.env.GCP_SA_KEY_JSON).trim());
   debugLog({
     phase: 'request',
     bucket: BUCKET,
     objectName,
     contentTypeLen: contentType.length,
-    signWithContentType: contentType.length > 0,
+    signWithContentType,
     credentialsSource: hasKeyEnv ? 'GCP_SA_KEY_JSON' : 'service-account.json',
   });
 
@@ -129,7 +142,7 @@ exports.handler = async (event) => {
     action: 'write',
     expires: Date.now() + 15 * 60 * 1000,
   };
-  if (contentType.length > 0) {
+  if (signWithContentType) {
     signOpts.contentType = contentType;
   }
 
@@ -139,15 +152,18 @@ exports.handler = async (event) => {
       .file(objectName)
       .getSignedUrl(signOpts);
 
-    const publicUrl = `https://storage.googleapis.com/${BUCKET}/${objectName}`;
-
+    const signedHeadersParam = signedHeadersFromUrl(uploadUrl);
     debugLog({
       phase: 'signed',
       bucket: BUCKET,
       objectName,
-      signWithContentType: contentType.length > 0,
+      signWithContentType,
+      signedHeadersParam,
+      signedUrlIncludesContentType: signedHeadersParam.toLowerCase().split(';').includes('content-type'),
       signOk: true,
     });
+
+    const publicUrl = `https://storage.googleapis.com/${BUCKET}/${objectName}`;
 
     return json(200, { uploadUrl, publicUrl });
   } catch (err) {

@@ -366,21 +366,56 @@
   const getSkuKeyFor  = (user) => `skuCounterGlobal:${user}`; // per-user counter key
 
   // ========= Photo Upload Function =========
+  function fmSignUploadDebug(){
+    try { return localStorage.getItem('FM_SIGN_UPLOAD_DEBUG') === '1'; } catch { return false; }
+  }
   async function trySignAndUpload(file, objectName){
     try{
-      const ct = file.type;
+      const ct = String(file.type ?? '');
+      const postPayload = { objectName, contentType: ct };
+      if (fmSignUploadDebug()) {
+        console.log('[FM upload] file.type', file.type, 'post contentType', ct, 'len', ct.length);
+      }
       const r = await fetch(SIGN_FN, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ objectName, contentType: ct })
+        body: JSON.stringify(postPayload)
       });
       if (!r.ok) return null;
       const j = await r.json();
       const uploadUrl = j && typeof j.uploadUrl === 'string' ? j.uploadUrl : '';
       const publicUrl = j && typeof j.publicUrl === 'string' ? j.publicUrl.trim() : '';
       if (!uploadUrl || !publicUrl || !/^https:\/\//i.test(publicUrl)) return null;
-      const putHeaders = ct ? { 'Content-Type': ct } : {};
-      const put = await fetch(uploadUrl, { method:'PUT', headers: putHeaders, body:file });
+      let needsContentType = false;
+      let signedHeadersParam = '';
+      try {
+        const u = new URL(uploadUrl);
+        signedHeadersParam = u.searchParams.get('X-Goog-SignedHeaders') || '';
+        if (!signedHeadersParam) {
+          const m = uploadUrl.match(/[?&]X-Goog-SignedHeaders=([^&]+)/i);
+          if (m) signedHeadersParam = decodeURIComponent(m[1]);
+        }
+        const parts = signedHeadersParam.toLowerCase().split(';').map(function(s){ return s.trim(); }).filter(Boolean);
+        needsContentType = parts.indexOf('content-type') !== -1;
+      } catch (e) {
+        if (fmSignUploadDebug()) console.warn('[FM upload] URL parse', e);
+        needsContentType = ct.length > 0;
+      }
+      if (fmSignUploadDebug()) {
+        console.log('[FM upload] X-Goog-SignedHeaders', signedHeadersParam, 'needsContentType', needsContentType);
+      }
+      if (needsContentType && ct.length === 0) {
+        if (fmSignUploadDebug()) console.warn('[FM upload] signed URL requires Content-Type but file.type is empty');
+        return null;
+      }
+      let putInit = { method: 'PUT', body: file };
+      if (needsContentType) {
+        putInit.headers = { 'Content-Type': ct };
+      }
+      if (fmSignUploadDebug()) {
+        console.log('[FM upload] PUT init has headers', !!putInit.headers, putInit.headers ? Object.keys(putInit.headers) : []);
+      }
+      const put = await fetch(uploadUrl, putInit);
       if (!put.ok) return null;
       return { url: publicUrl };
     }catch{ return null; }
