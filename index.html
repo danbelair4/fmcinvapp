@@ -54,12 +54,12 @@
   .tab-content.active{display:block}
   .main-content{padding:20px 20px 72px}
   .quick-stats{background:#f8f9fa;padding:15px;border-radius:10px;margin-bottom:20px;text-align:center;border-left:5px solid #667eea}
-  .photo-section{border:3px dashed #cbd5e0;border-radius:10px;padding:30px 20px;text-align:center;margin-bottom:20px;cursor:pointer;transition:all .3s ease}
+  .photo-section{border:3px dashed #cbd5e0;border-radius:10px;padding:22px 16px;text-align:center;margin-bottom:16px;cursor:pointer;transition:all .3s ease}
   .photo-section:hover{border-color:#667eea;background:#f7fafc}
   .photo-preview{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px;justify-content:center}
   .photo-thumbnail{width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid #e2e8f0}
-  .form-section{background:#f8f9fa;padding:20px;border-radius:10px;margin-bottom:20px;border-left:5px solid #667eea}
-  .form-group{margin-bottom:15px}
+  .form-section{background:#f8f9fa;padding:16px;border-radius:12px;margin-bottom:16px;border-left:5px solid #667eea}
+  .form-group{margin-bottom:12px}
   label{font-weight:600;margin-bottom:8px;color:#4a5568;display:block;font-size:16px}
   input,select,textarea{width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:8px;font-size:16px;transition:border-color .3s ease}
   input:focus,select:focus,textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
@@ -67,17 +67,17 @@
   .crystal-preview.show{display:block}
   .two-column{display:grid;grid-template-columns:1fr 1fr;gap:15px}
   .three-column{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px}
-  .price-display{background:#fff;padding:15px;border-radius:8px;text-align:center;border:2px solid #38b2ac;margin-top:15px}
+  .price-display{background:#fff;padding:12px;border-radius:10px;text-align:center;border:2px solid #38b2ac;margin-top:12px}
   .price-large{font-size:1.8rem;font-weight:700;color:#2d3748}
   .price-input{width:120px;text-align:center;border:none;background:transparent;font-size:1.8rem;font-weight:700}
-  .sku-display{background:#fff3cd;padding:15px;border-radius:8px;text-align:center;margin-top:15px;border:2px solid #ffc107}
+  .sku-display{background:#fff3cd;padding:12px;border-radius:10px;text-align:center;margin-top:12px;border:2px solid #ffc107}
   .barcode{font-family:'Courier New',monospace;font-size:14px;font-weight:700;margin:8px 0}
   .recent-item{background:#fff;border-radius:8px;padding:12px;margin-bottom:10px;border-left:4px solid #667eea}
   .recent-item h4{color:#2d3748;margin-bottom:8px}
   .recent-meta{font-size:14px;color:#718096}
-  .button{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text);font-weight:600;cursor:pointer}
+  .button{padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text);font-weight:600;cursor:pointer}
   .button:hover{background:#f7f7f7}
-  .button-secondary{background:#f9fafb}
+  .button-secondary{background:#fff;color:var(--muted);border-color:var(--border)}
   .button-success{background:var(--accent);color:#fff;border-color:var(--accent)}
   @media (max-width:480px){.two-column,.three-column{grid-template-columns:1fr}}
   .app-header{position:relative;height:125px;background:#fff;border-bottom:1px solid #eee;}
@@ -93,7 +93,7 @@
   input,select,textarea{background:#fff;border:1px solid var(--border);border-radius:10px}
   input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(216,160,146,.25)}
   .button,.button-success{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}
-  .button-secondary{background:#fff;color:var(--text)}
+  .button-secondary{background:#fff!important;color:var(--muted)!important;border-color:var(--border)!important}
   .bottom-tab{background:#fff;border:1px solid var(--border);color:var(--muted)}
   .bottom-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
   .photo-section{border:2px dashed var(--border)!important;background:transparent}
@@ -122,22 +122,17 @@
   .session-card{background:#fcfaf8;border-left-color:var(--accent)}
   .session-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
   .session-user-pill{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text)}
+  .session-inline-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .section-divider{border-top:1px solid var(--border);margin:18px 0 16px;padding-top:14px}
   .crystal-picker-section-label{padding:12px 10px 6px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
   .crystal-picker-empty{padding:16px;text-align:center;color:var(--muted)}
 
   .crystal-type-row{display:flex;gap:8px;align-items:center}
-  .crystal-type-row #crystal-type{flex:1;cursor:pointer;background:#fafafa}
+  .crystal-type-row #crystal-type{flex:1;background:#fff}
   .crystal-type-clear{width:44px;height:44px;padding:0;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:1.35rem;line-height:1;color:var(--muted);font-weight:700;cursor:pointer}
-  .crystal-picker{position:fixed;inset:0;z-index:1000;display:none;align-items:flex-end;justify-content:center}
-  .crystal-picker.show{display:flex}
-  .crystal-picker-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.4)}
-  .crystal-picker-sheet{position:relative;width:100%;max-width:500px;max-height:min(78vh,640px);background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.15);display:flex;flex-direction:column;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0)}
-  .crystal-picker-head{padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
-  .crystal-picker-head h3{margin:0 0 10px;font-size:1.05rem}
-  .crystal-picker-close{float:right;margin:0 0 8px 8px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;font-weight:600;cursor:pointer}
-  .crystal-picker-search{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;font-size:16px}
-  .crystal-picker-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 8px 14px}
+  .crystal-picker{position:fixed;z-index:1000;display:none;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.16);overflow:hidden}
+  .crystal-picker.show{display:block}
+  .crystal-picker-list{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 8px 10px;max-height:inherit}
   .crystal-picker-item{display:block;width:100%;text-align:left;padding:12px 10px;margin:2px 0;border:0;border-radius:10px;background:#f9fafb;font-size:16px;font-weight:500;cursor:pointer;color:var(--text)}
   .crystal-picker-item:active{background:#ede9e6}
 
@@ -170,26 +165,20 @@
     </div>
   </div>
 
-  <!-- Crystal picker: searchable sheet (no native datalist) -->
+  <!-- Crystal picker: floating autocomplete panel -->
   <div id="crystal-picker" class="crystal-picker" aria-hidden="true">
-    <div class="crystal-picker-backdrop" id="crystal-picker-backdrop"></div>
-    <div class="crystal-picker-sheet" role="dialog" aria-modal="true" aria-labelledby="crystal-picker-title">
-      <div class="crystal-picker-head">
-        <button type="button" class="crystal-picker-close" id="crystal-picker-close">Close</button>
-        <h3 id="crystal-picker-title">Crystal type</h3>
-        <input type="search" id="crystal-picker-search" class="crystal-picker-search" placeholder="Search crystals…" autocomplete="off" autocorrect="off" spellcheck="false">
-      </div>
-      <div id="crystal-picker-list" class="crystal-picker-list"></div>
-    </div>
+    <div id="crystal-picker-list" class="crystal-picker-list" role="listbox" aria-label="Crystal suggestions"></div>
   </div>
 
         <div class="form-section session-card">
           <div class="session-header">
             <div>
               <div class="section-title">Batch Session</div>
-              <div class="section-note">These fields stay filled after each inventory add so batch entry is faster.</div>
+              <div class="section-note">Use Batch Mode when you want vendor settings to stay filled across repeated entries.</div>
             </div>
-            <div id="session-user-pill" class="session-user-pill">User: Allie</div>
+            <div class="session-inline-tools">
+              <div id="session-user-pill" class="session-user-pill">User: Allie</div>
+            </div>
           </div>
 
           <div class="two-column">
@@ -225,6 +214,14 @@
           </div>
 
           <div class="form-group">
+            <label>Batch Mode</label>
+            <div class="seg" id="batch-mode" role="group" aria-label="Batch mode">
+              <button type="button" data-batch="on" class="seg-btn is-active">On</button>
+              <button type="button" data-batch="off" class="seg-btn">Off</button>
+            </div>
+          </div>
+
+          <div class="form-group">
             <label>Pricing Mode</label>
             <div class="seg" id="pricing-mode">
               <button type="button" class="seg-btn is-active" data-mode="per_kilo">Per Kilo</button>
@@ -256,7 +253,7 @@
           <div class="form-group">
             <label for="crystal-type">Crystal Type *</label>
             <div class="crystal-type-row">
-              <input type="text" id="crystal-type" readonly inputmode="none" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="Tap to choose crystal…" aria-haspopup="dialog" aria-expanded="false">
+              <input type="text" id="crystal-type" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" placeholder="Type crystal name…" aria-haspopup="listbox" aria-expanded="false">
               <button type="button" id="crystal-type-clear" class="crystal-type-clear" title="Clear">×</button>
             </div>
           </div>
@@ -398,6 +395,18 @@
     return (document.querySelector('#publish-status .is-active')?.dataset.status || 'active').trim();
   }
 
+  function isBatchModeEnabled(){
+    return (document.querySelector('#batch-mode .is-active')?.dataset.batch || 'on') === 'on';
+  }
+
+  function setBatchMode(enabled){
+    const mode = enabled ? 'on' : 'off';
+    document.querySelectorAll('#batch-mode .seg-btn').forEach((b) => b.classList.remove('is-active'));
+    document.querySelector(`#batch-mode .seg-btn[data-batch="${mode}"]`)?.classList.add('is-active');
+    try { localStorage.setItem('batchModeEnabled', mode); } catch (_) {}
+    renderSessionContext();
+  }
+
   function renderSessionContext(){
     const pill = document.getElementById('session-user-pill');
     if (pill) pill.textContent = `User: ${currentUser || 'Unassigned'}`;
@@ -407,13 +416,15 @@
     const origin = (document.getElementById('origin-country')?.value || '').trim() || 'Not set';
     const markup = (document.getElementById('markup')?.value || '').trim() || '3';
     const status = getCurrentPublishStatusValue();
+    const batchMode = isBatchModeEnabled() ? 'On' : 'Off';
     summary.innerHTML =
       `<div class="section-note" style="margin:0">` +
       `<strong>User:</strong> ${currentUser || 'Unassigned'} | ` +
       `<strong>Vendor:</strong> ${vendor} | ` +
       `<strong>Origin:</strong> ${origin} | ` +
       `<strong>Markup:</strong> ${markup}x | ` +
-      `<strong>Status:</strong> ${status}` +
+      `<strong>Status:</strong> ${status} | ` +
+      `<strong>Batch:</strong> ${batchMode}` +
       `</div>`;
   }
 
@@ -873,12 +884,30 @@
 
   const CRYSTAL_NAMES_ALL = Object.keys(crystalDatabase).sort((a, b) => a.localeCompare(b));
 
-  function syncCrystalPickerHeight(){
-    const sheet = document.querySelector('.crystal-picker-sheet');
-    if (!sheet) return;
-    const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    const maxHeight = Math.min(Math.round(viewportHeight * 0.78), 640);
-    sheet.style.maxHeight = `${Math.max(360, maxHeight)}px`;
+  function positionCrystalPicker(){
+    const root = document.getElementById('crystal-picker');
+    const field = document.getElementById('crystal-type');
+    if (!root || !field) return;
+    const rect = field.getBoundingClientRect();
+    const vv = window.visualViewport;
+    const viewportHeight = vv ? vv.height : window.innerHeight;
+    const viewportWidth = vv ? vv.width : window.innerWidth;
+    const offsetTop = vv ? vv.offsetTop : 0;
+    const offsetLeft = vv ? vv.offsetLeft : 0;
+    const margin = 8;
+    const spaceBelow = (offsetTop + viewportHeight) - rect.bottom - margin;
+    const spaceAbove = rect.top - offsetTop - margin;
+    const placeBelow = spaceBelow >= 150 || spaceBelow >= spaceAbove;
+    const maxHeight = Math.max(140, Math.min(300, placeBelow ? spaceBelow - 6 : spaceAbove - 6));
+    const panelWidth = Math.min(Math.max(rect.width, 220), viewportWidth - (margin * 2));
+    const left = Math.max(offsetLeft + margin, Math.min(rect.left + offsetLeft, offsetLeft + viewportWidth - panelWidth - margin));
+    const top = placeBelow
+      ? rect.bottom + offsetTop + 6
+      : Math.max(offsetTop + margin, rect.top + offsetTop - maxHeight - 6);
+    root.style.left = `${left}px`;
+    root.style.top = `${top}px`;
+    root.style.width = `${panelWidth}px`;
+    root.style.maxHeight = `${maxHeight}px`;
   }
 
   function appendCrystalPickerSection(frag, label, names){
@@ -899,16 +928,13 @@
 
   function openCrystalPicker(){
     const root = document.getElementById('crystal-picker');
-    const search = document.getElementById('crystal-picker-search');
     const field = document.getElementById('crystal-type');
-    if (!root || !search) return;
+    if (!root || !field) return;
     root.classList.add('show');
     root.setAttribute('aria-hidden', 'false');
     if (field) field.setAttribute('aria-expanded', 'true');
-    syncCrystalPickerHeight();
-    search.value = '';
-    renderCrystalPickerList('');
-    requestAnimationFrame(() => { try { search.focus(); } catch (_) {} });
+    positionCrystalPicker();
+    renderCrystalPickerList(field.value || '');
   }
 
   function closeCrystalPicker(){
@@ -961,32 +987,54 @@
   function setupCrystalPickerUI(){
     const field = document.getElementById('crystal-type');
     const clr = document.getElementById('crystal-type-clear');
-    const backdrop = document.getElementById('crystal-picker-backdrop');
-    const closeBtn = document.getElementById('crystal-picker-close');
-    const search = document.getElementById('crystal-picker-search');
     if (field){
-      field.addEventListener('click', (e) => { e.preventDefault(); openCrystalPicker(); });
+      field.addEventListener('focus', () => openCrystalPicker());
+      field.addEventListener('click', () => openCrystalPicker());
+      field.addEventListener('input', () => {
+        openCrystalPicker();
+        updateCrystalPreview();
+      });
+      field.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeCrystalPicker();
+          return;
+        }
+        if (e.key === 'Enter') {
+          const first = document.querySelector('#crystal-picker-list .crystal-picker-item');
+          if (first) {
+            e.preventDefault();
+            first.click();
+          }
+        }
+      });
     }
     clr?.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       if (field) field.value = '';
       updateCrystalPreview();
+      openCrystalPicker();
     });
-    backdrop?.addEventListener('click', () => closeCrystalPicker());
-    closeBtn?.addEventListener('click', () => closeCrystalPicker());
-    search?.addEventListener('input', () => renderCrystalPickerList(search.value));
-    if (!window.__crystalPickerEsc){
-      window.__crystalPickerEsc = true;
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && document.getElementById('crystal-picker')?.classList.contains('show')) closeCrystalPicker();
+    if (!window.__crystalPickerDocClose){
+      window.__crystalPickerDocClose = true;
+      document.addEventListener('pointerdown', (e) => {
+        const root = document.getElementById('crystal-picker');
+        const fieldEl = document.getElementById('crystal-type');
+        const clearEl = document.getElementById('crystal-type-clear');
+        if (!root || !root.classList.contains('show')) return;
+        const target = e.target;
+        if (root.contains(target) || fieldEl?.contains(target) || clearEl?.contains(target)) return;
+        closeCrystalPicker();
       });
     }
-    if (!window.__crystalPickerViewport && window.visualViewport){
+    if (!window.__crystalPickerViewport){
       window.__crystalPickerViewport = true;
-      window.visualViewport.addEventListener('resize', () => {
-        if (document.getElementById('crystal-picker')?.classList.contains('show')) syncCrystalPickerHeight();
-      });
+      const reposition = () => {
+        if (document.getElementById('crystal-picker')?.classList.contains('show')) positionCrystalPicker();
+      };
+      window.addEventListener('resize', reposition);
+      window.addEventListener('scroll', reposition, true);
+      if (window.visualViewport) window.visualViewport.addEventListener('resize', reposition);
     }
   }
 
@@ -1208,96 +1256,76 @@ function setupPhotoHandler() {
 
 
     // ========= Inventory =========
-  function addItem(){
-    const crystalType = (document.getElementById('crystal-type')?.value || '').trim();
-    const productType = document.getElementById('product-type')?.value || '';
-    const weightRaw = parseAmountInput(document.getElementById('weight'));
-    const cost = parseAmountInput(document.getElementById('cost'));
-    const retailPrice = parseAmountInput(document.getElementById('retail-price'));
-    const quantity = parseInt(document.getElementById('quantity')?.value || '1', 10) || 1;
-    const pricingMode = getPricingMode();
-    const weightKg = pricingMode === 'per_kilo' ? weightRaw : 0;
+  function getCurrentFormManualSku(){
+    return document.getElementById('manual-sku')?.value?.trim() || '';
+  }
 
-    const needWeight = pricingMode === 'per_kilo' && (!Number.isFinite(weightRaw) || weightRaw <= 0);
-    if (!crystalType || !productType || !Number.isFinite(cost) || cost <= 0 || needWeight) {
-      alert("Please fill in crystal type, product type, and cost" + (pricingMode === 'per_kilo' ? ", and a positive weight (kg)." : "."));
+  function normalizePublishStatusForItem(){
+    return getCurrentPublishStatusValue() || 'active';
+  }
+
+  function applySkuCounterAfterLocalSave(item, manualSku){
+    const skuKey = getSkuKeyFor(currentUser);
+    const base = getSkuBaseFor(currentUser);
+    const current = parseInt(localStorage.getItem(skuKey) || base, 10);
+    if (manualSku) {
+      const manualNum = parseInt(manualSku, 10);
+      if (!isNaN(manualNum) && manualNum > current) {
+        localStorage.setItem(skuKey, String(manualNum));
+      }
       return;
     }
-
-    const crystal = crystalDatabase[crystalType] || {};
-
-    // CHECK FOR MANUAL SKU OVERRIDE
-    const manualSku = document.getElementById('manual-sku')?.value?.trim();
-    let sku;
-
-    if (manualSku) {
-      // Use manual SKU
-      sku = manualSku;
-      
-      // ALSO update the counter if the manual SKU is numeric and higher
-      const manualNum = parseInt(manualSku, 10);
-      if (!isNaN(manualNum)) {
-        const skuKey = getSkuKeyFor(currentUser);
-        const current = parseInt(localStorage.getItem(skuKey) || getSkuBaseFor(currentUser), 10);
-        // Only update if manual number is higher than current counter
-        if (manualNum > current) {
-          localStorage.setItem(skuKey, String(manualNum));
-        }
-      }
-    } else {
-      // Auto-generate SKU and increment counter
-      const skuKey = getSkuKeyFor(currentUser);
-      const skuBase = getSkuBaseFor(currentUser);
-      let current = parseInt(localStorage.getItem(skuKey) || skuBase, 10);
-      sku = String(current + 1).padStart(6, '0');
-      localStorage.setItem(skuKey, String(current + 1));
+    const itemNum = parseInt(String(item && item.sku || ''), 10);
+    if (!isNaN(itemNum) && itemNum > current) {
+      localStorage.setItem(skuKey, String(itemNum));
     }
+  }
 
-    const item = {
-      id: Date.now(),
-      sku, crystalType, productType, weight: weightKg, cost, pricingMode,
-      status: (document.querySelector('#publish-status .is-active')?.dataset.status) || 'active',
-      retailPrice: Math.round(Number(retailPrice || 0)),
-      quantity: quantity,
-      originCountry: document.getElementById('origin-country').value,
-      vendor: document.getElementById('vendor').value,
-      intentions: crystal.intentions||'', description: crystal.description||'',
-      category: crystal.category||'', chakra: crystal.chakra||'', hardness: crystal.hardness||'',
-      photos: sanitizePhotosForPersist(currentPhotos.slice()),
-      user: currentUser,
-      dateAdded: new Date().toISOString(),
-      barcode: `${sku}`
-    };
-
+  function persistItemLocally(item, options = {}){
+    const manualSku = options.manualSku || '';
+    const fingerprint = JSON.stringify([item && item.sku, item && item.crystalType, item && item.productType, item && item.dateAdded]);
+    if (!persistItemLocally._lastFingerprint) persistItemLocally._lastFingerprint = '';
+    if (persistItemLocally._lastFingerprint === fingerprint) {
+      return { ok: true, skipped: true };
+    }
     inventory.push(item);
     stripDataPhotosFromInventoryInPlace();
     try {
       localStorage.setItem('gemShowInventory', JSON.stringify(inventory));
-      rememberRecentCrystal(crystalType);
+      rememberRecentCrystal(item.crystalType);
+      applySkuCounterAfterLocalSave(item, manualSku);
+      persistItemLocally._lastFingerprint = fingerprint;
+      return { ok: true, skipped: false };
     } catch (err) {
       inventory.pop();
-      alert('Could not save inventory (storage may be full). Camera/library previews are not kept on the phone—only uploaded https links are stored.\n\nTry: Export → clear old test items, or remove photos before add.\n\n' + (err && err.message ? err.message : String(err)));
-      return;
-    }
-
-    alert(`${crystalType} ${productType} added successfully!`);
-    
-    const manualEl = document.getElementById('manual-sku');
-    if (manualEl) manualEl.value = '';
-    
-    try {
-      clearForm();
-      displayRecentItems();
-      updateStats();
-      saveInventory();
-    } catch (err2) {
-      console.error(err2);
-      alert('Item was saved, but refreshing the form failed. Try reloading the page.\n' + (err2 && err2.message ? err2.message : String(err2)));
+      return { ok: false, error: err && err.message ? err.message : String(err) };
     }
   }
-  window.addItem = addItem;
 
-  function buildCurrentItemPayloadForShopify(){
+  function clearSessionFieldsForNextItem(){
+    const vendorEl = document.getElementById('vendor');
+    const originEl = document.getElementById('origin-country');
+    const markupEl = document.getElementById('markup');
+    if (vendorEl) vendorEl.value = '';
+    if (originEl) originEl.value = '';
+    if (markupEl) markupEl.value = '3';
+    document.querySelectorAll('#publish-status .seg-btn').forEach((b) => b.classList.remove('is-active'));
+    document.querySelector('#publish-status .seg-btn[data-status="active"]')?.classList.add('is-active');
+  }
+
+  function prepareNextItemAfterSave(){
+    clearForm();
+    if (!isBatchModeEnabled()) {
+      clearSessionFieldsForNextItem();
+      if (typeof calculatePrice === 'function') calculatePrice();
+    }
+    renderSessionContext();
+    displayRecentItems();
+    updateStats();
+    saveInventory();
+  }
+
+  function buildCurrentItemData(options = {}){
     const crystalType = (document.getElementById('crystal-type')?.value || '').trim();
     const productType = document.getElementById('product-type')?.value || '';
     const weightRaw = parseAmountInput(document.getElementById('weight'));
@@ -1313,8 +1341,12 @@ function setupPhotoHandler() {
       return null;
     }
 
-    const crystal = crystalDatabase[crystalType] || {};
-    const manualSku = document.getElementById('manual-sku')?.value?.trim();
+    const crystal = crystalDatabase[crystalType];
+    if (!crystal) {
+      alert('Choose a crystal from the suggested list so the item uses the existing crystal catalog.');
+      return null;
+    }
+    const manualSku = getCurrentFormManualSku();
     let sku;
     if (manualSku) sku = manualSku;
     else sku = (document.getElementById('generated-sku')?.textContent || '').trim();
@@ -1328,8 +1360,8 @@ function setupPhotoHandler() {
     const previewOnlyCount = (Array.isArray(currentPhotos) ? currentPhotos : []).filter(function(p){
       return p && p.localPreviewOnly;
     }).length;
-    console.log('[shopify-save] sanitized photo payload', sanitizedPhotos);
-    if ((Array.isArray(currentPhotos) ? currentPhotos.length : 0) > 0 && validPhotoUrls.length === 0) {
+    if (options.forShopify) console.log('[shopify-save] sanitized photo payload', sanitizedPhotos);
+    if (options.forShopify && (Array.isArray(currentPhotos) ? currentPhotos.length : 0) > 0 && validPhotoUrls.length === 0) {
       alert('Photo upload failed. Preview exists locally, but no public uploaded image URL is available for Shopify.');
       console.warn('[shopify-save] blocked because only local previews exist', {
         previewCount: currentPhotos.length,
@@ -1364,8 +1396,34 @@ function setupPhotoHandler() {
     };
   }
 
+  function addItem(){
+    const manualSku = getCurrentFormManualSku();
+    const item = buildCurrentItemData({ forShopify: false });
+    if (!item) return;
+    const saveResult = persistItemLocally(item, { manualSku });
+    if (!saveResult.ok) {
+      alert('Could not save inventory (storage may be full). Camera/library previews are not kept on the phone—only uploaded https links are stored.\n\nTry: Export → clear old test items, or remove photos before add.\n\n' + saveResult.error);
+      return;
+    }
+
+    alert(`${item.crystalType} ${item.productType} added successfully!`);
+
+    try {
+      prepareNextItemAfterSave();
+    } catch (err2) {
+      console.error(err2);
+      alert('Item was saved, but refreshing the form failed. Try reloading the page.\n' + (err2 && err2.message ? err2.message : String(err2)));
+    }
+  }
+  window.addItem = addItem;
+
+  function buildCurrentItemPayloadForShopify(){
+    return buildCurrentItemData({ forShopify: true });
+  }
+
   async function saveItemToShopify(){
     const btn = document.getElementById('btn-shopify');
+    const manualSku = getCurrentFormManualSku();
     const item = buildCurrentItemPayloadForShopify();
     if (!item) return;
     if (btn){ btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
@@ -1408,7 +1466,13 @@ function setupPhotoHandler() {
         if (pubErrors.length) okMsg += '\nPublication errors: ' + pubErrors.join(' | ');
       }
       if (data.publishQueryError) okMsg += '\n\nPublication query: ' + data.publishQueryError;
+      const localSave = persistItemLocally(item, { manualSku });
+      if (!localSave.ok) {
+        alert(okMsg + '\n\nLocal inventory warning: ' + localSave.error + '\n\nCSV and label export were not updated yet.');
+        return;
+      }
       alert(okMsg);
+      prepareNextItemAfterSave();
     } catch (e) {
       alert('Shopify save failed (network or server).\n\n' + (e && e.message ? e.message : String(e)));
     } finally {
@@ -1856,6 +1920,10 @@ function clearAllData(){
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) currentUser = storedUser;
     }catch(_){}
+    try{
+      const batchPref = localStorage.getItem('batchModeEnabled');
+      if (batchPref) setBatchMode(batchPref === 'on');
+    }catch(_){}
 
     if (!currentUser) showUserPicker();
     if (typeof generateSKU === 'function') generateSKU();
@@ -1899,6 +1967,7 @@ function showUserPicker(){
     m.classList.remove('show');
     if (typeof generateSKU === 'function') generateSKU();
     updateStats();
+    renderSessionContext();
   };
   m.classList.add('show');
 }
@@ -2037,6 +2106,10 @@ updatePricingLabels();
     el?.addEventListener('input', renderSessionContext);
   });
   $('markup')?.addEventListener('change', renderSessionContext);
+  $('batch-mode')?.addEventListener('click', (e) => {
+    const b = e.target.closest('.seg-btn'); if(!b) return;
+    setBatchMode(b.dataset.batch === 'on');
+  });
 
 
 
