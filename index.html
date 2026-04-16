@@ -446,12 +446,40 @@
   }
 
   .photo-card {
+    position: relative;
     width: 92px;
     padding: 8px;
     border-radius: 16px;
     background: #fff;
     border: 1px solid var(--border-soft);
     box-shadow: var(--shadow-sm);
+  }
+
+  .photo-remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(43, 34, 31, 0.82);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(43, 34, 31, 0.18);
+  }
+
+  .photo-remove-btn:hover {
+    background: rgba(28, 21, 19, 0.92);
+  }
+
+  .photo-remove-btn:active {
+    transform: scale(0.96);
   }
 
   .photo-card--uploaded {
@@ -2813,9 +2841,39 @@ function setupPhotoHandler() {
   const preview  = document.getElementById('photo-preview');
   const titleEl  = document.getElementById('photo-section-title');
 
-  function appendPhotoPreview(photo){
+  function updatePhotoSectionState(){
+    const uploadedCount = currentPhotos.filter(function(p){ return isPublicPhotoUrl(p && p.url); }).length;
+    const failedCount = currentPhotos.length - uploadedCount;
+    if (!titleEl) return;
+    if (!currentPhotos.length) {
+      titleEl.textContent = 'Add Photos';
+      titleEl.style.color = '';
+      return;
+    }
+    if (failedCount > 0) {
+      titleEl.textContent = `${currentPhotos.length} Photo(s) Selected - ${failedCount} preview only`;
+      titleEl.style.color = '#b91c1c';
+      return;
+    }
+    titleEl.textContent = `${currentPhotos.length} Photo(s) Selected`;
+    titleEl.style.color = '';
+  }
+
+  function appendPhotoPreview(photo, index){
     const card = document.createElement('div');
     card.className = 'photo-card ' + (photo.uploaded ? 'photo-card--uploaded' : 'photo-card--local');
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'photo-remove-btn';
+    removeBtn.setAttribute('aria-label', `Remove ${photo.name || 'photo'}`);
+    removeBtn.title = 'Remove photo';
+    removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', function(){
+      currentPhotos.splice(index, 1);
+      renderPhotoPreviews();
+    });
+
     const img = document.createElement('img');
     img.src = photo.previewUrl || photo.url || '';
     img.className = 'photo-thumbnail';
@@ -2834,10 +2892,20 @@ function setupPhotoHandler() {
       ? 'Ready for save'
       : (photo.uploadError ? 'Upload failed: ' + photo.uploadError : 'Local preview only');
 
+    card.appendChild(removeBtn);
     card.appendChild(img);
     card.appendChild(badge);
     card.appendChild(meta);
     preview.appendChild(card);
+  }
+
+  function renderPhotoPreviews(){
+    if (!preview) return;
+    preview.innerHTML = '';
+    currentPhotos.forEach(function(photo, index){
+      appendPhotoPreview(photo, index);
+    });
+    updatePhotoSectionState();
   }
 
   async function processFiles(fileList){
@@ -2867,7 +2935,6 @@ function setupPhotoHandler() {
           localPreviewOnly: false,
         };
         currentPhotos.push(photo);
-        appendPhotoPreview(photo);
       } else {
         // Keep a visible local preview, but do not treat it as an uploaded photo.
         await new Promise((res) => {
@@ -2885,7 +2952,6 @@ function setupPhotoHandler() {
               uploadError: uploaded && uploaded.error ? uploaded.error : 'Upload failed.',
             };
             currentPhotos.push(photo);
-            appendPhotoPreview(photo);
             res();
           };
           reader.readAsDataURL(f);
@@ -2893,19 +2959,14 @@ function setupPhotoHandler() {
       }
     }
 
-    const uploadedCount = currentPhotos.filter(function(p){ return isPublicPhotoUrl(p && p.url); }).length;
-    const failedCount = currentPhotos.length - uploadedCount;
+    renderPhotoPreviews();
+    const failedCount = currentPhotos.filter(function(p){ return !(p && isPublicPhotoUrl(p.url)); }).length;
     console.log('[photo-upload] currentPhotos after processing', summarizePhotoStateForLog(currentPhotos));
     if (failedCount > 0) {
-      titleEl.textContent = `${currentPhotos.length} Photo(s) Selected - ${failedCount} preview only`;
-      titleEl.style.color = '#b91c1c';
       alert(
         `Photo upload failed for ${failedCount} file(s).\n\n` +
         `A local preview is shown, but no public uploaded image URL is available for Shopify or CSV for those file(s).`
       );
-    } else {
-      titleEl.textContent = `${currentPhotos.length} Photo(s) Selected`;
-      titleEl.style.color = '';
     }
   }
 
