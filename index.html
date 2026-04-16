@@ -6,136 +6,1223 @@
 <title>Feather Moon Crystals Inventory</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23d8a092'/%3E%3Cpath fill='%23fbf7f4' d='M16 8a8 8 0 1 1 0 16 10 10 0 1 0 0-16z'/%3E%3C/svg%3E" type="image/svg+xml">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  :root{--bg-1:#fbf7f4;
-        --text:#1f2a37;
-        --muted:#6b7280;
-        --accent:#d8a092;
-        --border:#e8e1db}
+  :root {
+    --bg-1: #fbf7f4;
+    --bg-2: #f6f0eb;
+    --surface: #ffffff;
+    --surface-soft: #fcfaf8;
+    --surface-strong: #fffdfb;
+    --text: #1f2a37;
+    --text-soft: #4b5563;
+    --muted: #6b7280;
+    --accent: #d8a092;
+    --accent-strong: #c98a7b;
+    --accent-soft: rgba(216, 160, 146, 0.12);
+    --accent-ring: rgba(216, 160, 146, 0.22);
+    --border: #e8e1db;
+    --border-soft: #f1ebe6;
+    --success: #3d8b68;
+    --success-soft: rgba(61, 139, 104, 0.12);
+    --warning: #b7791f;
+    --warning-soft: rgba(183, 121, 31, 0.12);
+    --danger: #b45353;
+    --danger-soft: rgba(180, 83, 83, 0.12);
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --shadow-sm: 0 6px 18px rgba(68, 43, 34, 0.06);
+    --shadow-md: 0 14px 34px rgba(68, 43, 34, 0.10);
+    --shadow-lg: 0 20px 48px rgba(68, 43, 34, 0.14);
+    --transition: 0.2s ease;
+  }
 
+  body {
+    background: linear-gradient(180deg, #fdfaf7 0%, var(--bg-1) 100%) !important;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+  }
 
-.app-header{
-  display:flex; align-items:center; justify-content:space-between;
-  background:var(--bg-1); color:var(--text);
-  border-bottom:1px solid var(--border);
-  padding:12px 14px;
-}
+  .container {
+    max-width: 520px;
+    margin: 0 auto;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
 
-.header-left{display:flex; align-items:center; gap:10px; min-width:0;}
-.header-title{font-weight:700; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.header-select{height:34px; border:1px solid var(--border); border-radius:8px; padding:0 8px; background:#fff; color:var(--text);}
+  .header,
+  .tabs,
+  .tab,
+  .header-left,
+  .header-title,
+  .header-select,
+  .user-row,
+  .user-select,
+  .user-btn,
+  .quick-stats,
+  .btn-toggle,
+  .form-actions {
+    display: none;
+  }
 
-.bottom-nav{
-  position:sticky; bottom:0; left:0; right:0;
-  background:var(--bg-1); border-top:1px solid var(--border);
-  display:flex; gap:6px; justify-content:space-around; align-items:center;
-  height:56px; z-index:50;
-}
-.bottom-tab{
-  flex:1; height:40px; margin:0 6px; border-radius:10px; border:1px solid var(--border);
-  background:#fff; color:var(--muted); font-weight:600; cursor:pointer;
-}
-.bottom-tab.active{ color:#fff; background:var(--accent); border-color:var(--accent); }
+  .app-header {
+    position: relative;
+    height: 104px;
+    background: rgba(255, 253, 251, 0.9);
+    border-bottom: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
 
-.main-content{ padding-bottom:72px; } /* space for bottom nav */
+  .app-logo-slot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 82px;
+    max-width: min(90vw, 280px);
+    text-align: center;
+  }
 
-  body{ background:var(--bg-1) !important; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; padding:10px }
-  .container{max-width:500px;margin:0 auto;background:#fff;border-radius:15px;box-shadow:0 20px 40px rgba(0,0,0,.1);overflow:hidden}
-  .header{ display:none; }
-  .header h1{font-size:1.5rem;margin-bottom:5px}
-  .user-select{background:#2d3748;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .user-btn{padding:10px;border:2px solid transparent;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;cursor:pointer;text-align:center;font-size:14px;font-weight:600;transition:all .3s ease}
-  .user-btn.active{background:#667eea;border-color:#fff}
-  .tabs{display:flex;background:#2d3748}
-  .tab{flex:1;padding:15px;background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:14px;font-weight:600;transition:all .3s ease}
-  .tab.active{color:#fff;background:rgba(255,255,255,.1)}
-  .tab-content{display:none}
-  .tab-content.active{display:block}
-  .main-content{padding:20px 20px 72px}
-  .quick-stats{background:#f8f9fa;padding:15px;border-radius:10px;margin-bottom:20px;text-align:center;border-left:5px solid #667eea}
-  .photo-section{border:3px dashed #cbd5e0;border-radius:10px;padding:22px 16px;text-align:center;margin-bottom:16px;cursor:pointer;transition:all .3s ease}
-  .photo-section:hover{border-color:#667eea;background:#f7fafc}
-  .photo-preview{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px;justify-content:center}
-  .photo-thumbnail{width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid #e2e8f0}
-  .form-section{background:#f8f9fa;padding:16px;border-radius:12px;margin-bottom:16px;border-left:5px solid #667eea}
-  .form-group{margin-bottom:12px}
-  label{font-weight:600;margin-bottom:8px;color:#4a5568;display:block;font-size:16px}
-  input,select,textarea{width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:8px;font-size:16px;transition:border-color .3s ease}
-  input:focus,select:focus,textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
-  .crystal-preview{background:#e6fffa;padding:15px;border-radius:8px;margin-top:10px;display:none}
-  .crystal-preview.show{display:block}
-  .two-column{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-  .three-column{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px}
-  .price-display{background:#fff;padding:12px;border-radius:10px;text-align:center;border:2px solid #38b2ac;margin-top:12px}
-  .price-large{font-size:1.8rem;font-weight:700;color:#2d3748}
-  .price-input{width:120px;text-align:center;border:none;background:transparent;font-size:1.8rem;font-weight:700}
-  .sku-display{background:#fff3cd;padding:12px;border-radius:10px;text-align:center;margin-top:12px;border:2px solid #ffc107}
-  .barcode{font-family:'Courier New',monospace;font-size:14px;font-weight:700;margin:8px 0}
-  .recent-item{background:#fff;border-radius:8px;padding:12px;margin-bottom:10px;border-left:4px solid #667eea}
-  .recent-item h4{color:#2d3748;margin-bottom:8px}
-  .recent-meta{font-size:14px;color:#718096}
-  .button{padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text);font-weight:600;cursor:pointer}
-  .button:hover{background:#f7f7f7}
-  .button-secondary{background:#fff;color:var(--muted);border-color:var(--border)}
-  .button-success{background:var(--accent);color:#fff;border-color:var(--accent)}
-  @media (max-width:480px){.two-column,.three-column{grid-template-columns:1fr}}
-  .app-header{position:relative;height:125px;background:#fff;border-bottom:1px solid #eee;}
-  .app-logo-slot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-height:100px;max-width:min(92vw,280px);text-align:center;}
-  .app-logo-img{max-height:100px;width:auto;max-width:100%;display:block;margin:0 auto;object-fit:contain;}
-  .app-logo-svg{max-height:100px;width:100%;max-width:280px;display:none;margin:0 auto;}
-  .icon-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:1px solid #e5e7eb;border-radius:8px;background:#1f2937;color:#fff;}
-  .user-row{display:flex;justify-content:center;padding:10px;background:#f9fafb;border-bottom:1px solid #eee;}
-  .user-select{appearance:none;font-size:16px;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;background:#fff;}
-  .tagline{position:absolute;left:50%;top:calc(50% + 28px);transform:translateX(-50%);font-size:13px;color:#6b7280;}
-  body{background:var(--bg-1)!important;color:var(--text)}
-  .container,.form-section,.price-display,.sku-display,.quick-stats{background:#fff;border-color:var(--border)}
-  input,select,textarea{background:#fff;border:1px solid var(--border);border-radius:10px}
-  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(216,160,146,.25)}
-  .button,.button-success{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}
-  .button-secondary{background:#fff!important;color:var(--muted)!important;border-color:var(--border)!important}
-  .bottom-tab{background:#fff;border:1px solid var(--border);color:var(--muted)}
-  .bottom-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
-  .photo-section{border:2px dashed var(--border)!important;background:transparent}
-  .umodal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:999}
-  .umodal.show{display:flex}
-  .umodal-card{background:#fff;padding:18px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.2);width:min(420px,92vw);text-align:center}
-  .umodal-sub{color:#6b7280;margin:6px 0 12px}
-  .umodal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .umodal-btn{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text);font-weight:600;cursor:pointer}
-  .umodal-btn:hover{border-color:var(--accent);box-shadow:0 0 0 2px rgba(216,160,146,.2)}
-  .icon-link{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:var(--muted);font-weight:600;cursor:pointer}
-  .icon-link:hover{color:var(--accent)}
-  .umodal{display:none;pointer-events:none}
-  .umodal.show{display:flex;pointer-events:auto}
-  .btn-toggle{display:flex;gap:8px}
-  .btn-toggle button{padding:.55rem .9rem;border:1px solid var(--border);border-radius:8px;background:#fff;}
-  .btn-toggle button.is-active{background:var(--accent-1);color:#fff;border-color:var(--accent-1);}
-  .form-actions{display:flex;gap:12px;justify-content:center;margin:10px 0;flex-wrap:wrap}
-  .seg{display:flex;gap:8px}
-  .seg-btn{padding:.6rem 1rem;border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer}
-  .seg-btn.is-active{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .button-row {display:flex;gap:12px;flex-wrap: wrap;margin-top: 10px;}
-  .button-row .button {flex: 1;min-width: 160px;justify-content: center;}
-  .section-title{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:4px}
-  .section-note{font-size:13px;color:var(--muted);margin-bottom:14px}
-  .session-card{background:#fcfaf8;border-left-color:var(--accent)}
-  .session-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
-  .session-user-pill{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text)}
-  .session-inline-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .section-divider{border-top:1px solid var(--border);margin:18px 0 16px;padding-top:14px}
-  .crystal-picker-section-label{padding:12px 10px 6px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-  .crystal-picker-empty{padding:16px;text-align:center;color:var(--muted)}
+  .app-logo-img {
+    max-height: 82px;
+    width: auto;
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+  }
 
-  .crystal-type-row{display:flex;gap:8px;align-items:center}
-  .crystal-type-row #crystal-type{flex:1;background:#fff}
-  .crystal-type-clear{width:44px;height:44px;padding:0;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:1.35rem;line-height:1;color:var(--muted);font-weight:700;cursor:pointer}
-  .crystal-picker{position:fixed;z-index:1000;display:none;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.16);overflow:hidden}
-  .crystal-picker.show{display:block}
-  .crystal-picker-list{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 8px 10px;max-height:inherit}
-  .crystal-picker-item{display:block;width:100%;text-align:left;padding:12px 10px;margin:2px 0;border:0;border-radius:10px;background:#f9fafb;font-size:16px;font-weight:500;cursor:pointer;color:var(--text)}
-  .crystal-picker-item:active{background:#ede9e6}
+  .app-logo-svg {
+    max-height: 82px;
+    width: 100%;
+    max-width: 280px;
+    display: none;
+    margin: 0 auto;
+  }
 
+  .icon-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--text);
+    color: #fff;
+  }
+
+  .icon-link {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .icon-link:hover { color: var(--accent); }
+
+  .main-content {
+    padding: 16px 16px 88px;
+  }
+
+  .tab-content {
+    display: none;
+    animation: tab-fade 0.18s ease;
+  }
+
+  .tab-content.active { display: block; }
+
+  @keyframes tab-fade {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-section {
+    background: var(--surface);
+    padding: 18px 16px;
+    border-radius: var(--radius-lg);
+    margin: 14px 16px;
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .session-card {
+    background: linear-gradient(180deg, var(--surface-strong) 0%, var(--surface-soft) 100%);
+    border: 1px solid rgba(216, 160, 146, 0.26);
+    box-shadow: 0 10px 24px rgba(152, 109, 92, 0.08);
+  }
+
+  .current-item-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fffdfb 100%);
+  }
+
+  .recent-tab-card,
+  .export-tab-card {
+    background: linear-gradient(180deg, #fffefd 0%, #ffffff 100%);
+  }
+
+  .form-group { margin-bottom: 14px; }
+
+  label {
+    font-weight: 650;
+    margin-bottom: 7px;
+    color: var(--text-soft);
+    display: block;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+    color: var(--text);
+    background: #fff;
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  }
+
+  input::placeholder,
+  textarea::placeholder { color: #b3aaa3; }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+    background: #fffefd;
+  }
+
+  .two-column,
+  .three-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .three-column { grid-template-columns: 1fr 1fr 1fr; }
+
+  .section-title {
+    font-size: 1.08rem;
+    font-weight: 750;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .section-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .session-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+  }
+
+  .session-inline-tools {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .session-user-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 13px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-strong) 100%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    box-shadow: 0 8px 18px rgba(201, 138, 123, 0.22);
+  }
+
+  .session-summary-card {
+    background: var(--surface-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .summary-chip {
+    background: #fff;
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 10px 11px;
+    min-width: 0;
+  }
+
+  .summary-chip-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .summary-chip-value {
+    display: block;
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .seg {
+    display: inline-flex;
+    gap: 0;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fffaf7;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+  }
+
+  .seg-btn {
+    flex: 1;
+    padding: 11px 14px;
+    border: 0;
+    border-right: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-weight: 650;
+    font-size: 14px;
+    transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+  }
+
+  .seg-btn:last-child { border-right: 0; }
+
+  .seg-btn.is-active {
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-strong) 100%);
+    color: #fff;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.06);
+  }
+
+  .photo-section {
+    border: 1.5px dashed rgba(216, 160, 146, 0.45);
+    border-radius: var(--radius-lg);
+    padding: 20px 16px;
+    text-align: center;
+    margin-bottom: 18px;
+    background: linear-gradient(180deg, #fffdfb 0%, #fbf6f2 100%);
+    transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  }
+
+  .photo-section:hover,
+  .photo-section:focus-within {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, #fffdfb 0%, #f9f1eb 100%);
+    box-shadow: 0 10px 24px rgba(166, 119, 101, 0.08);
+  }
+
+  .photo-icon-wrap {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 10px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+  }
+
+  .photo-section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .photo-helper-text {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .photo-action-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .button-photo-action {
+    width: auto;
+    padding: 10px 14px;
+  }
+
+  .photo-status-copy {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
+    justify-content: center;
+  }
+
+  .photo-card {
+    width: 92px;
+    padding: 8px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .photo-card--uploaded {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfffd 100%);
+    border-color: rgba(61, 139, 104, 0.2);
+  }
+
+  .photo-card--local {
+    background: linear-gradient(180deg, #fffdfd 0%, #fcf5f5 100%);
+    border-color: rgba(180, 83, 83, 0.2);
+  }
+
+  .photo-thumbnail {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid var(--border-soft);
+    display: block;
+  }
+
+  .photo-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .photo-card--uploaded .photo-status-badge {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+
+  .photo-card--local .photo-status-badge {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+
+  .photo-card-meta {
+    margin-top: 6px;
+    font-size: 10px;
+    line-height: 1.35;
+    color: var(--muted);
+    word-break: break-word;
+  }
+
+  .crystal-type-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .crystal-type-row #crystal-type {
+    flex: 1;
+    background: #fff;
+  }
+
+  .crystal-type-clear {
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    font-size: 1.35rem;
+    line-height: 1;
+    color: var(--muted);
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition), color var(--transition);
+  }
+
+  .crystal-type-clear:hover {
+    border-color: var(--accent);
+    color: var(--accent-strong);
+    background: #fffaf7;
+  }
+
+  .crystal-picker {
+    position: fixed;
+    z-index: 1000;
+    display: none;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(232, 225, 219, 0.92);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .crystal-picker.show { display: block; }
+
+  .crystal-picker-list {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px;
+    max-height: inherit;
+  }
+
+  .crystal-picker-section-label {
+    padding: 10px 12px 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+  }
+
+  .crystal-picker-empty {
+    padding: 18px 14px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .crystal-picker-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 13px 12px;
+    margin: 3px 0;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text);
+    transition: background var(--transition), color var(--transition), transform var(--transition);
+  }
+
+  .crystal-picker-item:hover,
+  .crystal-picker-item:focus-visible {
+    background: var(--accent-soft);
+    outline: none;
+  }
+
+  .crystal-picker-item:active {
+    background: rgba(216, 160, 146, 0.2);
+    transform: scale(0.99);
+  }
+
+  .crystal-preview {
+    background: linear-gradient(180deg, #fff8f3 0%, #fff 100%);
+    padding: 14px;
+    border-radius: 14px;
+    margin-top: 10px;
+    display: none;
+    border: 1px solid rgba(216, 160, 146, 0.2);
+  }
+
+  .crystal-preview.show { display: block; }
+
+  .crystal-preview-title {
+    font-weight: 750;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .crystal-preview-copy {
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.5;
+  }
+
+  .section-divider {
+    border-top: 1px solid var(--border-soft);
+    margin: 18px 0 16px;
+    padding-top: 16px;
+  }
+
+  .price-display,
+  .sku-display {
+    padding: 15px 14px;
+    border-radius: 16px;
+    text-align: center;
+    margin-top: 12px;
+    border: 1px solid var(--border-soft);
+  }
+
+  .price-display {
+    background: linear-gradient(180deg, #fbfffd 0%, #ffffff 100%);
+    border-color: rgba(61, 139, 104, 0.22);
+  }
+
+  .sku-display {
+    background: linear-gradient(180deg, #fffdf9 0%, #ffffff 100%);
+    border-color: rgba(183, 121, 31, 0.22);
+  }
+
+  .display-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .price-large {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+  }
+
+  .price-input {
+    width: 120px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+    padding: 0;
+    box-shadow: none !important;
+  }
+
+  .price-input:focus { box-shadow: none !important; }
+
+  .profit-note,
+  .sku-helper,
+  .manual-sku-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .sku-main {
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .barcode {
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 9px 0;
+    color: var(--text-soft);
+    letter-spacing: 0.08em;
+  }
+
+  .manual-sku-wrap {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-soft);
+    text-align: left;
+  }
+
+  .manual-sku-label {
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+
+  .manual-sku-input {
+    font-family: "Courier New", monospace;
+    text-align: center;
+  }
+
+  .button-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .button {
+    flex: 1 1 calc(50% - 5px);
+    min-width: 140px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: #fff;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition), box-shadow var(--transition);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .button:hover {
+    background: #fffaf7;
+    border-color: rgba(216, 160, 146, 0.55);
+  }
+
+  .button:active { transform: scale(0.985); }
+
+  .button[disabled] {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+  }
+
+  .button-success {
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-strong) 100%);
+    color: #fff;
+    border-color: var(--accent-strong);
+    box-shadow: 0 10px 18px rgba(201, 138, 123, 0.18);
+  }
+
+  .button-success:hover {
+    background: linear-gradient(180deg, #dda89a 0%, #c98575 100%);
+    border-color: #c98575;
+  }
+
+  .button-secondary {
+    background: #fff;
+    color: var(--muted);
+    border-color: var(--border);
+  }
+
+  .button-shopify {
+    background: #fff8f3;
+    color: #8c5b49;
+    border-color: rgba(216, 160, 146, 0.42);
+  }
+
+  .button-shopify:hover {
+    background: #fff2ea;
+    color: #7a4f3f;
+    border-color: rgba(216, 160, 146, 0.7);
+  }
+
+  .button-tertiary {
+    background: #fff;
+    color: var(--muted);
+  }
+
+  .button-danger-muted {
+    background: #fff;
+    color: var(--danger);
+    border-color: rgba(180, 83, 83, 0.28);
+  }
+
+  .button-danger-muted:hover {
+    background: #fff6f6;
+    border-color: rgba(180, 83, 83, 0.48);
+  }
+
+  .button-primary-action {
+    flex-basis: 100%;
+    order: -3;
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .button-utility { order: -1; }
+
+  .recent-header,
+  .export-header {
+    margin-bottom: 14px;
+  }
+
+  .recent-list-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .recent-list-title {
+    font-size: 1rem;
+    font-weight: 750;
+    color: var(--text);
+  }
+
+  .recent-list-note {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 22px 14px;
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+    background: #fffaf7;
+  }
+
+  .recent-item {
+    background: linear-gradient(180deg, #fffefd 0%, #ffffff 100%);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .recent-item-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .recent-item h4 {
+    color: var(--text);
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 750;
+    line-height: 1.3;
+  }
+
+  .recent-subtitle,
+  .recent-meta {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .recent-status-pill,
+  .recent-photo-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .status-pill-active {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+
+  .status-pill-draft {
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+
+  .recent-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .recent-stat {
+    background: var(--surface-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 10px;
+    min-width: 0;
+  }
+
+  .recent-stat-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .recent-stat strong {
+    display: block;
+    font-size: 14px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .recent-photo-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .recent-photo-link,
+  .recent-photo-note {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    text-decoration: none;
+  }
+
+  .recent-photo-link {
+    background: #fff7f2;
+    color: #8c5b49;
+    border: 1px solid rgba(216, 160, 146, 0.3);
+  }
+
+  .recent-photo-note {
+    background: #f8f4f2;
+    color: var(--muted);
+    border: 1px solid var(--border-soft);
+  }
+
+  .export-primary-actions .button-success {
+    flex-basis: 100%;
+  }
+
+  .export-status-card {
+    background: linear-gradient(180deg, #fff9f5 0%, #fffdfb 100%);
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(216, 160, 146, 0.22);
+    margin-top: 16px;
+  }
+
+  .export-status-title {
+    font-size: 15px;
+    font-weight: 750;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .export-status-list {
+    display: grid;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+
+  .export-status-line {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--border-soft);
+  }
+
+  .export-status-total {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .bottom-nav {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(251, 247, 244, 0.88);
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 12px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    min-height: 62px;
+    z-index: 50;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .bottom-tab {
+    flex: 1;
+    height: 42px;
+    margin: 0;
+    border-radius: 13px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.92);
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  }
+
+  .bottom-tab.active {
+    color: #fff;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-strong) 100%);
+    border-color: var(--accent-strong);
+    box-shadow: 0 10px 18px rgba(201, 138, 123, 0.2);
+  }
+
+  .bottom-tab:active { transform: scale(0.985); }
+
+  .umodal,
+  .feedback-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(31, 42, 55, 0.28);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    pointer-events: none;
+    padding: 18px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .umodal.show,
+  .feedback-modal.show {
+    display: flex;
+    pointer-events: auto;
+  }
+
+  .umodal-card,
+  .feedback-card {
+    background: #fff;
+    padding: 20px 18px;
+    border-radius: 18px;
+    box-shadow: var(--shadow-lg);
+    width: min(420px, 92vw);
+    text-align: center;
+  }
+
+  .umodal-sub {
+    color: var(--muted);
+    margin: 6px 0 12px;
+  }
+
+  .umodal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .umodal-btn {
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--text);
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition), color var(--transition);
+  }
+
+  .umodal-btn:hover {
+    border-color: var(--accent);
+    background: #fffaf7;
+  }
+
+  .feedback-eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    margin-bottom: 8px;
+  }
+
+  .feedback-title {
+    font-size: 1.22rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .feedback-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .feedback-grid {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .feedback-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 11px 12px;
+    border-radius: 12px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border-soft);
+    text-align: left;
+  }
+
+  .feedback-row-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .feedback-row-value {
+    flex: 1;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--text);
+    line-height: 1.45;
+    word-break: break-word;
+  }
+
+  .feedback-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .feedback-close {
+    width: 100%;
+  }
+
+  .toast-stack {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: min(92vw, 380px);
+    pointer-events: none;
+  }
+
+  .toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border-soft);
+    background: rgba(255,255,255,0.95);
+    color: var(--text);
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toast-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .toast-success .toast-icon {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+
+  .toast-info .toast-icon {
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  .toast-error .toast-icon {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+
+  .toast-message {
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 480px) {
+    .two-column,
+    .three-column,
+    .recent-card-grid,
+    .summary-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .button-row .button {
+      flex-basis: 100%;
+      min-width: 0;
+    }
+
+    .recent-list-head,
+    .recent-item-top {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
 </style>
 </head>
 <body>
@@ -230,24 +1317,25 @@
           </div>
         </div>
 
-        <div class="form-section">
+        <div class="form-section current-item-card">
           <div class="section-title">Current Item</div>
           <div class="section-note">Choose the crystal, enter item details, then add or duplicate for the next piece.</div>
 
           <div class="photo-section">
-            <div style="font-size:2rem; margin-bottom:10px;">📸</div>
+            <div class="photo-icon-wrap">📸</div>
             <h3 id="photo-section-title">Add Photos</h3>
-            <p>Use camera or choose from library</p>
+            <p class="photo-helper-text">Upload from your library or camera. Preview-only photos stay clearly marked until a real upload succeeds.</p>
 
             <input type="file" id="photo-input-library" accept="image/*" multiple style="display:none;">
             <input type="file" id="photo-input-camera"  accept="image/*" capture="environment" multiple style="display:none;">
 
-            <div style="display:flex; gap:10px; justify-content:center; margin-top:10px; flex-wrap:wrap;">
-              <button type="button" class="button" style="width:auto;padding:10px 14px;" onclick="document.getElementById('photo-input-library').click()">Choose from Library</button>
-              <button type="button" class="button button-secondary" style="width:auto;padding:10px 14px;" onclick="document.getElementById('photo-input-camera').click()">Take Photo</button>
+            <div class="photo-action-row">
+              <button type="button" class="button button-photo-action" onclick="document.getElementById('photo-input-library').click()">Choose from Library</button>
+              <button type="button" class="button button-secondary button-photo-action" onclick="document.getElementById('photo-input-camera').click()">Take Photo</button>
             </div>
 
             <div id="photo-preview" class="photo-preview"></div>
+            <div class="photo-status-copy">Uploaded photos show a soft success badge. Failed uploads remain labeled preview only so nothing looks falsely saved.</div>
           </div>
 
           <div class="form-group">
@@ -259,8 +1347,8 @@
           </div>
 
           <div class="crystal-preview" id="crystal-preview">
-            <div style="font-weight:700;margin-bottom:8px" id="crystal-name-display"></div>
-            <div style="font-size:14px" id="crystal-info-display"></div>
+            <div class="crystal-preview-title" id="crystal-name-display"></div>
+            <div class="crystal-preview-copy" id="crystal-info-display"></div>
           </div>
 
           <div class="form-group">
@@ -296,34 +1384,35 @@
           </div>
 
           <div class="price-display">
-            <div>Retail Price</div>
+            <div class="display-label">Retail Price</div>
             <div class="price-large">$<input type="number" id="retail-price" class="price-input" step="0.01" value="0.00" onchange="updateProfit()"/></div>
-            <div style="font-size:14px;color:#718096">Profit: $<span id="profit">0.00</span></div>
+            <div class="profit-note">Profit: $<span id="profit">0.00</span></div>
           </div>
 
           <div class="sku-display">
-            <div><strong>SKU:</strong> <span id="generated-sku">Select crystal & type</span></div>
+            <div class="display-label">SKU & Barcode</div>
+            <div class="sku-main"><strong>SKU:</strong> <span id="generated-sku">Select crystal & type</span></div>
             <div class="barcode">*<span id="barcode">BARCODE</span>*</div>
-            <div style="margin-top:10px; padding-top:10px; border-top:1px solid #e8e1db;">
-              <label style="font-size:14px; margin-bottom:4px;">Manual SKU Override (optional)</label>
+            <div class="manual-sku-wrap">
+              <label class="manual-sku-label">Manual SKU Override (optional)</label>
               <input type="text" id="manual-sku" placeholder="Leave blank for auto-generated" 
-                    style="font-family:'Courier New',monospace; text-align:center;"
+                    class="manual-sku-input"
                     oninput="updateManualSKU()">
-              <div style="font-size:12px;color:#6b7280;margin-top:4px;">
+              <div class="manual-sku-note">
                 Enter a custom SKU to override auto-generation
               </div>
             </div>
           </div>
 
           <div class="button-row">
-            <button type="button" id="btn-add" class="button button-success">✅ Add to Inventory</button>
-            <button type="button" id="btn-dupe" class="button button-secondary">📋 Duplicate Last</button>
-            <button type="button" id="btn-shopify" class="button button-secondary">🛍️ Save to Shopify</button>
+            <button type="button" id="btn-add" class="button button-success button-primary-action">✅ Add to Inventory</button>
+            <button type="button" id="btn-dupe" class="button button-secondary button-utility">📋 Duplicate Last</button>
+            <button type="button" id="btn-shopify" class="button button-shopify">🛍️ Save to Shopify</button>
           </div>
           <div class="button-row">
-            <button type="button" id="btn-clear" class="button button-secondary">🔄 Clear Weight & Photos</button>
-            <button type="button" id="btn-clear-all" class="button button-secondary">🗑️ Clear All Fields</button>
-            <button type="button" id="btn-user" class="button button-secondary">👤 Change User</button>
+            <button type="button" id="btn-clear" class="button button-secondary button-tertiary">🔄 Clear Weight & Photos</button>
+            <button type="button" id="btn-clear-all" class="button button-secondary button-tertiary">🗑️ Clear All Fields</button>
+            <button type="button" id="btn-user" class="button button-secondary button-tertiary">👤 Change User</button>
           </div>
         </div>
       </div>
@@ -332,11 +1421,18 @@
       <!-- Recent -->
     <div id="recent" class="tab-content">
       <div class="container">
-        <div class="form-section">
-          <div id="session-summary" style="margin-bottom:12px"></div>
-          <h3 style="margin-bottom:15px">Recent Items (Last 10)</h3>
+        <div class="form-section recent-tab-card">
+          <div class="recent-header">
+            <div class="section-title">Recent Intake</div>
+            <div class="section-note">A clean view of the last 10 saved pieces, including Shopify saves that also fed local inventory.</div>
+          </div>
+          <div id="session-summary"></div>
+          <div class="recent-list-head">
+            <h3 class="recent-list-title">Recent Items</h3>
+            <div class="recent-list-note">Last 10 entries</div>
+          </div>
           <div id="recent-items">
-            <p style="text-align:center;color:#718096;padding:20px">No items added yet</p>
+            <p class="empty-state">No items added yet</p>
           </div>
         </div>
       </div>
@@ -344,27 +1440,48 @@
       <!-- Export --> 
     <div id="export" class="tab-content">
         <div class="container">
-          <div class="form-section">
-            <h3 style="margin-bottom:15px">Export Data</h3>
+          <div class="form-section export-tab-card">
+            <div class="export-header">
+              <div class="section-title">Export & Labels</div>
+              <div class="section-note">Use the Shopify-ready CSV for imports, print barcode labels when you are ready, and only clear local data when you truly want a reset.</div>
+            </div>
           
-          <div class="button-row">
-            <button id="btn-export-clear" class="button button-secondary">🧹 Clear All Data</button>
+          <div class="button-row export-primary-actions">
             <button id="btn-export-csv"   class="button button-success">📄 Export to CSV</button>
-            <button id="btn-export-bar"   class="button button-secondary">🖨️ Print Barcodes</button>
+            <button id="btn-export-bar"   class="button button-shopify">🖨️ Print Barcodes</button>
           </div>
 
-          <div style="background:#fff3cd;padding:15px;border-radius:8px;border-left:4px solid #ffc107;margin-top:15px">
-            <strong>📱 System Ready:</strong>
-            <div style="margin-top:8px;font-size:14px">
-              Photos saved or to GCS <br/>
-              CSV uses Shopify-friendly format<br/>
-              Barcodes ready for printing<br/>
+          <div class="button-row export-secondary-actions">
+            <button id="btn-export-clear" class="button button-danger-muted">🧹 Clear All Data</button>
+          </div>
+
+          <div class="export-status-card">
+            <div class="export-status-title">System Ready</div>
+            <div class="export-status-list">
+              <div class="export-status-line">Photo truth stays intact so only real uploaded image URLs flow into saves and exports.</div>
+              <div class="export-status-line">CSV keeps the existing Shopify-friendly format and includes items saved locally or through Shopify.</div>
+              <div class="export-status-line">Barcode labels are ready whenever you want a printable batch.</div>
+            </div>
+            <div class="export-status-total">
               Total Items: <strong id="total-items">0</strong>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+  <div id="feedback-modal" class="feedback-modal" aria-hidden="true">
+    <div class="feedback-card">
+      <div id="feedback-eyebrow" class="feedback-eyebrow">Save Complete</div>
+      <div id="feedback-title" class="feedback-title">Saved</div>
+      <div id="feedback-subtitle" class="feedback-subtitle"></div>
+      <div id="feedback-grid" class="feedback-grid"></div>
+      <div id="feedback-note" class="feedback-note"></div>
+      <button type="button" id="feedback-close" class="button button-success feedback-close">Done</button>
+    </div>
+  </div>
+
+  <div id="toast-stack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
   
 
   <nav class="bottom-nav" id="bottom-nav">
@@ -407,25 +1524,110 @@
     renderSessionContext();
   }
 
+  function escapeHtml(value){
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch){
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
+    });
+  }
+
+  function formatUiLabel(value){
+    const raw = String(value || '').trim();
+    if (!raw) return 'Not set';
+    return raw.charAt(0).toUpperCase() + raw.slice(1);
+  }
+
+  function renderSummaryChip(label, value){
+    return '<div class="summary-chip">'
+      + '<span class="summary-chip-label">' + escapeHtml(label) + '</span>'
+      + '<span class="summary-chip-value">' + escapeHtml(value) + '</span>'
+      + '</div>';
+  }
+
   function renderSessionContext(){
     const pill = document.getElementById('session-user-pill');
-    if (pill) pill.textContent = `User: ${currentUser || 'Unassigned'}`;
+    if (pill) pill.textContent = currentUser ? `Intake by ${currentUser}` : 'Choose a user';
     const summary = document.getElementById('session-summary');
     if (!summary) return;
     const vendor = (document.getElementById('vendor')?.value || '').trim() || 'Not set';
     const origin = (document.getElementById('origin-country')?.value || '').trim() || 'Not set';
     const markup = (document.getElementById('markup')?.value || '').trim() || '3';
-    const status = getCurrentPublishStatusValue();
+    const status = formatUiLabel(getCurrentPublishStatusValue());
     const batchMode = isBatchModeEnabled() ? 'On' : 'Off';
     summary.innerHTML =
-      `<div class="section-note" style="margin:0">` +
-      `<strong>User:</strong> ${currentUser || 'Unassigned'} | ` +
-      `<strong>Vendor:</strong> ${vendor} | ` +
-      `<strong>Origin:</strong> ${origin} | ` +
-      `<strong>Markup:</strong> ${markup}x | ` +
-      `<strong>Status:</strong> ${status} | ` +
-      `<strong>Batch:</strong> ${batchMode}` +
-      `</div>`;
+      '<div class="session-summary-card"><div class="summary-grid">'
+      + renderSummaryChip('User', currentUser || 'Unassigned')
+      + renderSummaryChip('Vendor', vendor)
+      + renderSummaryChip('Origin', origin)
+      + renderSummaryChip('Markup', markup + 'x')
+      + renderSummaryChip('Status', status)
+      + renderSummaryChip('Batch', batchMode)
+      + '</div></div>';
+  }
+
+  function setupFeedbackModal(){
+    if (window.__fmFeedbackSetupDone) return;
+    const modal = document.getElementById('feedback-modal');
+    const closeBtn = document.getElementById('feedback-close');
+    if (!modal || !closeBtn) return;
+
+    closeBtn.addEventListener('click', closeFeedbackModal);
+    modal.addEventListener('click', function(event){
+      if (event.target === modal) closeFeedbackModal();
+    });
+    window.__fmFeedbackSetupDone = true;
+  }
+
+  function closeFeedbackModal(){
+    const modal = document.getElementById('feedback-modal');
+    if (!modal) return;
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  function showFeedbackModal(options){
+    const modal = document.getElementById('feedback-modal');
+    const eyebrow = document.getElementById('feedback-eyebrow');
+    const title = document.getElementById('feedback-title');
+    const subtitle = document.getElementById('feedback-subtitle');
+    const grid = document.getElementById('feedback-grid');
+    const note = document.getElementById('feedback-note');
+    if (!modal || !eyebrow || !title || !subtitle || !grid || !note) return;
+
+    const rows = Array.isArray(options && options.rows) ? options.rows : [];
+    eyebrow.textContent = (options && options.eyebrow) || 'Save Complete';
+    title.textContent = (options && options.title) || 'Saved';
+    subtitle.textContent = (options && options.subtitle) || '';
+    grid.innerHTML = rows.map(function(row){
+      return '<div class="feedback-row">'
+        + '<div class="feedback-row-label">' + escapeHtml(row && row.label || '') + '</div>'
+        + '<div class="feedback-row-value">' + escapeHtml(row && row.value || '') + '</div>'
+        + '</div>';
+    }).join('');
+    note.textContent = (options && options.note) || '';
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function showToast(message, tone, duration){
+    const stack = document.getElementById('toast-stack');
+    if (!stack || !message) return;
+    const toast = document.createElement('div');
+    const safeTone = tone || 'success';
+    const icon = safeTone === 'error' ? '!' : (safeTone === 'info' ? 'i' : '✓');
+    toast.className = 'toast toast-' + safeTone;
+    toast.innerHTML =
+      '<span class="toast-icon">' + icon + '</span>'
+      + '<div class="toast-message">' + escapeHtml(message) + '</div>';
+    stack.appendChild(toast);
+    requestAnimationFrame(function(){
+      toast.classList.add('show');
+    });
+    setTimeout(function(){
+      toast.classList.remove('show');
+      setTimeout(function(){
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 240);
+    }, Math.max(1800, Number(duration) || 2600));
   }
 
   function loadRecentCrystals(){
@@ -1167,18 +2369,30 @@ function setupPhotoHandler() {
   const titleEl  = document.getElementById('photo-section-title');
 
   function appendPhotoPreview(photo){
+    const card = document.createElement('div');
+    card.className = 'photo-card ' + (photo.uploaded ? 'photo-card--uploaded' : 'photo-card--local');
     const img = document.createElement('img');
     img.src = photo.previewUrl || photo.url || '';
     img.className = 'photo-thumbnail';
     img.title = photo.uploaded
       ? photo.name
       : `${photo.name} (preview only - upload failed${photo.uploadError ? `: ${photo.uploadError}` : ''})`;
-    if (!photo.uploaded) {
-      img.style.opacity = '0.7';
-      img.style.outline = '2px dashed #b91c1c';
-      img.style.outlineOffset = '2px';
-    }
-    preview.appendChild(img);
+    if (!photo.uploaded) img.style.opacity = '0.76';
+
+    const badge = document.createElement('div');
+    badge.className = 'photo-status-badge';
+    badge.textContent = photo.uploaded ? 'Uploaded' : 'Preview only';
+
+    const meta = document.createElement('div');
+    meta.className = 'photo-card-meta';
+    meta.textContent = photo.uploaded
+      ? 'Ready for save'
+      : (photo.uploadError ? 'Upload failed: ' + photo.uploadError : 'Local preview only');
+
+    card.appendChild(img);
+    card.appendChild(badge);
+    card.appendChild(meta);
+    preview.appendChild(card);
   }
 
   async function processFiles(fileList){
@@ -1406,7 +2620,7 @@ function setupPhotoHandler() {
       return;
     }
 
-    alert(`${item.crystalType} ${item.productType} added successfully!`);
+    showToast(`${item.crystalType} ${item.productType} added to inventory.`, 'success', 2600);
 
     try {
       prepareNextItemAfterSave();
@@ -1450,29 +2664,62 @@ function setupPhotoHandler() {
         alert('Shopify save failed.\n\n' + msg);
         return;
       }
-      let okMsg = 'Saved to Shopify.'
-        + '\n\nProduct: ' + (data.title || '')
-        + '\nID: ' + (data.productId || '')
-        + '\nStatus sent: ' + (data.statusSent || item.status || 'ACTIVE')
-        + '\nPhotos attempted: ' + (data.mediaAttempted != null ? data.mediaAttempted : 0)
-        + '\nPhotos attached: ' + (data.mediaAttached != null ? data.mediaAttached : 0);
-      if (data.mediaError) okMsg += '\nMedia error: ' + data.mediaError;
+      const statusSent = data.statusSent || item.status || 'ACTIVE';
+      const mediaAttempted = data.mediaAttempted != null ? data.mediaAttempted : 0;
+      const mediaAttached = data.mediaAttached != null ? data.mediaAttached : 0;
+      let publicationSummary = 'Not published';
+      const pubErrors = Array.isArray(data.publications)
+        ? data.publications
+            .filter(function(p){ return p && p.error; })
+            .map(function(p){ return (p.name || p.id || 'publication') + ': ' + p.error; })
+        : [];
       if (Array.isArray(data.publications) && data.publications.length) {
         const pubOk = data.publications.filter(function(p){ return p && p.published; }).length;
-        okMsg += '\n\nSales channels published: ' + pubOk + ' / ' + data.publications.length;
-        const pubErrors = data.publications
-          .filter(function(p){ return p && p.error; })
-          .map(function(p){ return (p.name || p.id || 'publication') + ': ' + p.error; });
-        if (pubErrors.length) okMsg += '\nPublication errors: ' + pubErrors.join(' | ');
+        publicationSummary = pubOk + ' / ' + data.publications.length + ' channels';
       }
-      if (data.publishQueryError) okMsg += '\n\nPublication query: ' + data.publishQueryError;
       const localSave = persistItemLocally(item, { manualSku });
       if (!localSave.ok) {
-        alert(okMsg + '\n\nLocal inventory warning: ' + localSave.error + '\n\nCSV and label export were not updated yet.');
+        alert(
+          'Saved to Shopify.\n\n'
+          + 'Product: ' + (data.title || '') + '\n'
+          + 'ID: ' + (data.productId || '') + '\n'
+          + 'Status sent: ' + statusSent + '\n'
+          + 'Photos attempted: ' + mediaAttempted + '\n'
+          + 'Photos attached: ' + mediaAttached + '\n'
+          + (data.mediaError ? 'Media error: ' + data.mediaError + '\n' : '')
+          + 'Publications: ' + publicationSummary
+          + '\n\nLocal inventory warning: ' + localSave.error + '\n\nCSV and label export were not updated yet.'
+        );
         return;
       }
-      alert(okMsg);
-      prepareNextItemAfterSave();
+
+      try {
+        prepareNextItemAfterSave();
+      } catch (err2) {
+        console.error(err2);
+        alert('Shopify save succeeded, but refreshing the form failed. Try reloading the page.\n' + (err2 && err2.message ? err2.message : String(err2)));
+        return;
+      }
+
+      showFeedbackModal({
+        eyebrow: 'Shopify Saved',
+        title: data.title || 'Product saved',
+        subtitle: 'The Shopify save completed and the item was also fed into local inventory, recent items, CSV, and label exports.',
+        rows: [
+          { label: 'Product ID', value: data.productId || 'Unavailable' },
+          { label: 'Status Sent', value: statusSent },
+          { label: 'Photos Attempted', value: String(mediaAttempted) },
+          { label: 'Photos Attached', value: String(mediaAttached) },
+          { label: 'Media Result', value: data.mediaError || (mediaAttached > 0 ? 'Attached successfully' : 'No media attached') },
+          { label: 'Sales Channels', value: publicationSummary }
+        ],
+        note: [
+          data.publishQueryError ? 'Publication query: ' + data.publishQueryError : '',
+          pubErrors.length ? 'Publication errors: ' + pubErrors.join(' | ') : ''
+        ].filter(Boolean).join(' ')
+          || 'Everything above reflects the real Shopify response so you can trust what happened.'
+      });
+      showToast('Shopify save completed.', 'info', 2200);
     } catch (e) {
       alert('Shopify save failed (network or server).\n\n' + (e && e.message ? e.message : String(e)));
     } finally {
@@ -1875,31 +3122,58 @@ function clearAllData(){
     const container = document.getElementById('recent-items');
     if (!container) return;
     if (!recent.length){
-      container.innerHTML = '<p style="text-align:center;color:#718096;padding:20px">No items added yet</p>';
+      container.innerHTML = '<p class="empty-state">No items added yet</p>';
       return;
     }
     let html = '';
     recent.forEach(item=>{
       const rp = Number(item.retailPrice || 0);
+      const qty = Math.max(1, parseInt(item.quantity ?? item.qty ?? 1, 10) || 1);
       const wLine = item.pricingMode === 'per_piece'
         ? '—'
         : `${Number(item.weight) || 0}kg`;
+      const status = String(item.status || 'active').trim().toLowerCase() === 'draft' ? 'Draft' : 'Active';
+      const statusClass = status === 'Draft' ? 'status-pill-draft' : 'status-pill-active';
+      const title = [item.crystalType || '', item.productType || ''].filter(Boolean).join(' ').trim() || 'Saved item';
+      const subtitleParts = [
+        (item.vendor || '').trim(),
+        (item.originCountry || '').trim()
+      ].filter(Boolean);
+      const photoMarkup = Array.isArray(item.photos) && item.photos.length
+        ? `<div class="recent-photo-links">${item.photos.map((p,i)=>{
+            const u = (p && p.url) || '';
+            if (/^https?:\/\//i.test(u)) return `<a class="recent-photo-link" href="${escapeHtml(u)}" target="_blank" rel="noopener">Photo ${i+1}</a>`;
+            if (p && p.localPreviewDropped) return `<span class="recent-photo-note">Photo ${i+1} preview only</span>`;
+            return '';
+          }).filter(Boolean).join('')}</div>`
+        : '';
       html += `<div class="recent-item">
-        <h4>${item.crystalType} ${item.productType}</h4>
-        <div class="recent-meta">
-          <strong>SKU:</strong> ${item.sku} |
-          <strong>Price:</strong> $${rp.toFixed(2)} |
-          <strong>Weight:</strong> ${wLine}<br/>
-          <strong>Added by:</strong> ${item.user} |
-          <strong>Date:</strong> ${new Date(item.dateAdded).toLocaleDateString()}
-          ${item.photos?.length ? ' | <strong>Photos:</strong> ' + item.photos.length : ''}
+        <div class="recent-item-top">
+          <div>
+            <h4>${escapeHtml(title)}</h4>
+            <div class="recent-subtitle">${escapeHtml(subtitleParts.join(' · ') || 'Saved locally and ready for export')}</div>
+          </div>
+          <span class="recent-status-pill ${statusClass}">${escapeHtml(status)}</span>
         </div>
-        ${item.photos?.length ? `<div style="margin-top:8px">${item.photos.map((p,i)=>{
-          const u = (p && p.url) || '';
-          if (/^https?:\/\//i.test(u)) return `<a href="${u}" target="_blank" rel="noopener">Photo ${i+1}</a>`;
-          if (p && p.localPreviewDropped) return `<span style="color:#718096">Photo ${i+1} (preview not stored)</span>`;
-          return '';
-        }).filter(Boolean).join(' | ')}</div>` : ''}
+        <div class="recent-card-grid">
+          <div class="recent-stat">
+            <span class="recent-stat-label">SKU</span>
+            <strong>${escapeHtml(item.sku || '—')}</strong>
+          </div>
+          <div class="recent-stat">
+            <span class="recent-stat-label">Price</span>
+            <strong>$${rp.toFixed(2)}</strong>
+          </div>
+          <div class="recent-stat">
+            <span class="recent-stat-label">Qty / Weight</span>
+            <strong>${escapeHtml(String(qty))} / ${escapeHtml(wLine)}</strong>
+          </div>
+        </div>
+        <div class="recent-meta">
+          Added by <strong>${escapeHtml(item.user || 'Unknown')}</strong> on ${escapeHtml(new Date(item.dateAdded).toLocaleDateString())}
+          ${item.photos?.length ? ` · <span class="recent-photo-pill ${item.photos.some(function(p){ return p && p.localPreviewDropped; }) ? 'status-pill-draft' : 'status-pill-active'}">${escapeHtml(String(item.photos.length))} photo${item.photos.length === 1 ? '' : 's'}</span>` : ''}
+        </div>
+        ${photoMarkup}
       </div>`;
     });
     container.innerHTML = html;
@@ -1914,6 +3188,7 @@ function clearAllData(){
     if (typeof stripDataPhotosFromInventoryInPlace === 'function') stripDataPhotosFromInventoryInPlace();
     if (typeof saveInventory === 'function') saveInventory();
     loadRecentCrystals();
+    setupFeedbackModal();
 
     // Restore user or prompt once
     try{
