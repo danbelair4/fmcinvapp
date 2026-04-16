@@ -694,9 +694,7 @@
   }
 
   .generated-copy-meta {
-    margin-top: 9px;
-    font-size: 11px;
-    color: var(--muted);
+    display: none;
   }
 
   .conditional-field[hidden] {
@@ -1546,16 +1544,13 @@
               <input type="text" id="manual-sku" placeholder="Leave blank for auto-generated" 
                     class="manual-sku-input"
                     oninput="updateManualSKU()">
-              <div class="manual-sku-note">
-                Enter a custom SKU to override auto-generation
-              </div>
             </div>
           </div>
 
           <div class="button-row">
-            <button type="button" id="btn-add" class="button button-success button-primary-action">✅ Add to Inventory</button>
-            <button type="button" id="btn-dupe" class="button button-secondary button-utility">📋 Duplicate Last</button>
-            <button type="button" id="btn-shopify" class="button button-shopify">🛍️ Save to Shopify</button>
+            <button type="button" id="btn-shopify" class="button button-shopify button-primary-action">🛍️ Save to Shopify</button>
+            <button type="button" id="btn-add" class="button button-success">✅ Add to Inventory</button>
+            <button type="button" id="btn-dupe" class="button button-secondary button-utility" hidden>📋 Duplicate Last</button>
           </div>
           <div class="button-row">
             <button type="button" id="btn-clear" class="button button-secondary button-tertiary">🔄 Clear Weight & Photos</button>
@@ -1572,12 +1567,10 @@
         <div class="form-section recent-tab-card">
           <div class="recent-header">
             <div class="section-title">Recent Intake</div>
-            <div class="section-note">A clean view of the last 10 saved pieces, including Shopify saves that also fed local inventory.</div>
           </div>
           <div id="session-summary"></div>
           <div class="recent-list-head">
             <h3 class="recent-list-title">Recent Items</h3>
-            <div class="recent-list-note">Last 10 entries</div>
           </div>
           <div id="recent-items">
             <p class="empty-state">No items added yet</p>
@@ -1591,12 +1584,11 @@
           <div class="form-section export-tab-card">
             <div class="export-header">
               <div class="section-title">Export & Labels</div>
-              <div class="section-note">Use the Shopify-ready CSV for imports, print barcode labels when you are ready, and only clear local data when you truly want a reset.</div>
             </div>
           
           <div class="button-row export-primary-actions">
-            <button id="btn-export-csv"   class="button button-success">📄 Export to CSV</button>
-            <button id="btn-export-bar"   class="button button-shopify">🖨️ Print Barcodes</button>
+            <button id="btn-export-bar"   class="button button-shopify button-primary-action">🖨️ Print Barcodes</button>
+            <button id="btn-export-csv"   class="button button-secondary">📄 Export to CSV</button>
           </div>
 
           <div class="button-row export-secondary-actions">
@@ -1604,12 +1596,6 @@
           </div>
 
           <div class="export-status-card">
-            <div class="export-status-title">System Ready</div>
-            <div class="export-status-list">
-              <div class="export-status-line">Photo truth stays intact so only real uploaded image URLs flow into saves and exports.</div>
-              <div class="export-status-line">CSV keeps the existing Shopify-friendly format and includes items saved locally or through Shopify.</div>
-              <div class="export-status-line">Barcode labels are ready whenever you want a printable batch.</div>
-            </div>
             <div class="export-status-total">
               Total Items: <strong id="total-items">0</strong>
             </div>
@@ -2408,14 +2394,11 @@
     const crystal = String(crystalName || '').trim();
     const type = String(productType || '').trim();
     if (!crystal && !type) return '';
-    if (!type) return crystal ? crystal + ' Crystal' : '';
+    if (!type) return crystal || '';
     const lowerType = type.toLowerCase();
     const formattedShape = formatTitleWords(carvingShape);
     if (lowerType === 'carving') return formattedShape ? (crystal + ' ' + formattedShape + ' Carving').trim() : (crystal + ' Carving').trim();
-    if (lowerType === 'on stand') return crystal + ' Crystal on Stand';
-    if (lowerType === 'freeform') return crystal + ' Freeform Stone';
-    if (/\b(crystal|stone|beads|cluster|geode)\b/i.test(type)) return (crystal + ' ' + type).trim();
-    return (crystal + ' ' + type + ' Crystal').trim();
+    return [crystal, type].filter(Boolean).join(' ').trim();
   }
 
   function generateProductDescription(crystalName, productType, carvingShape){
@@ -2505,9 +2488,7 @@
     }
     syncGeneratedFieldValue(titleEl, content.title || '');
     syncGeneratedFieldValue(descEl, content.description || '');
-    metaEl.textContent = content.source === 'library'
-      ? 'Generated from the crystal library profile.'
-      : 'Generated from the base crystal catalog fallback.';
+    metaEl.textContent = '';
     card.classList.add('show');
   }
 
@@ -2992,10 +2973,8 @@ function setupPhotoHandler() {
   }
 
   function prepareNextItemAfterSave(){
-    clearForm();
-    if (!isBatchModeEnabled()) {
-      clearSessionFieldsForNextItem();
-      if (typeof calculatePrice === 'function') calculatePrice();
+    if (!getCurrentFormManualSku() && typeof generateSKU === 'function') {
+      generateSKU();
     }
     renderSessionContext();
     displayRecentItems();
