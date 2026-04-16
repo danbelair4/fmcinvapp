@@ -369,6 +369,20 @@
   function fmSignUploadDebug(){
     try { return localStorage.getItem('FM_SIGN_UPLOAD_DEBUG') === '1'; } catch { return false; }
   }
+  function isPublicPhotoUrl(url){
+    return /^https?:\/\//i.test(String(url || '').trim());
+  }
+  function summarizePhotoStateForLog(photos){
+    return (Array.isArray(photos) ? photos : []).map(function(p){
+      return {
+        name: p && p.name,
+        uploaded: !!(p && p.uploaded),
+        urlKind: isPublicPhotoUrl(p && p.url) ? 'https' : ((p && p.previewUrl) ? 'preview-only' : 'empty'),
+        localPreviewOnly: !!(p && p.localPreviewOnly),
+        uploadError: p && p.uploadError ? String(p.uploadError) : '',
+      };
+    });
+  }
   async function trySignAndUpload(file, objectName){
     try{
       const ct = String(file.type ?? '');
@@ -381,11 +395,23 @@
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify(postPayload)
       });
-      if (!r.ok) return null;
+      if (!r.ok) {
+        let errMsg = 'sign-upload failed with HTTP ' + r.status;
+        try {
+          const errJson = await r.json();
+          if (errJson && errJson.error) errMsg += ': ' + errJson.error;
+        } catch (_) {}
+        console.warn('[photo-upload] sign failed', { fileName: file.name, objectName, error: errMsg });
+        return { ok: false, error: errMsg };
+      }
       const j = await r.json();
       const uploadUrl = j && typeof j.uploadUrl === 'string' ? j.uploadUrl : '';
       const publicUrl = j && typeof j.publicUrl === 'string' ? j.publicUrl.trim() : '';
-      if (!uploadUrl || !publicUrl || !/^https:\/\//i.test(publicUrl)) return null;
+      if (!uploadUrl || !publicUrl || !/^https:\/\//i.test(publicUrl)) {
+        const errMsg = 'sign-upload returned invalid uploadUrl/publicUrl.';
+        console.warn('[photo-upload] invalid sign response', { fileName: file.name, objectName, error: errMsg });
+        return { ok: false, error: errMsg };
+      }
       let needsContentType = false;
       let signedHeadersParam = '';
       try {
@@ -405,8 +431,9 @@
         console.log('[FM upload] X-Goog-SignedHeaders', signedHeadersParam, 'needsContentType', needsContentType);
       }
       if (needsContentType && ct.length === 0) {
-        if (fmSignUploadDebug()) console.warn('[FM upload] signed URL requires Content-Type but file.type is empty');
-        return null;
+        const errMsg = 'Signed URL requires Content-Type but file.type is empty.';
+        console.warn('[photo-upload] upload failed', { fileName: file.name, objectName, error: errMsg });
+        return { ok: false, error: errMsg };
       }
       let putInit = { method: 'PUT', body: file };
       if (needsContentType) {
@@ -416,9 +443,22 @@
         console.log('[FM upload] PUT init has headers', !!putInit.headers, putInit.headers ? Object.keys(putInit.headers) : []);
       }
       const put = await fetch(uploadUrl, putInit);
-      if (!put.ok) return null;
-      return { url: publicUrl };
-    }catch{ return null; }
+      if (!put.ok) {
+        let errMsg = 'GCS PUT failed with HTTP ' + put.status;
+        try {
+          const errText = await put.text();
+          if (errText) errMsg += ': ' + errText.slice(0, 250);
+        } catch (_) {}
+        console.warn('[photo-upload] upload failed', { fileName: file.name, objectName, error: errMsg });
+        return { ok: false, error: errMsg };
+      }
+      console.log('[photo-upload] upload success', { fileName: file.name, publicUrl });
+      return { ok: true, url: publicUrl };
+    }catch(err){
+      const errMsg = err && err.message ? err.message : String(err);
+      console.warn('[photo-upload] upload threw', { fileName: file.name, objectName, error: errMsg });
+      return { ok: false, error: errMsg };
+    }
   }
 
   // ========= Crystal DB =========
@@ -963,6 +1003,21 @@ function setupPhotoHandler() {
   const preview  = document.getElementById('photo-preview');
   const titleEl  = document.getElementById('photo-section-title');
 
+  function appendPhotoPreview(photo){
+    const img = document.createElement('img');
+    img.src = photo.previewUrl || photo.url || '';
+    img.className = 'photo-thumbnail';
+    img.title = photo.uploaded
+      ? photo.name
+      : `${photo.name} (preview only - upload failed${photo.uploadError ? `: ${photo.uploadError}` : ''})`;
+    if (!photo.uploaded) {
+      img.style.opacity = '0.7';
+      img.style.outline = '2px dashed #b91c1c';
+      img.style.outlineOffset = '2px';
+    }
+    preview.appendChild(img);
+  }
+
   async function processFiles(fileList){
     const files = Array.from(fileList || []);
     if (!files.length) return;
@@ -979,17 +1034,36 @@ function setupPhotoHandler() {
 
       // Try GCS upload first
       const uploaded = await trySignAndUpload(f, objectName);
-      if (uploaded) {
-        currentPhotos.push({ name: f.name, url: uploaded.url, size: f.size, contentType: f.type });
-        const img = document.createElement('img'); img.src = uploaded.url; img.className = 'photo-thumbnail'; img.title = f.name; preview.appendChild(img);
+      if (uploaded && uploaded.ok) {
+        const photo = {
+          name: f.name,
+          url: uploaded.url,
+          previewUrl: uploaded.url,
+          size: f.size,
+          contentType: f.type,
+          uploaded: true,
+          localPreviewOnly: false,
+        };
+        currentPhotos.push(photo);
+        appendPhotoPreview(photo);
       } else {
-        // Fallback to local data URL so you still see a preview & can export (no real URL)
+        // Keep a visible local preview, but do not treat it as an uploaded photo.
         await new Promise((res) => {
           const reader = new FileReader();
           reader.onload = (ev) => {
             const dataUrl = ev.target.result;
-            currentPhotos.push({ name: f.name, url: dataUrl, size: f.size, contentType: f.type });
-            const img = document.createElement('img'); img.src = dataUrl; img.className = 'photo-thumbnail'; img.title = f.name; preview.appendChild(img);
+            const photo = {
+              name: f.name,
+              url: '',
+              previewUrl: dataUrl,
+              size: f.size,
+              contentType: f.type,
+              uploaded: false,
+              localPreviewOnly: true,
+              uploadError: uploaded && uploaded.error ? uploaded.error : 'Upload failed.',
+            };
+            currentPhotos.push(photo);
+            appendPhotoPreview(photo);
             res();
           };
           reader.readAsDataURL(f);
@@ -997,7 +1071,20 @@ function setupPhotoHandler() {
       }
     }
 
-    titleEl.textContent = `${currentPhotos.length} Photo(s) Selected`;
+    const uploadedCount = currentPhotos.filter(function(p){ return isPublicPhotoUrl(p && p.url); }).length;
+    const failedCount = currentPhotos.length - uploadedCount;
+    console.log('[photo-upload] currentPhotos after processing', summarizePhotoStateForLog(currentPhotos));
+    if (failedCount > 0) {
+      titleEl.textContent = `${currentPhotos.length} Photo(s) Selected - ${failedCount} preview only`;
+      titleEl.style.color = '#b91c1c';
+      alert(
+        `Photo upload failed for ${failedCount} file(s).\n\n` +
+        `A local preview is shown, but no public uploaded image URL is available for Shopify or CSV for those file(s).`
+      );
+    } else {
+      titleEl.textContent = `${currentPhotos.length} Photo(s) Selected`;
+      titleEl.style.color = '';
+    }
   }
 
   if (libInput) libInput.addEventListener('change', (e) => processFiles(e.target.files));
@@ -1120,6 +1207,22 @@ function setupPhotoHandler() {
       return null;
     }
 
+    const sanitizedPhotos = sanitizePhotosForPersist(currentPhotos.slice());
+    const validPhotoUrls = sanitizedPhotos.filter(function(p){ return p && isPublicPhotoUrl(p.url); });
+    const previewOnlyCount = (Array.isArray(currentPhotos) ? currentPhotos : []).filter(function(p){
+      return p && p.localPreviewOnly;
+    }).length;
+    console.log('[shopify-save] sanitized photo payload', sanitizedPhotos);
+    if ((Array.isArray(currentPhotos) ? currentPhotos.length : 0) > 0 && validPhotoUrls.length === 0) {
+      alert('Photo upload failed. Preview exists locally, but no public uploaded image URL is available for Shopify.');
+      console.warn('[shopify-save] blocked because only local previews exist', {
+        previewCount: currentPhotos.length,
+        previewOnlyCount,
+        validPhotoCount: validPhotoUrls.length
+      });
+      return null;
+    }
+
     return {
       id: Date.now(),
       sku,
@@ -1138,7 +1241,7 @@ function setupPhotoHandler() {
       category: crystal.category || '',
       chakra: crystal.chakra || '',
       hardness: crystal.hardness || '',
-      photos: sanitizePhotosForPersist(currentPhotos.slice()),
+      photos: sanitizedPhotos,
       user: currentUser,
       dateAdded: new Date().toISOString(),
       barcode: `${sku}`,
@@ -1156,6 +1259,9 @@ function setupPhotoHandler() {
         photoCount: Array.isArray(item.photos) ? item.photos.length : 0,
         httpsPhotoCount: (Array.isArray(item.photos) ? item.photos : []).filter(function(p){
           return p && /^https?:\/\//i.test(String(p.url || '').trim());
+        }).length,
+        droppedPreviews: (Array.isArray(item.photos) ? item.photos : []).filter(function(p){
+          return p && p.localPreviewDropped;
         }).length
       });
       const res = await fetch(SHOPIFY_SAVE_URL, {
@@ -1206,6 +1312,7 @@ function clearForm(){
     currentPhotos = []; 
     if (prev) prev.innerHTML = '';
     if (titleEl) titleEl.textContent = 'Add Photos';
+    if (titleEl) titleEl.style.color = '';
     
     // Keep: crystal-type, product-type, vendor, markup, cost, pricing mode, publish status
     // Recalculate based on kept values
@@ -1234,6 +1341,7 @@ function clearAllFields(){
     currentPhotos = []; 
     document.getElementById('photo-preview').innerHTML = '';
     document.getElementById('photo-section-title').textContent = 'Add Photos';
+    document.getElementById('photo-section-title').style.color = '';
     
     // Reset pricing mode to default
     document.querySelectorAll('#pricing-mode .seg-btn').forEach(b => b.classList.remove('is-active'));
@@ -1635,13 +1743,20 @@ function getPricingMode(){
 // ========= Inventory Persistence =========
 function sanitizePhotosForPersist(photos){
   if (!Array.isArray(photos)) return [];
-  return photos.map((p) => {
+  const sanitized = photos.map((p) => {
     if (!p || typeof p !== 'object') return p;
     const u = String(p.url || '');
     if (/^https?:\/\//i.test(u)) return { name: p.name, url: u, size: p.size, contentType: p.contentType };
     if (/^data:/i.test(u)) return { name: p.name || 'photo', url: '', size: p.size, contentType: p.contentType, localPreviewDropped: true };
     return { name: p.name, url: '', size: p.size, contentType: p.contentType };
   });
+  console.log('[sanitize-photos]', {
+    inputCount: photos.length,
+    validHttpsCount: sanitized.filter(function(p){ return p && isPublicPhotoUrl(p.url); }).length,
+    droppedCount: sanitized.filter(function(p){ return p && !isPublicPhotoUrl(p.url); }).length,
+    payload: sanitized
+  });
+  return sanitized;
 }
 
 function stripDataPhotosFromInventoryInPlace(){
