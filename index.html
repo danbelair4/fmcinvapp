@@ -307,6 +307,43 @@
     text-overflow: ellipsis;
   }
 
+  .country-quick-picks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+  }
+
+  .country-chip {
+    border: 1px solid rgba(216, 160, 146, 0.28);
+    background: #fffaf7;
+    color: #8b5d4d;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1;
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
+  }
+
+  .country-chip:hover {
+    border-color: rgba(216, 160, 146, 0.55);
+    background: #fff3ec;
+  }
+
+  .country-chip:active {
+    transform: scale(0.98);
+  }
+
+  .country-chip.is-active {
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-strong) 100%);
+    border-color: var(--accent-strong);
+    color: #fff;
+    box-shadow: 0 8px 16px rgba(201, 138, 123, 0.14);
+  }
+
   .seg {
     display: inline-flex;
     gap: 0;
@@ -1261,7 +1298,6 @@
           <div class="session-header">
             <div>
               <div class="section-title">Batch Session</div>
-              <div class="section-note">Use Batch Mode when you want vendor settings to stay filled across repeated entries.</div>
             </div>
             <div class="session-inline-tools">
               <div id="session-user-pill" class="session-user-pill">User: Allie</div>
@@ -1271,6 +1307,23 @@
           <div class="two-column">
             <div class="form-group">
               <label for="origin-country">Country of Origin</label>
+              <div class="country-quick-picks" id="origin-country-chips" aria-label="Common origin countries">
+                <button type="button" class="country-chip" data-country="Brazil">Brazil</button>
+                <button type="button" class="country-chip" data-country="India">India</button>
+                <button type="button" class="country-chip" data-country="Madagascar">Madagascar</button>
+                <button type="button" class="country-chip" data-country="China">China</button>
+                <button type="button" class="country-chip" data-country="Morocco">Morocco</button>
+                <button type="button" class="country-chip" data-country="Mexico">Mexico</button>
+                <button type="button" class="country-chip" data-country="Peru">Peru</button>
+                <button type="button" class="country-chip" data-country="Pakistan">Pakistan</button>
+                <button type="button" class="country-chip" data-country="Afghanistan">Afghanistan</button>
+                <button type="button" class="country-chip" data-country="Congo">Congo</button>
+                <button type="button" class="country-chip" data-country="Namibia">Namibia</button>
+                <button type="button" class="country-chip" data-country="South Africa">South Africa</button>
+                <button type="button" class="country-chip" data-country="Indonesia">Indonesia</button>
+                <button type="button" class="country-chip" data-country="Sri Lanka">Sri Lanka</button>
+                <button type="button" class="country-chip" data-country="USA">USA</button>
+              </div>
               <input id="origin-country" placeholder="e.g., Brazil, India, Madagascar"/>
             </div>
             <div class="form-group">
@@ -1319,12 +1372,10 @@
 
         <div class="form-section current-item-card">
           <div class="section-title">Current Item</div>
-          <div class="section-note">Choose the crystal, enter item details, then add or duplicate for the next piece.</div>
 
           <div class="photo-section">
             <div class="photo-icon-wrap">📸</div>
             <h3 id="photo-section-title">Add Photos</h3>
-            <p class="photo-helper-text">Upload from your library or camera. Preview-only photos stay clearly marked until a real upload succeeds.</p>
 
             <input type="file" id="photo-input-library" accept="image/*" multiple style="display:none;">
             <input type="file" id="photo-input-camera"  accept="image/*" capture="environment" multiple style="display:none;">
@@ -1335,7 +1386,6 @@
             </div>
 
             <div id="photo-preview" class="photo-preview"></div>
-            <div class="photo-status-copy">Uploaded photos show a soft success badge. Failed uploads remain labeled preview only so nothing looks falsely saved.</div>
           </div>
 
           <div class="form-group">
@@ -1543,6 +1593,24 @@
       + '</div>';
   }
 
+  function syncOriginCountryChips(){
+    const input = document.getElementById('origin-country');
+    const selected = String(input && input.value || '').trim().toLowerCase();
+    document.querySelectorAll('#origin-country-chips .country-chip').forEach(function(chip){
+      const country = String(chip.dataset.country || '').trim().toLowerCase();
+      chip.classList.toggle('is-active', !!selected && selected === country);
+    });
+  }
+
+  function setOriginCountry(value){
+    const input = document.getElementById('origin-country');
+    if (!input) return;
+    input.value = String(value || '');
+    renderSessionContext();
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+  }
+
   function renderSessionContext(){
     const pill = document.getElementById('session-user-pill');
     if (pill) pill.textContent = currentUser ? `Intake by ${currentUser}` : 'Choose a user';
@@ -1562,6 +1630,7 @@
       + renderSummaryChip('Status', status)
       + renderSummaryChip('Batch', batchMode)
       + '</div></div>';
+    syncOriginCountryChips();
   }
 
   function setupFeedbackModal(){
@@ -3379,6 +3448,12 @@ updatePricingLabels();
   ['vendor','origin-country'].forEach((id) => {
     const el = $(id);
     el?.addEventListener('input', renderSessionContext);
+  });
+  $('origin-country-chips')?.addEventListener('click', (e) => {
+    const chip = e.target.closest('.country-chip');
+    if (!chip) return;
+    e.preventDefault();
+    setOriginCountry(chip.dataset.country || '');
   });
   $('markup')?.addEventListener('change', renderSessionContext);
   $('batch-mode')?.addEventListener('click', (e) => {
