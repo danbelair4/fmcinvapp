@@ -1151,6 +1151,13 @@ function setupPhotoHandler() {
     if (!item) return;
     if (btn){ btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
     try{
+      console.log('[shopify-save]', {
+        status: item.status,
+        photoCount: Array.isArray(item.photos) ? item.photos.length : 0,
+        httpsPhotoCount: (Array.isArray(item.photos) ? item.photos : []).filter(function(p){
+          return p && /^https?:\/\//i.test(String(p.url || '').trim());
+        }).length
+      });
       const res = await fetch(SHOPIFY_SAVE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1163,14 +1170,20 @@ function setupPhotoHandler() {
         alert('Shopify save failed.\n\n' + msg);
         return;
       }
-      let okMsg = 'Saved to Shopify.\n\nProduct: ' + (data.title || '') + '\nID: ' + (data.productId || '');
-      if (data.mediaAttached != null && Number(data.mediaAttached) > 0) {
-        okMsg += '\n\nPhotos attached: ' + data.mediaAttached;
-      }
-      if (data.mediaError) okMsg += '\n\nMedia warning: ' + data.mediaError;
+      let okMsg = 'Saved to Shopify.'
+        + '\n\nProduct: ' + (data.title || '')
+        + '\nID: ' + (data.productId || '')
+        + '\nStatus sent: ' + (data.statusSent || item.status || 'ACTIVE')
+        + '\nPhotos attempted: ' + (data.mediaAttempted != null ? data.mediaAttempted : 0)
+        + '\nPhotos attached: ' + (data.mediaAttached != null ? data.mediaAttached : 0);
+      if (data.mediaError) okMsg += '\nMedia error: ' + data.mediaError;
       if (Array.isArray(data.publications) && data.publications.length) {
         const pubOk = data.publications.filter(function(p){ return p && p.published; }).length;
         okMsg += '\n\nSales channels published: ' + pubOk + ' / ' + data.publications.length;
+        const pubErrors = data.publications
+          .filter(function(p){ return p && p.error; })
+          .map(function(p){ return (p.name || p.id || 'publication') + ': ' + p.error; });
+        if (pubErrors.length) okMsg += '\nPublication errors: ' + pubErrors.join(' | ');
       }
       if (data.publishQueryError) okMsg += '\n\nPublication query: ' + data.publishQueryError;
       alert(okMsg);
@@ -1334,7 +1347,7 @@ function clearAllFields(){
         vendor,                             // Vendor
         type,                               // Type
         tags,                               // Tags
-        'active',                             // Status
+        status,                               // Status
         'Title','Default Title',            // Option1 Name/Value
         '','','','',                        // Option2/3 placeholders
         (item.sku || ''),                   // Variant SKU

@@ -36,6 +36,7 @@ mutation ProductCreate($product: ProductCreateInput!) {
       id
       title
       handle
+      status
       variants(first: 5) {
         nodes {
           id
@@ -316,9 +317,12 @@ exports.handler = async (event) => {
   const HANDLE_SEQ = 1;
   const handleParts = computeCsvHandleParts(item, HANDLE_SEQ);
 
-  /** @type {{ mediaAttached: number, mediaError: string|null, publications: Array<{id: string, name: string|null, published: boolean, error?: string}>, publishQueryError: string|null }} */
+  /** @type {{ statusSent: string|null, mediaAttempted: number, mediaAttached: number, mediaUrls: string[], mediaError: string|null, publications: Array<{id: string, name: string|null, published: boolean, error?: string}>, publishQueryError: string|null }} */
   const meta = {
+    statusSent: null,
+    mediaAttempted: 0,
     mediaAttached: 0,
+    mediaUrls: [],
     mediaError: null,
     publications: [],
     publishQueryError: null,
@@ -326,6 +330,7 @@ exports.handler = async (event) => {
 
   try {
     const productInput = buildProductCreateInput(item, HANDLE_SEQ);
+    meta.statusSent = productInput.status || null;
     const createRes = await gql(MUTATION_PRODUCT_CREATE, { product: productInput });
     const createPayload = createRes?.data?.productCreate;
     const createErr = collectUserErrors(createPayload);
@@ -434,18 +439,27 @@ exports.handler = async (event) => {
     }
 
     const mediaInputs = buildProductCreateMediaInputsFromCsvItem(item);
-    if (mediaInputs.length) {
+    meta.mediaAttempted = mediaInputs.length;
+    meta.mediaUrls = mediaInputs.map((m) => m.originalSource);
+    if (!mediaInputs.length) {
+      meta.mediaError =
+        Array.isArray(item.photos) && item.photos.length
+          ? 'No public https photo URLs were present on the payload.'
+          : 'No photos were present on the payload.';
+    } else {
       try {
         const mRes = await gql(MUTATION_PRODUCT_CREATE_MEDIA, {
           productId: product.id,
           media: mediaInputs,
         });
         const mPayload = mRes?.data?.productCreateMedia;
+        const createdMedia = Array.isArray(mPayload?.media) ? mPayload.media : [];
+        meta.mediaAttached = createdMedia.length;
         const mErr = collectMediaUserErrors(mPayload);
         if (mErr) {
           meta.mediaError = mErr;
-        } else {
-          meta.mediaAttached = Array.isArray(mPayload?.media) ? mPayload.media.length : mediaInputs.length;
+        } else if (!createdMedia.length) {
+          meta.mediaError = 'Shopify returned no media records.';
         }
       } catch (me) {
         meta.mediaError = me && me.message ? me.message : String(me);
@@ -503,11 +517,15 @@ exports.handler = async (event) => {
         inventoryItemId: inventoryItemId || null,
         handle: product.handle || handleParts.handle,
         title: product.title,
+        statusSent: meta.statusSent,
+        statusReturned: product.status || null,
         sku,
         price: csvBulk.price,
         quantitySet: qty,
         inventoryTracked: Boolean(updated?.inventoryItem?.tracked),
+        mediaAttempted: meta.mediaAttempted,
         mediaAttached: meta.mediaAttached,
+        mediaUrls: meta.mediaUrls,
         mediaError: meta.mediaError,
         publications: meta.publications,
         publishQueryError: meta.publishQueryError,

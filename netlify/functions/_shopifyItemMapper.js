@@ -219,11 +219,14 @@ function csvVariantInventoryQty(item) {
 }
 
 /**
- * CSV Status column in parent row is literal 'active' (not item.status).
- * @returns {'ACTIVE'}
+ * UI stores lower-case publish status; Shopify expects enum strings.
+ * Defaults to ACTIVE to preserve existing behavior when status is missing.
+ * @param {Record<string, unknown>} item
+ * @returns {'ACTIVE'|'DRAFT'}
  */
-function csvProductStatus() {
-  return 'ACTIVE';
+function csvProductStatus(item) {
+  const raw = trimStr(item && item.status).toLowerCase();
+  return raw === 'draft' ? 'DRAFT' : 'ACTIVE';
 }
 
 /**
@@ -246,7 +249,7 @@ function buildProductCreateInput(item, handleSequenceForBase = 1) {
     vendor: trimStr(item.vendor) || undefined,
     productType: (item.productType || '').toString().trim() || undefined,
     tags: buildCsvTagsArray(item),
-    status: csvProductStatus(),
+    status: csvProductStatus(item),
     giftCard: false,
     seo: {
       title,
