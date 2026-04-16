@@ -625,6 +625,84 @@
     line-height: 1.5;
   }
 
+  .generated-copy-preview {
+    display: none;
+    margin-top: 10px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(183, 121, 31, 0.18);
+    background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+  }
+
+  .generated-copy-preview.show {
+    display: block;
+  }
+
+  .generated-copy-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .generated-copy-title {
+    font-size: 15px;
+    font-weight: 750;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+
+  .generated-copy-editor {
+    display: grid;
+    gap: 10px;
+  }
+
+  .generated-copy-field-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .generated-copy-input,
+  .generated-copy-textarea {
+    width: 100%;
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.92);
+    color: var(--text);
+    font: inherit;
+    padding: 12px 13px;
+  }
+
+  .generated-copy-textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .generated-copy-body {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-soft);
+  }
+
+  .generated-copy-meta {
+    margin-top: 9px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .conditional-field[hidden] {
+    display: none !important;
+  }
+
   .section-divider {
     border-top: 1px solid var(--border-soft);
     margin: 18px 0 16px;
@@ -1401,6 +1479,21 @@
             <div class="crystal-preview-copy" id="crystal-info-display"></div>
           </div>
 
+          <div class="generated-copy-preview" id="generated-copy-preview">
+            <div class="generated-copy-label">Generated Listing Copy</div>
+            <div class="generated-copy-editor">
+              <div>
+                <label class="generated-copy-field-label" for="generated-title-input">Title</label>
+                <input type="text" id="generated-title-input" class="generated-copy-input" placeholder="Generated title will appear here">
+              </div>
+              <div>
+                <label class="generated-copy-field-label" for="generated-description-input">Description</label>
+                <textarea id="generated-description-input" class="generated-copy-textarea" rows="5" placeholder="Generated description will appear here"></textarea>
+              </div>
+            </div>
+            <div class="generated-copy-meta" id="generated-copy-meta"></div>
+          </div>
+
           <div class="form-group">
             <label for="product-type">Product Type *</label>
             <select id="product-type" onchange="generateSKU()">
@@ -1413,6 +1506,11 @@
               <option value="Geode">Geode</option><option value="Egg">Egg</option>
               <option value="Heart">Heart</option><option value="Pyramid">Pyramid</option><option value="Cut Base">Cut Base</option><option value="On Stand">On Stand</option>
             </select>
+          </div>
+
+          <div class="form-group conditional-field" id="carving-shape-group" hidden>
+            <label for="carving-shape">Carving Shape / Figure</label>
+            <input type="text" id="carving-shape" autocomplete="off" autocapitalize="words" placeholder="Heart, Moon, Ghost, Pterodactyl...">
           </div>
 
           <div class="section-divider">
@@ -1552,11 +1650,15 @@
   let currentUser = 'Allie';
   let currentPhotos = [];
   let recentCrystals = [];
+  let crystalProfileLookup = Object.create(null);
+  let crystalLibraryDiagnostics = { loaded: false, duplicateNames: [] };
+  let currentGeneratedContent = { title: '', description: '', source: 'fallback' };
    
   // ===== Numeric SKU config (per user) =====
   const USER_SKU_STARTS = { Stevie: 100000, Allie: 500013, Dan: 800000, Matt: 900000 };
   const getSkuBaseFor = (user) => Number(USER_SKU_STARTS[user]) || 100000;
   const getSkuKeyFor  = (user) => `skuCounterGlobal:${user}`; // per-user counter key
+  const CRYSTAL_LIBRARY_URL = 'crystal-library.json';
 
   function getCurrentPublishStatusValue(){
     return (document.querySelector('#publish-status .is-active')?.dataset.status || 'active').trim();
@@ -2153,7 +2255,299 @@
     "Zoisite (Ruby in Zoisite)":{"intentions":"Passion, growth, healing, transformation","description":"Green zoisite with ruby inclusions, blending heart and root energy.","category":"Silicate","chakra":"Heart, Root","hardness":"6-7"},
   };
 
-  const CRYSTAL_NAMES_ALL = Object.keys(crystalDatabase).sort((a, b) => a.localeCompare(b));
+  let CRYSTAL_NAMES_ALL = [];
+
+  function rebuildCrystalNameIndex(){
+    CRYSTAL_NAMES_ALL = Object.keys(crystalDatabase).sort((a, b) => a.localeCompare(b));
+  }
+
+  function uniqStrings(values){
+    const seen = new Set();
+    return (Array.isArray(values) ? values : []).map(function(value){
+      return String(value || '').trim();
+    }).filter(function(value){
+      if (!value) return false;
+      const key = value.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function joinReadableList(values){
+    const items = uniqStrings(values);
+    if (!items.length) return '';
+    if (items.length === 1) return items[0];
+    if (items.length === 2) return items[0] + ' and ' + items[1];
+    return items.slice(0, -1).join(', ') + ', and ' + items[items.length - 1];
+  }
+
+  function trimSentence(value){
+    return String(value || '').replace(/\s+/g, ' ').trim().replace(/[.,;:\s]+$/, '');
+  }
+
+  function cleanProfilePhrase(value){
+    return trimSentence(String(value || '')
+      .replace(/\s*Wikipedia summary \([^)]+\):/gi, '. ')
+      .replace(/\s*Read more:\s*https?:\/\/\S+/gi, '')
+      .replace(/\([^)]*non-medical[^)]*\)/gi, '')
+      .replace(/\([^)]*personal practice[^)]*\)/gi, '')
+    );
+  }
+
+  function dedupeCrystalProfiles(crystals){
+    const seen = new Set();
+    const profiles = [];
+    const duplicateNames = [];
+    (Array.isArray(crystals) ? crystals : []).forEach(function(profile){
+      const name = String(profile && profile.crystal_name || '').trim();
+      if (!name) return;
+      const key = name.toLowerCase();
+      if (seen.has(key)) {
+        duplicateNames.push(name);
+        return;
+      }
+      seen.add(key);
+      profiles.push(profile);
+    });
+    return { profiles, duplicateNames: uniqStrings(duplicateNames) };
+  }
+
+  function buildCrystalProfileLookup(crystals){
+    const lookup = Object.create(null);
+    (Array.isArray(crystals) ? crystals : []).forEach(function(profile){
+      const names = uniqStrings([profile && profile.crystal_name].concat(Array.isArray(profile && profile.aliases) ? profile.aliases : []));
+      names.forEach(function(name){
+        if (!lookup[name]) lookup[name] = profile;
+      });
+    });
+    return lookup;
+  }
+
+  function crystalProfileToFallbackEntry(profile){
+    const themes = uniqStrings(profile && profile.metaphysical && profile.metaphysical.core_themes);
+    const chakras = uniqStrings(profile && profile.metaphysical && profile.metaphysical.chakra_associations);
+    const appearance = cleanProfilePhrase(profile && profile.identity && profile.identity.appearance_notes);
+    const tags = uniqStrings(profile && profile.seo && profile.seo.collection_tags).filter(function(tag){
+      return !/^(crystals|gemstones|metaphysical)$/i.test(tag);
+    });
+    return {
+      intentions: themes.join(', '),
+      description: appearance || 'Natural crystal with one-of-a-kind variation in color and pattern.',
+      category: tags[0] || '',
+      chakra: chakras.join(', '),
+      hardness: ''
+    };
+  }
+
+  function getCrystalProfile(crystalName){
+    const key = String(crystalName || '').trim();
+    if (!key) return null;
+    return crystalProfileLookup[key] || null;
+  }
+
+  function buildColorPhrase(profile){
+    const colorRange = uniqStrings(profile && profile.identity && profile.identity.color_range).filter(function(color){
+      return !/^natural color varies$/i.test(color);
+    }).slice(0, 3);
+    return colorRange.length ? joinReadableList(colorRange).toLowerCase() : 'natural tones';
+  }
+
+  function buildThemePhrase(profile, fallbackCrystal){
+    const themes = uniqStrings(
+      (profile && profile.metaphysical && profile.metaphysical.core_themes)
+      || String(fallbackCrystal && fallbackCrystal.intentions || '').split(',')
+    ).slice(0, 4).map(function(theme){
+      return cleanProfilePhrase(theme).toLowerCase();
+    }).filter(Boolean);
+    return joinReadableList(themes);
+  }
+
+  function buildUsePhrase(profile){
+    const uses = uniqStrings(profile && profile.metaphysical && profile.metaphysical.common_uses)
+      .map(function(use){ return cleanProfilePhrase(use).toLowerCase(); })
+      .filter(Boolean)
+      .slice(0, 3);
+    return joinReadableList(uses);
+  }
+
+  function buildSourcePhrase(profile){
+    const sources = uniqStrings(profile && profile.identity && profile.identity.common_sources).filter(function(source){
+      return source && !/various worldwide sources/i.test(source);
+    }).slice(0, 2);
+    return joinReadableList(sources);
+  }
+
+  function normalizeFreeText(value){
+    return String(value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function formatTitleWords(value){
+    return normalizeFreeText(value).replace(/\b([a-z])/g, function(_, ch){
+      return ch.toUpperCase();
+    });
+  }
+
+  function isCarvingProductType(productType){
+    return normalizeFreeText(productType).toLowerCase() === 'carving';
+  }
+
+  function getCarvingShapeValue(){
+    const productType = document.getElementById('product-type')?.value || '';
+    if (!isCarvingProductType(productType)) return '';
+    return normalizeFreeText(document.getElementById('carving-shape')?.value || '');
+  }
+
+  function updateCarvingShapeVisibility(){
+    const group = document.getElementById('carving-shape-group');
+    if (!group) return;
+    group.hidden = !isCarvingProductType(document.getElementById('product-type')?.value || '');
+  }
+
+  function generateProductTitle(crystalName, productType, carvingShape){
+    const crystal = String(crystalName || '').trim();
+    const type = String(productType || '').trim();
+    if (!crystal && !type) return '';
+    if (!type) return crystal ? crystal + ' Crystal' : '';
+    const lowerType = type.toLowerCase();
+    const formattedShape = formatTitleWords(carvingShape);
+    if (lowerType === 'carving') return formattedShape ? (crystal + ' ' + formattedShape + ' Carving').trim() : (crystal + ' Carving').trim();
+    if (lowerType === 'on stand') return crystal + ' Crystal on Stand';
+    if (lowerType === 'freeform') return crystal + ' Freeform Stone';
+    if (/\b(crystal|stone|beads|cluster|geode)\b/i.test(type)) return (crystal + ' ' + type).trim();
+    return (crystal + ' ' + type + ' Crystal').trim();
+  }
+
+  function generateProductDescription(crystalName, productType, carvingShape){
+    const crystal = String(crystalName || '').trim();
+    if (!crystal) return '';
+    const fallbackCrystal = crystalDatabase[crystal] || {};
+    const profile = getCrystalProfile(crystal);
+    const type = String(productType || '').trim();
+    const normalizedShape = normalizeFreeText(carvingShape).toLowerCase();
+    const pieceLabel = isCarvingProductType(type) && normalizedShape
+      ? normalizedShape + ' carving'
+      : (type ? type.toLowerCase() + ' piece' : 'crystal piece');
+    const colorPhrase = buildColorPhrase(profile);
+    const themePhrase = buildThemePhrase(profile, fallbackCrystal);
+    const usePhrase = buildUsePhrase(profile);
+    const sourcePhrase = buildSourcePhrase(profile);
+    const parts = [
+      'This ' + pieceLabel + ' showcases ' + crystal + ' in ' + colorPhrase + ' with the natural variation that makes each piece distinct.'
+    ];
+
+    if (themePhrase) {
+      parts.push('Many people are drawn to ' + crystal + ' for themes of ' + themePhrase + '.');
+    } else if (fallbackCrystal && fallbackCrystal.category) {
+      parts.push(crystal + ' is a natural ' + String(fallbackCrystal.category).toLowerCase() + ' material often chosen for its character and presence.');
+    }
+
+    if (usePhrase) {
+      parts.push('It is often used for intention setting, meditation, and decor, especially around ' + usePhrase + '.');
+    } else {
+      parts.push('It is often used for meditation, altar styling, shelf display, or as a thoughtful gift.');
+    }
+
+    if (sourcePhrase) {
+      parts.push('Material like this is commonly associated with sources in ' + sourcePhrase + '.');
+    }
+
+    parts.push('Because each crystal forms naturally, color, pattern, flash, and shape will vary from piece to piece.');
+    return parts.join(' ');
+  }
+
+  function syncGeneratedFieldValue(el, nextValue){
+    if (!el) return;
+    el.value = nextValue || '';
+    el.dataset.lastAutoValue = nextValue || '';
+  }
+
+  function getEditableListingCopy(){
+    const titleEl = document.getElementById('generated-title-input');
+    const descEl = document.getElementById('generated-description-input');
+    return {
+      title: normalizeFreeText(titleEl?.value || '') || currentGeneratedContent.title || '',
+      description: String(descEl?.value || '').trim() || currentGeneratedContent.description || ''
+    };
+  }
+
+  function setEditableListingCopy(title, description){
+    const titleEl = document.getElementById('generated-title-input');
+    const descEl = document.getElementById('generated-description-input');
+    if (titleEl) titleEl.value = title || '';
+    if (descEl) descEl.value = description || '';
+  }
+
+  function buildGeneratedContent(crystalName, productType, carvingShape){
+    const crystal = String(crystalName || '').trim();
+    if (!crystal) return { title: '', description: '', source: 'fallback' };
+    return {
+      title: generateProductTitle(crystal, productType, carvingShape),
+      description: generateProductDescription(crystal, productType, carvingShape),
+      source: getCrystalProfile(crystal) ? 'library' : 'fallback'
+    };
+  }
+
+  function renderGeneratedContentPreview(content){
+    const card = document.getElementById('generated-copy-preview');
+    const titleEl = document.getElementById('generated-title-input');
+    const descEl = document.getElementById('generated-description-input');
+    const metaEl = document.getElementById('generated-copy-meta');
+    if (!card || !titleEl || !descEl || !metaEl) return;
+    if (!content || (!content.title && !content.description)) {
+      card.classList.remove('show');
+      titleEl.value = '';
+      descEl.value = '';
+      titleEl.dataset.lastAutoValue = '';
+      descEl.dataset.lastAutoValue = '';
+      metaEl.textContent = '';
+      return;
+    }
+    syncGeneratedFieldValue(titleEl, content.title || '');
+    syncGeneratedFieldValue(descEl, content.description || '');
+    metaEl.textContent = content.source === 'library'
+      ? 'Generated from the crystal library profile.'
+      : 'Generated from the base crystal catalog fallback.';
+    card.classList.add('show');
+  }
+
+  function syncGeneratedContentFromForm(){
+    const crystalName = document.getElementById('crystal-type')?.value || '';
+    const productType = document.getElementById('product-type')?.value || '';
+    const carvingShape = getCarvingShapeValue();
+    updateCarvingShapeVisibility();
+    currentGeneratedContent = buildGeneratedContent(crystalName, productType, carvingShape);
+    renderGeneratedContentPreview(currentGeneratedContent);
+  }
+
+  async function loadCrystalLibrary(){
+    try {
+      const response = await fetch(CRYSTAL_LIBRARY_URL, { cache: 'no-store' });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const payload = await response.json();
+      const deduped = dedupeCrystalProfiles(payload && payload.crystals);
+      crystalProfileLookup = buildCrystalProfileLookup(deduped.profiles);
+      crystalLibraryDiagnostics = { loaded: true, duplicateNames: deduped.duplicateNames };
+      deduped.profiles.forEach(function(profile){
+        const name = String(profile && profile.crystal_name || '').trim();
+        if (name && !crystalDatabase[name]) crystalDatabase[name] = crystalProfileToFallbackEntry(profile);
+      });
+      rebuildCrystalNameIndex();
+      if (deduped.duplicateNames.length) {
+        console.info('[crystal-library] exact duplicates skipped from canonical lookup', deduped.duplicateNames);
+      }
+      syncGeneratedContentFromForm();
+      return true;
+    } catch (err) {
+      crystalProfileLookup = Object.create(null);
+      crystalLibraryDiagnostics = { loaded: false, duplicateNames: [] };
+      console.warn('[crystal-library] falling back to inline crystal catalog', err && err.message ? err.message : err);
+      syncGeneratedContentFromForm();
+      return false;
+    }
+  }
+
+  rebuildCrystalNameIndex();
 
   function positionCrystalPicker(){
     const root = document.getElementById('crystal-picker');
@@ -2359,6 +2753,7 @@
     } else {
       preview.classList.remove('show');
     }
+    syncGeneratedContentFromForm();
     generateSKU();
   }
   function generateSKU(){
@@ -2611,6 +3006,7 @@ function setupPhotoHandler() {
   function buildCurrentItemData(options = {}){
     const crystalType = (document.getElementById('crystal-type')?.value || '').trim();
     const productType = document.getElementById('product-type')?.value || '';
+    const carvingShape = getCarvingShapeValue();
     const weightRaw = parseAmountInput(document.getElementById('weight'));
     const cost = parseAmountInput(document.getElementById('cost'));
     const retailPrice = parseAmountInput(document.getElementById('retail-price'));
@@ -2654,11 +3050,16 @@ function setupPhotoHandler() {
       return null;
     }
 
+    const generatedContent = buildGeneratedContent(crystalType, productType, carvingShape);
+    const editableCopy = getEditableListingCopy();
+
     return {
       id: Date.now(),
       sku,
       crystalType,
       productType,
+      carvingShape,
+      title: editableCopy.title || generatedContent.title || generateProductTitle(crystalType, productType, carvingShape),
       weight: weightKg,
       cost,
       pricingMode,
@@ -2668,10 +3069,11 @@ function setupPhotoHandler() {
       originCountry: document.getElementById('origin-country')?.value || '',
       vendor: document.getElementById('vendor')?.value || '',
       intentions: crystal.intentions || '',
-      description: crystal.description || '',
+      description: editableCopy.description || generatedContent.description || crystal.description || '',
       category: crystal.category || '',
       chakra: crystal.chakra || '',
       hardness: crystal.hardness || '',
+      contentSource: generatedContent.source || 'fallback',
       photos: sanitizedPhotos,
       user: currentUser,
       dateAdded: new Date().toISOString(),
@@ -2825,6 +3227,7 @@ function duplicateLastItem(){
     const retailEl = document.getElementById('retail-price');
     const qtyEl = document.getElementById('quantity');
     const manualEl = document.getElementById('manual-sku');
+    const carvingShapeEl = document.getElementById('carving-shape');
     const prev = document.getElementById('photo-preview');
     const titleEl = document.getElementById('photo-section-title');
 
@@ -2835,6 +3238,7 @@ function duplicateLastItem(){
     if (qtyEl) qtyEl.value = String(last.quantity ?? 1);
     if (retailEl) retailEl.value = formatMoney(Number(last.retailPrice || 0));
     if (manualEl) manualEl.value = '';
+    if (carvingShapeEl) carvingShapeEl.value = last.carvingShape || '';
 
     if (last.pricingMode) {
       document.querySelectorAll('#pricing-mode .seg-btn').forEach((b) => b.classList.remove('is-active'));
@@ -2849,6 +3253,9 @@ function duplicateLastItem(){
 
     rememberRecentCrystal(last.crystalType || '');
     if (typeof updateCrystalPreview === 'function') updateCrystalPreview();
+    if (typeof setEditableListingCopy === 'function') {
+      setEditableListingCopy(last.title || currentGeneratedContent.title || '', last.description || currentGeneratedContent.description || '');
+    }
     if (typeof generateSKU === 'function') generateSKU();
     if (typeof updateProfit === 'function') updateProfit();
   }
@@ -2862,6 +3269,7 @@ function clearForm(){
     const retailEl = document.getElementById('retail-price');
     const qEl = document.getElementById('quantity');
     const manualEl = document.getElementById('manual-sku');
+    const carvingShapeEl = document.getElementById('carving-shape');
     const prev = document.getElementById('photo-preview');
     const titleEl = document.getElementById('photo-section-title');
     const crystalPreview = document.getElementById('crystal-preview');
@@ -2874,6 +3282,7 @@ function clearForm(){
     if (retailEl) retailEl.value = '0.00';
     if (qEl) qEl.value = '1';
     if (manualEl) manualEl.value = '';
+    if (carvingShapeEl) carvingShapeEl.value = '';
     currentPhotos = []; 
     if (prev) prev.innerHTML = '';
     if (titleEl) titleEl.textContent = 'Add Photos';
@@ -2881,6 +3290,7 @@ function clearForm(){
     if (crystalPreview) crystalPreview.classList.remove('show');
     if (crystalName) crystalName.textContent = '';
     if (crystalInfo) crystalInfo.innerHTML = '';
+    if (typeof syncGeneratedContentFromForm === 'function') syncGeneratedContentFromForm();
     
     // Keep: user, vendor, origin-country, markup, pricing mode, publish status
     // Recalculate based on kept values
@@ -2894,6 +3304,7 @@ function clearForm(){
 function clearAllFields(){
     document.getElementById('crystal-type').value = '';
     document.getElementById('product-type').value = '';
+    document.getElementById('carving-shape').value = '';
     document.getElementById('weight').value = '';
     document.getElementById('cost').value = '';
     document.getElementById('retail-price').value = '0.00';
@@ -2922,6 +3333,7 @@ function clearAllFields(){
     document.querySelectorAll('#publish-status .seg-btn').forEach(b => b.classList.remove('is-active'));
     document.querySelector('#publish-status .seg-btn[data-status="active"]')?.classList.add('is-active');
     
+    if (typeof syncGeneratedContentFromForm === 'function') syncGeneratedContentFromForm();
     updatePricingLabels();
     calculatePrice();
     renderSessionContext();
@@ -3105,7 +3517,7 @@ function clearAllFields(){
 
         // Build rows from your inventory structure - barcode matches SKU
         const rows = inventory.map(item => {
-          const title = (item.crystalType || 'Crystal').trim();
+          const title = ((item.title && item.title.trim()) || [item.crystalType || '', item.productType || ''].filter(Boolean).join(' ').trim() || 'Crystal');
           const price = Number(item.retailPrice || 0);
           const sku   = String(item.sku ?? '').trim();
           const barcode = sku; // Barcode = SKU for matching with Shopify
@@ -3203,7 +3615,7 @@ function clearAllData(){
         : `${Number(item.weight) || 0}kg`;
       const status = String(item.status || 'active').trim().toLowerCase() === 'draft' ? 'Draft' : 'Active';
       const statusClass = status === 'Draft' ? 'status-pill-draft' : 'status-pill-active';
-      const title = [item.crystalType || '', item.productType || ''].filter(Boolean).join(' ').trim() || 'Saved item';
+      const title = (item.title || '').trim() || [item.crystalType || '', item.productType || ''].filter(Boolean).join(' ').trim() || 'Saved item';
       const subtitleParts = [
         (item.vendor || '').trim(),
         (item.originCountry || '').trim()
@@ -3273,6 +3685,8 @@ function clearAllData(){
     if (typeof generateSKU === 'function') generateSKU();
     renderSessionContext();
     updateStats();setupPhotoHandler();
+    if (typeof syncGeneratedContentFromForm === 'function') syncGeneratedContentFromForm();
+    loadCrystalLibrary();
   }
 
 if (document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', initApp); } else { initApp(); }
@@ -3485,6 +3899,13 @@ updatePricingLabels();
       wrap.querySelector('.seg-btn[data-mode="per_kilo"]')?.classList.add('is-active');
     }
   })();
+
+  $('product-type')?.addEventListener('change', ()=>{
+    if (typeof syncGeneratedContentFromForm === 'function') syncGeneratedContentFromForm();
+  });
+  $('carving-shape')?.addEventListener('input', ()=>{
+    if (typeof syncGeneratedContentFromForm === 'function') syncGeneratedContentFromForm();
+  });
   if (typeof updatePricingLabels === 'function') updatePricingLabels();
   if (typeof calculatePrice === 'function') calculatePrice();
 
