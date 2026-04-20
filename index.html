@@ -2805,10 +2805,12 @@ function updateProfit(){
   let unitRetail = parseAmountInput(retailBox);
   if (!Number.isFinite(unitRetail)){
     unitRetail = computeUnitRetail(mode, weight, cost, markup);
-    if (retailBox) retailBox.value = formatMoney(unitRetail);
+  } else {
+    unitRetail = Math.round(unitRetail);
   }
+  if (retailBox) retailBox.value = formatMoney(unitRetail);
 
-  const totalRetail = round2(unitRetail * qty);
+  const totalRetail = Math.round(unitRetail) * qty;
   const totalCost = round2(unitCost * qty);
   const profit = round2(totalRetail - totalCost);
 
@@ -2830,7 +2832,7 @@ function computeUnitRetail(mode, weight, cost, markup){
   const c = Number.isFinite(cost) ? cost : 0;
   const m = Number.isFinite(markup) ? markup : 1;
   const base = (mode === 'per_piece') ? c : (w * c);
-  return round2(base * m);
+  return Math.round(base * m);
 }
 
 function updateManualSKU(){}
