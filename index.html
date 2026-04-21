@@ -653,6 +653,43 @@
     line-height: 1.5;
   }
 
+  .crystal-card-preview {
+    display: none;
+    margin-top: 10px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(183, 121, 31, 0.18);
+    background: linear-gradient(180deg, #fafbff 0%, #ffffff 100%);
+  }
+
+  .crystal-card-preview.show {
+    display: block;
+  }
+
+  .crystal-card-preview-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .crystal-card-preview-frame {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+    background: var(--surface-soft);
+    max-width: 100%;
+  }
+
+  .crystal-card-preview-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+    vertical-align: middle;
+  }
+
   .generated-copy-preview {
     display: none;
     margin-top: 10px;
@@ -1150,8 +1187,7 @@
 
   .bottom-tab:active { transform: scale(0.985); }
 
-  .umodal,
-  .feedback-modal {
+  .umodal {
     position: fixed;
     inset: 0;
     background: rgba(31, 42, 55, 0.28);
@@ -1165,14 +1201,12 @@
     -webkit-backdrop-filter: blur(6px);
   }
 
-  .umodal.show,
-  .feedback-modal.show {
+  .umodal.show {
     display: flex;
     pointer-events: auto;
   }
 
-  .umodal-card,
-  .feedback-card {
+  .umodal-card {
     background: #fff;
     padding: 20px 18px;
     border-radius: 18px;
@@ -1206,76 +1240,6 @@
   .umodal-btn:hover {
     border-color: var(--accent);
     background: #fffaf7;
-  }
-
-  .feedback-eyebrow {
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent-strong);
-    margin-bottom: 8px;
-  }
-
-  .feedback-title {
-    font-size: 1.22rem;
-    font-weight: 800;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-
-  .feedback-subtitle {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 14px;
-    line-height: 1.5;
-  }
-
-  .feedback-grid {
-    display: grid;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-
-  .feedback-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    align-items: flex-start;
-    padding: 11px 12px;
-    border-radius: 12px;
-    background: var(--surface-soft);
-    border: 1px solid var(--border-soft);
-    text-align: left;
-  }
-
-  .feedback-row-label {
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .feedback-row-value {
-    flex: 1;
-    text-align: right;
-    font-size: 14px;
-    font-weight: 650;
-    color: var(--text);
-    line-height: 1.45;
-    word-break: break-word;
-  }
-
-  .feedback-note {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 14px;
-    line-height: 1.5;
-  }
-
-  .feedback-close {
-    width: 100%;
   }
 
   .toast-stack {
@@ -1505,6 +1469,13 @@
             <div class="crystal-preview-copy" id="crystal-info-display"></div>
           </div>
 
+          <div class="crystal-card-preview" id="crystal-card-preview" hidden aria-hidden="true">
+            <div class="crystal-card-preview-label">Crystal Card</div>
+            <div class="crystal-card-preview-frame">
+              <img id="crystal-card-image" alt="" decoding="async" loading="lazy">
+            </div>
+          </div>
+
           <div class="generated-copy-preview" id="generated-copy-preview">
             <div class="generated-copy-label">Generated Listing Copy</div>
             <div class="generated-copy-editor">
@@ -1632,17 +1603,6 @@
       </div>
     </div>
 
-  <div id="feedback-modal" class="feedback-modal" aria-hidden="true">
-    <div class="feedback-card">
-      <div id="feedback-eyebrow" class="feedback-eyebrow">Save Complete</div>
-      <div id="feedback-title" class="feedback-title">Saved</div>
-      <div id="feedback-subtitle" class="feedback-subtitle"></div>
-      <div id="feedback-grid" class="feedback-grid"></div>
-      <div id="feedback-note" class="feedback-note"></div>
-      <button type="button" id="feedback-close" class="button button-success feedback-close">Done</button>
-    </div>
-  </div>
-
   <div id="toast-stack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
   
 
@@ -1749,50 +1709,6 @@
       + renderSummaryChip('Batch', batchMode)
       + '</div></div>';
     syncOriginCountryChips();
-  }
-
-  function setupFeedbackModal(){
-    if (window.__fmFeedbackSetupDone) return;
-    const modal = document.getElementById('feedback-modal');
-    const closeBtn = document.getElementById('feedback-close');
-    if (!modal || !closeBtn) return;
-
-    closeBtn.addEventListener('click', closeFeedbackModal);
-    modal.addEventListener('click', function(event){
-      if (event.target === modal) closeFeedbackModal();
-    });
-    window.__fmFeedbackSetupDone = true;
-  }
-
-  function closeFeedbackModal(){
-    const modal = document.getElementById('feedback-modal');
-    if (!modal) return;
-    modal.classList.remove('show');
-    modal.setAttribute('aria-hidden', 'true');
-  }
-
-  function showFeedbackModal(options){
-    const modal = document.getElementById('feedback-modal');
-    const eyebrow = document.getElementById('feedback-eyebrow');
-    const title = document.getElementById('feedback-title');
-    const subtitle = document.getElementById('feedback-subtitle');
-    const grid = document.getElementById('feedback-grid');
-    const note = document.getElementById('feedback-note');
-    if (!modal || !eyebrow || !title || !subtitle || !grid || !note) return;
-
-    const rows = Array.isArray(options && options.rows) ? options.rows : [];
-    eyebrow.textContent = (options && options.eyebrow) || 'Save Complete';
-    title.textContent = (options && options.title) || 'Saved';
-    subtitle.textContent = (options && options.subtitle) || '';
-    grid.innerHTML = rows.map(function(row){
-      return '<div class="feedback-row">'
-        + '<div class="feedback-row-label">' + escapeHtml(row && row.label || '') + '</div>'
-        + '<div class="feedback-row-value">' + escapeHtml(row && row.value || '') + '</div>'
-        + '</div>';
-    }).join('');
-    note.textContent = (options && options.note) || '';
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden', 'false');
   }
 
   function showToast(message, tone, duration){
@@ -2377,7 +2293,7 @@
     return crystalProfileLookup[key] || null;
   }
 
-  /** Public https URL for the library’s card_image path, or null. Used only when saving to Shopify (extra product media). */
+  /** Public https URL for the library’s card_image path, or null. Used for in-app preview and Shopify extra product media. */
   function resolveCrystalCardHttpsUrl(crystalType){
     const name = String(crystalType || '').trim();
     if (!name) return null;
@@ -2386,13 +2302,77 @@
     const rel = String(profile.card_image).trim();
     if (!rel) return null;
     if (/^https?:\/\//i.test(rel)) return rel;
+    const proto = typeof window !== 'undefined' && window.location ? window.location.protocol : '';
+    const hasWebOrigin = proto === 'http:' || proto === 'https:';
     const origin = (CARD_IMAGE_BASE_URL && String(CARD_IMAGE_BASE_URL).trim())
-      || (typeof window !== 'undefined' && window.location && /^https?:$/i.test(window.location.protocol) ? window.location.origin : '');
+      || (typeof window !== 'undefined' && window.location && hasWebOrigin ? window.location.origin : '');
     if (!origin) return null;
     try {
       return new URL(rel.replace(/^\//, ''), origin + '/').href;
     } catch (_) {
       return null;
+    }
+  }
+
+  let _lastCrystalCardDiagKey = '';
+  let _crystalCardLoadSeq = 0;
+  function updateCrystalCardPreview(){
+    const crystalName = (document.getElementById('crystal-type')?.value || '').trim();
+    const wrap = document.getElementById('crystal-card-preview');
+    const img = document.getElementById('crystal-card-image');
+    if (!wrap || !img) return;
+
+    const profile = crystalName ? getCrystalProfile(crystalName) : null;
+    const rawCard = profile && profile.card_image != null ? String(profile.card_image).trim() : '';
+    const cardUrl = resolveCrystalCardHttpsUrl(crystalName);
+
+    const diagKey = crystalName + '\t' + rawCard + '\t' + (cardUrl || '');
+    if (diagKey !== _lastCrystalCardDiagKey) {
+      _lastCrystalCardDiagKey = diagKey;
+      console.log('[crystal-card]', {
+        selected: crystalName || '(empty)',
+        card_image: rawCard || '(none)',
+        finalUrl: cardUrl || '(none)',
+      });
+    }
+
+    img.onload = null;
+    img.onerror = null;
+
+    const seq = ++_crystalCardLoadSeq;
+    function showCard(){
+      if (seq !== _crystalCardLoadSeq) return;
+      wrap.hidden = false;
+      wrap.setAttribute('aria-hidden', 'false');
+      wrap.classList.add('show');
+    }
+    function hideCard(){
+      if (seq !== _crystalCardLoadSeq) return;
+      img.removeAttribute('src');
+      wrap.hidden = true;
+      wrap.setAttribute('aria-hidden', 'true');
+      wrap.classList.remove('show');
+    }
+
+    if (!cardUrl) {
+      hideCard();
+      return;
+    }
+
+    wrap.classList.remove('show');
+    wrap.hidden = true;
+    wrap.setAttribute('aria-hidden', 'true');
+
+    img.alt = 'Crystal reference card — ' + crystalName;
+    img.onload = showCard;
+    img.onerror = function(){
+      if (seq !== _crystalCardLoadSeq) return;
+      console.warn('[crystal-card] image load failed', cardUrl);
+      hideCard();
+    };
+    img.src = cardUrl;
+    if (img.complete && img.naturalWidth > 0) {
+      showCard();
     }
   }
 
@@ -2563,6 +2543,7 @@
     updateCarvingShapeVisibility();
     currentGeneratedContent = buildGeneratedContent(crystalName, productType, carvingShape);
     renderGeneratedContentPreview(currentGeneratedContent);
+    updateCrystalCardPreview();
   }
 
   async function loadCrystalLibrary(){
@@ -3261,25 +3242,17 @@ function setupPhotoHandler() {
         return;
       }
 
-      showFeedbackModal({
-        eyebrow: 'Shopify Saved',
-        title: data.title || 'Product saved',
-        subtitle: 'The Shopify save completed and the item was also fed into local inventory, recent items, CSV, and label exports.',
-        rows: [
-          { label: 'Product ID', value: data.productId || 'Unavailable' },
-          { label: 'Status Sent', value: statusSent },
-          { label: 'Photos Attempted', value: String(mediaAttempted) },
-          { label: 'Photos Attached', value: String(mediaAttached) },
-          { label: 'Media Result', value: data.mediaError || (mediaAttached > 0 ? 'Attached successfully' : 'No media attached') },
-          { label: 'Sales Channels', value: publicationSummary }
-        ],
-        note: [
-          data.publishQueryError ? 'Publication query: ' + data.publishQueryError : '',
-          pubErrors.length ? 'Publication errors: ' + pubErrors.join(' | ') : ''
-        ].filter(Boolean).join(' ')
-          || 'Everything above reflects the real Shopify response so you can trust what happened.'
+      console.log('[shopify-save] ok', {
+        productId: data.productId,
+        title: data.title,
+        statusSent,
+        mediaAttempted,
+        mediaAttached,
+        publicationSummary,
+        publishQueryError: data.publishQueryError || null,
+        pubErrors: pubErrors.length ? pubErrors : null,
       });
-      showToast('Shopify save completed.', 'info', 2200);
+      showToast('Saved to Shopify.', 'success', 2600);
     } catch (e) {
       alert('Shopify save failed (network or server).\n\n' + (e && e.message ? e.message : String(e)));
     } finally {
@@ -3758,7 +3731,6 @@ function clearAllData(){
     if (typeof stripDataPhotosFromInventoryInPlace === 'function') stripDataPhotosFromInventoryInPlace();
     if (typeof saveInventory === 'function') saveInventory();
     loadRecentCrystals();
-    setupFeedbackModal();
 
     // Restore user or prompt once
     try{
