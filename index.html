@@ -1625,6 +1625,8 @@
   let currentPhotos = [];
   let recentCrystals = [];
   let crystalProfileLookup = Object.create(null);
+  /** Lowercase crystal name → profile (same entries as crystalProfileLookup; fixes case mismatches). */
+  let crystalProfileLookupLower = Object.create(null);
   let crystalLibraryDiagnostics = { loaded: false, duplicateNames: [] };
   let currentGeneratedContent = { title: '', description: '', source: 'fallback' };
    
@@ -1633,7 +1635,10 @@
   const getSkuBaseFor = (user) => Number(USER_SKU_STARTS[user]) || 100000;
   const getSkuKeyFor  = (user) => `skuCounterGlobal:${user}`; // per-user counter key
   const CRYSTAL_LIBRARY_URL = 'crystal-library.json';
-  /** Optional: public site origin for crystal card PNGs (e.g. https://your-site.netlify.app). Leave empty to use this page’s origin (same host as index.html + crystal-cards/). */
+  /**
+   * Optional: absolute site root if the app is hosted on a different origin than crystal-cards/ (e.g. CDN).
+   * Leave empty — card URLs are derived from document.baseURI (works on Netlify and local file://).
+   */
   const CARD_IMAGE_BASE_URL = '';
 
   function getCurrentPublishStatusValue(){
@@ -2262,10 +2267,13 @@
 
   function buildCrystalProfileLookup(crystals){
     const lookup = Object.create(null);
+    crystalProfileLookupLower = Object.create(null);
     (Array.isArray(crystals) ? crystals : []).forEach(function(profile){
       const names = uniqStrings([profile && profile.crystal_name].concat(Array.isArray(profile && profile.aliases) ? profile.aliases : []));
       names.forEach(function(name){
         if (!lookup[name]) lookup[name] = profile;
+        const lk = name.toLowerCase();
+        if (!crystalProfileLookupLower[lk]) crystalProfileLookupLower[lk] = profile;
       });
     });
     return lookup;
@@ -2290,28 +2298,59 @@
   function getCrystalProfile(crystalName){
     const key = String(crystalName || '').trim();
     if (!key) return null;
-    return crystalProfileLookup[key] || null;
+    return crystalProfileLookup[key] || crystalProfileLookupLower[key.toLowerCase()] || null;
   }
 
-  /** Public https URL for the library’s card_image path, or null. Used for in-app preview and Shopify extra product media. */
-  function resolveCrystalCardHttpsUrl(crystalType){
+  /** Same slug rule as crystal card filenames: `crystal-cards/{slug}-card.png` */
+  function slugifyCrystalForCardFilename(s){
+    return String(s || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80);
+  }
+
+  /**
+   * Relative path to card image (e.g. crystal-cards/agate-card.png).
+   * Uses library card_image when set; otherwise conventional slug path so cards work even if JSON omits the field.
+   */
+  function getCrystalCardRelativePath(crystalType){
     const name = String(crystalType || '').trim();
-    if (!name) return null;
+    if (!name) return '';
     const profile = getCrystalProfile(name);
-    if (!profile || profile.card_image == null) return null;
-    const rel = String(profile.card_image).trim();
+    const fromJson = profile && String(profile.card_image || '').trim();
+    if (fromJson) return fromJson;
+    const slug = slugifyCrystalForCardFilename(name);
+    return slug ? ('crystal-cards/' + slug + '-card.png') : '';
+  }
+
+  /** Turn relative card path into absolute http(s) or file URL — uses document.baseURI so it works behind paths and on Netlify. */
+  function absoluteUrlFromCrystalCardPath(rel){
     if (!rel) return null;
     if (/^https?:\/\//i.test(rel)) return rel;
-    const proto = typeof window !== 'undefined' && window.location ? window.location.protocol : '';
-    const hasWebOrigin = proto === 'http:' || proto === 'https:';
-    const origin = (CARD_IMAGE_BASE_URL && String(CARD_IMAGE_BASE_URL).trim())
-      || (typeof window !== 'undefined' && window.location && hasWebOrigin ? window.location.origin : '');
-    if (!origin) return null;
     try {
-      return new URL(rel.replace(/^\//, ''), origin + '/').href;
-    } catch (_) {
-      return null;
+      const baseOverride = (CARD_IMAGE_BASE_URL && String(CARD_IMAGE_BASE_URL).trim()) || '';
+      if (baseOverride) {
+        return new URL(rel.replace(/^\//, ''), baseOverride.replace(/\/?$/, '/') ).href;
+      }
+      if (typeof document !== 'undefined' && document.baseURI) {
+        return new URL(rel.replace(/^\//, ''), document.baseURI).href;
+      }
+      const loc = typeof window !== 'undefined' ? window.location : null;
+      if (loc && (loc.protocol === 'http:' || loc.protocol === 'https:')) {
+        return new URL(rel.replace(/^\//, ''), loc.origin + '/').href;
+      }
+    } catch (e) {
+      console.warn('[crystal-card] absoluteUrlFromCrystalCardPath', e);
     }
+    return null;
+  }
+
+  /** Absolute URL for Shopify media and in-app image src (https on deployed site). */
+  function resolveCrystalCardHttpsUrl(crystalType){
+    const rel = getCrystalCardRelativePath(crystalType);
+    if (!rel) return null;
+    return absoluteUrlFromCrystalCardPath(rel);
   }
 
   let _lastCrystalCardDiagKey = '';
@@ -2324,14 +2363,17 @@
 
     const profile = crystalName ? getCrystalProfile(crystalName) : null;
     const rawCard = profile && profile.card_image != null ? String(profile.card_image).trim() : '';
+    const relPath = getCrystalCardRelativePath(crystalName);
     const cardUrl = resolveCrystalCardHttpsUrl(crystalName);
+    const imgSrc = relPath || '';
 
-    const diagKey = crystalName + '\t' + rawCard + '\t' + (cardUrl || '');
+    const diagKey = crystalName + '\t' + relPath + '\t' + (cardUrl || '');
     if (diagKey !== _lastCrystalCardDiagKey) {
       _lastCrystalCardDiagKey = diagKey;
       console.log('[crystal-card]', {
         selected: crystalName || '(empty)',
         card_image: rawCard || '(none)',
+        relPath: relPath || '(none)',
         finalUrl: cardUrl || '(none)',
       });
     }
@@ -2354,7 +2396,7 @@
       wrap.classList.remove('show');
     }
 
-    if (!cardUrl) {
+    if (!imgSrc) {
       hideCard();
       return;
     }
@@ -2367,10 +2409,10 @@
     img.onload = showCard;
     img.onerror = function(){
       if (seq !== _crystalCardLoadSeq) return;
-      console.warn('[crystal-card] image load failed', cardUrl);
+      console.warn('[crystal-card] image load failed', imgSrc);
       hideCard();
     };
-    img.src = cardUrl;
+    img.src = imgSrc;
     if (img.complete && img.naturalWidth > 0) {
       showCard();
     }
@@ -2566,6 +2608,7 @@
       return true;
     } catch (err) {
       crystalProfileLookup = Object.create(null);
+      crystalProfileLookupLower = Object.create(null);
       crystalLibraryDiagnostics = { loaded: false, duplicateNames: [] };
       console.warn('[crystal-library] falling back to inline crystal catalog', err && err.message ? err.message : err);
       syncGeneratedContentFromForm();
