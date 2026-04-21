@@ -6,6 +6,7 @@
   "crystals": [
     {
       "crystal_name": "Actinolite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -59,6 +60,7 @@
     },
     {
       "crystal_name": "Aegirine",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -112,6 +114,7 @@
     },
     {
       "crystal_name": "Agate",
+      "card_image": "crystal-cards/agate-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -165,6 +168,7 @@
     },
     {
       "crystal_name": "Agate (Blue Chalcedony)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -217,6 +221,7 @@
     },
     {
       "crystal_name": "Agate (Blue Lace)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -269,6 +274,7 @@
     },
     {
       "crystal_name": "Agate (Botswana)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -321,6 +327,7 @@
     },
     {
       "crystal_name": "Agate (Crazy Lace)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -376,6 +383,7 @@
     },
     {
       "crystal_name": "Agate (Fire)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -429,6 +437,7 @@
     },
     {
       "crystal_name": "Agate (Firework)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -480,6 +489,7 @@
     },
     {
       "crystal_name": "Agate (Moss)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -532,6 +542,7 @@
     },
     {
       "crystal_name": "Agate (Tree)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -584,6 +595,7 @@
     },
     {
       "crystal_name": "Ajoite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -637,6 +649,7 @@
     },
     {
       "crystal_name": "Ajoite in Quartz",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -691,6 +704,7 @@
     },
     {
       "crystal_name": "Amazonite",
+      "card_image": "crystal-cards/amazonite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -743,6 +757,7 @@
     },
     {
       "crystal_name": "Amazonite (Blue Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -795,6 +810,7 @@
     },
     {
       "crystal_name": "Amazonite (Peru)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -848,6 +864,7 @@
     },
     {
       "crystal_name": "Amazonite (Russian)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -900,6 +917,7 @@
     },
     {
       "crystal_name": "Amber",
+      "card_image": "crystal-cards/amber-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -951,6 +969,7 @@
     },
     {
       "crystal_name": "Amethyst",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1007,6 +1026,7 @@
     },
     {
       "crystal_name": "Ametrine",
+      "card_image": "crystal-cards/ametrine-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1059,6 +1079,7 @@
     },
     {
       "crystal_name": "Ammonite Fossil",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1110,6 +1131,7 @@
     },
     {
       "crystal_name": "Andalusite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1162,6 +1184,7 @@
     },
     {
       "crystal_name": "Andesine",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1217,6 +1240,7 @@
     },
     {
       "crystal_name": "Angelite",
+      "card_image": "crystal-cards/angelite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1268,6 +1292,7 @@
     },
     {
       "crystal_name": "Apatite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1320,6 +1345,7 @@
     },
     {
       "crystal_name": "Apatite (Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1372,6 +1398,7 @@
     },
     {
       "crystal_name": "Apatite (Purple)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1424,6 +1451,7 @@
     },
     {
       "crystal_name": "Apatite (Yellow)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1475,6 +1503,7 @@
     },
     {
       "crystal_name": "Apophyllite",
+      "card_image": "crystal-cards/apophyllite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1527,6 +1556,7 @@
     },
     {
       "crystal_name": "Aquamarine",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1585,6 +1615,7 @@
     },
     {
       "crystal_name": "Aragonite",
+      "card_image": "crystal-cards/aragonite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1637,6 +1668,7 @@
     },
     {
       "crystal_name": "Arfvedsonite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1695,6 +1727,7 @@
     },
     {
       "crystal_name": "Astrophyllite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1747,6 +1780,7 @@
     },
     {
       "crystal_name": "Atlantisite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1801,6 +1835,7 @@
     },
     {
       "crystal_name": "Auralite 23",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1856,6 +1891,7 @@
     },
     {
       "crystal_name": "Aventurine (Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1908,6 +1944,7 @@
     },
     {
       "crystal_name": "Aventurine (Green and Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -1962,6 +1999,7 @@
     },
     {
       "crystal_name": "Aventurine (Peach)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2015,6 +2053,7 @@
     },
     {
       "crystal_name": "Aventurine (Red and Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2068,6 +2107,7 @@
     },
     {
       "crystal_name": "Aventurine (Red)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2120,6 +2160,7 @@
     },
     {
       "crystal_name": "Aventurine (Silver Sheen)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2172,6 +2213,7 @@
     },
     {
       "crystal_name": "Axinite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2225,6 +2267,7 @@
     },
     {
       "crystal_name": "Azurite",
+      "card_image": "crystal-cards/azurite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2280,6 +2323,7 @@
     },
     {
       "crystal_name": "Azurite-Malachite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2337,6 +2381,7 @@
     },
     {
       "crystal_name": "Black Obsidian (Apache Tear)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2389,6 +2434,7 @@
     },
     {
       "crystal_name": "Black Obsidian (Mahogany)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2443,6 +2489,7 @@
     },
     {
       "crystal_name": "Black Onyx",
+      "card_image": "crystal-cards/black-onyx-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2494,6 +2541,7 @@
     },
     {
       "crystal_name": "Black Tourmaline",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2547,6 +2595,7 @@
     },
     {
       "crystal_name": "Bloodstone",
+      "card_image": "crystal-cards/bloodstone-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2603,6 +2652,7 @@
     },
     {
       "crystal_name": "Bloodstone (Fancy Jasper)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2655,6 +2705,7 @@
     },
     {
       "crystal_name": "Bloodstone (Heliotrope)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2710,6 +2761,7 @@
     },
     {
       "crystal_name": "Blue Apatite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2762,6 +2814,7 @@
     },
     {
       "crystal_name": "Blue Calcite",
+      "card_image": "crystal-cards/blue-calcite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2816,6 +2869,7 @@
     },
     {
       "crystal_name": "Blue Chalcedony (Gray)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2869,6 +2923,7 @@
     },
     {
       "crystal_name": "Blue Chalcedony (Purple Tint)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2921,6 +2976,7 @@
     },
     {
       "crystal_name": "Blue Kyanite",
+      "card_image": "crystal-cards/blue-kyanite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -2972,6 +3028,7 @@
     },
     {
       "crystal_name": "Blue Kyanite (Black)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3024,6 +3081,7 @@
     },
     {
       "crystal_name": "Blue Lace Agate",
+      "card_image": "crystal-cards/blue-lace-agate-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3077,6 +3135,7 @@
     },
     {
       "crystal_name": "Blue Opal",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3132,7 +3191,67 @@
       }
     },
     {
+      "crystal_name": "Blue Quartz",
+      "card_image": "",
+      "aliases": [],
+      "identity": {
+        "color_range": [
+          "blue tones"
+        ],
+        "appearance_notes": "Quartz with fibrous or needle-like inclusions of minerals such as dumortierite, tourmaline, or magnesioriebeckite that lend a soft to vivid blue color. Retains the clarity and hardness of quartz with a cool, serene tone; commonly cut as tumbles, spheres, hearts, and towers.",
+        "common_sources": [
+          "Brazil",
+          "Austria",
+          "United States"
+        ]
+      },
+      "metaphysical": {
+        "core_themes": [
+          "Calm",
+          "communication",
+          "clarity",
+          "peace",
+          "truth"
+        ],
+        "emotional_support": [
+          "Calm",
+          "peace"
+        ],
+        "spiritual_themes": [
+          "Mindfulness and reflection (personal practice)"
+        ],
+        "chakra_associations": [
+          "Throat",
+          "Third Eye"
+        ],
+        "zodiac_associations": [],
+        "common_uses": [
+          "Meditation",
+          "Altar display",
+          "Carry stone",
+          "Jewelry"
+        ]
+      },
+      "seo": {
+        "primary_keyword": "Blue Quartz crystal",
+        "secondary_keywords": [
+          "Blue Quartz meaning",
+          "Blue Quartz properties",
+          "Blue Quartz metaphysical",
+          "Blue Quartz for sale",
+          "Blue Quartz Quartz"
+        ],
+        "collection_tags": [
+          "crystals",
+          "gemstones",
+          "metaphysical",
+          "quartz"
+        ]
+      }
+    },
+    {
       "crystal_name": "Blue Tourmaline (Indicolite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3185,6 +3304,7 @@
     },
     {
       "crystal_name": "Boulder Opal",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3238,7 +3358,67 @@
       }
     },
     {
+      "crystal_name": "Bumblebee Jasper",
+      "card_image": "",
+      "aliases": [],
+      "identity": {
+        "color_range": [
+          "yellow tones",
+          "orange tones",
+          "black tones"
+        ],
+        "appearance_notes": "Boldly banded stone from Indonesian volcanic areas with vivid yellow, orange, and black layers drawn from sulfur, calcite, and iron-bearing inclusions. Despite the trade name, it is a volcanic sedimentary material rather than true jasper, prized for its striking banding when cut as cabochons, tumbles, and towers.",
+        "common_sources": [
+          "Indonesia"
+        ]
+      },
+      "metaphysical": {
+        "core_themes": [
+          "Confidence",
+          "courage",
+          "creativity",
+          "joy",
+          "manifestation"
+        ],
+        "emotional_support": [
+          "Confidence",
+          "joy"
+        ],
+        "spiritual_themes": [
+          "Mindfulness and reflection (personal practice)"
+        ],
+        "chakra_associations": [
+          "Solar Plexus",
+          "Sacral"
+        ],
+        "zodiac_associations": [],
+        "common_uses": [
+          "Meditation",
+          "Altar display",
+          "Carry stone",
+          "Home decor"
+        ]
+      },
+      "seo": {
+        "primary_keyword": "Bumblebee Jasper crystal",
+        "secondary_keywords": [
+          "Bumblebee Jasper meaning",
+          "Bumblebee Jasper properties",
+          "Bumblebee Jasper metaphysical",
+          "Bumblebee Jasper for sale",
+          "Bumblebee Jasper Rock"
+        ],
+        "collection_tags": [
+          "crystals",
+          "gemstones",
+          "metaphysical",
+          "rock"
+        ]
+      }
+    },
+    {
       "crystal_name": "Bustamite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3295,6 +3475,7 @@
     },
     {
       "crystal_name": "Bytownite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3346,6 +3527,7 @@
     },
     {
       "crystal_name": "Calcite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3397,6 +3579,7 @@
     },
     {
       "crystal_name": "Carnelian",
+      "card_image": "crystal-cards/carnelian-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3456,6 +3639,7 @@
     },
     {
       "crystal_name": "Carnelian (Red)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3515,6 +3699,7 @@
     },
     {
       "crystal_name": "Cavansite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3568,6 +3753,7 @@
     },
     {
       "crystal_name": "Celestite",
+      "card_image": "crystal-cards/celestite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3620,6 +3806,7 @@
     },
     {
       "crystal_name": "Chalcedony (Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3671,6 +3858,7 @@
     },
     {
       "crystal_name": "Chalcedony (Pink)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3727,6 +3915,7 @@
     },
     {
       "crystal_name": "Charoite",
+      "card_image": "crystal-cards/charoite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3784,6 +3973,7 @@
     },
     {
       "crystal_name": "Charoite (Purple)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3840,6 +4030,7 @@
     },
     {
       "crystal_name": "Chrysanthemum Stone",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3895,6 +4086,7 @@
     },
     {
       "crystal_name": "Chrysoberyl",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -3948,6 +4140,7 @@
     },
     {
       "crystal_name": "Chrysoberyl (Alexandrite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4004,6 +4197,7 @@
     },
     {
       "crystal_name": "Chrysoberyl (Cat’s Eye)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4056,6 +4250,7 @@
     },
     {
       "crystal_name": "Chrysoberyl (Golden)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4107,6 +4302,7 @@
     },
     {
       "crystal_name": "Chrysocolla",
+      "card_image": "crystal-cards/chrysocolla-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4160,6 +4356,7 @@
     },
     {
       "crystal_name": "Chrysocolla (Blue Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4213,6 +4410,7 @@
     },
     {
       "crystal_name": "Chrysocolla (Gem Silica with Quartz)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4265,6 +4463,7 @@
     },
     {
       "crystal_name": "Chrysocolla (Gem Silica)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4317,6 +4516,7 @@
     },
     {
       "crystal_name": "Chrysocolla (Malachite and Azurite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4370,6 +4570,7 @@
     },
     {
       "crystal_name": "Chrysocolla (Malachite Chrysoprase)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4426,6 +4627,7 @@
     },
     {
       "crystal_name": "Chrysocolla (Shattuckite Mix)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4478,6 +4680,7 @@
     },
     {
       "crystal_name": "Chrysocolla with Malachite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4530,6 +4733,7 @@
     },
     {
       "crystal_name": "Chrysoprase",
+      "card_image": "crystal-cards/chrysoprase-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4582,6 +4786,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Apple Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4636,6 +4841,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Australian)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4688,6 +4894,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Dark Apple Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4739,6 +4946,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Dark Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4790,6 +4998,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Lemon Chrysoprase)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4843,6 +5052,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Lemon Magnesite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4895,6 +5105,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Lemon)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4948,6 +5159,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Nickel Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -4999,6 +5211,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Nickel)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5053,6 +5266,7 @@
     },
     {
       "crystal_name": "Chrysoprase (Prase)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5104,6 +5318,7 @@
     },
     {
       "crystal_name": "Chrysotile (Serpentine)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5156,6 +5371,7 @@
     },
     {
       "crystal_name": "Chrysotile Serpentine",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5208,6 +5424,7 @@
     },
     {
       "crystal_name": "Chrysotite (Serpentine)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5260,6 +5477,7 @@
     },
     {
       "crystal_name": "Cinnabar",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5311,6 +5529,7 @@
     },
     {
       "crystal_name": "Citrine",
+      "card_image": "crystal-cards/citrine-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5367,6 +5586,7 @@
     },
     {
       "crystal_name": "Clear Quartz",
+      "card_image": "crystal-cards/clear-quartz-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5421,6 +5641,7 @@
     },
     {
       "crystal_name": "Copal",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5475,6 +5696,7 @@
     },
     {
       "crystal_name": "Copper",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5525,6 +5747,7 @@
     },
     {
       "crystal_name": "Covellite",
+      "card_image": "crystal-cards/covellite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5577,6 +5800,7 @@
     },
     {
       "crystal_name": "Crystallized Fossil Wood",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5630,6 +5854,7 @@
     },
     {
       "crystal_name": "Dalmatian Jasper",
+      "card_image": "crystal-cards/dalmatian-jasper-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5683,6 +5908,7 @@
     },
     {
       "crystal_name": "Danburite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5736,6 +5962,7 @@
     },
     {
       "crystal_name": "Diaspore (Zultanite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5789,6 +6016,7 @@
     },
     {
       "crystal_name": "Diopside",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5844,6 +6072,7 @@
     },
     {
       "crystal_name": "Diopside (Chrome)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5899,6 +6128,7 @@
     },
     {
       "crystal_name": "Dioptase",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -5954,6 +6184,7 @@
     },
     {
       "crystal_name": "Dragon Bloodstone",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6009,6 +6240,7 @@
     },
     {
       "crystal_name": "Emerald",
+      "card_image": "crystal-cards/emerald-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6064,6 +6296,7 @@
     },
     {
       "crystal_name": "Emerald (Colombian)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6119,6 +6352,7 @@
     },
     {
       "crystal_name": "Emerald (Zambian)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6178,6 +6412,7 @@
     },
     {
       "crystal_name": "Epidote",
+      "card_image": "crystal-cards/epidote-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6232,6 +6467,7 @@
     },
     {
       "crystal_name": "Fire Opal",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6287,6 +6523,7 @@
     },
     {
       "crystal_name": "Fire Quartz",
+      "card_image": "",
       "aliases": [
         "Hematoid Quartz",
         "Harlequin Quartz",
@@ -6355,6 +6592,7 @@
     },
     {
       "crystal_name": "Flower Agate",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6411,6 +6649,7 @@
     },
     {
       "crystal_name": "Fluorite",
+      "card_image": "crystal-cards/fluorite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6462,6 +6701,7 @@
     },
     {
       "crystal_name": "Fluorite (Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6514,6 +6754,7 @@
     },
     {
       "crystal_name": "Fluorite (Clear Rainbow)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6565,6 +6806,7 @@
     },
     {
       "crystal_name": "Fluorite (Clear)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6617,6 +6859,7 @@
     },
     {
       "crystal_name": "Fluorite (Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6668,6 +6911,7 @@
     },
     {
       "crystal_name": "Fluorite (Purple)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6720,6 +6964,7 @@
     },
     {
       "crystal_name": "Fluorite (Rainbow)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6772,6 +7017,7 @@
     },
     {
       "crystal_name": "Fluorite (Yellow)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6824,6 +7070,7 @@
     },
     {
       "crystal_name": "Fuchsite",
+      "card_image": "crystal-cards/fuchsite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6874,7 +7121,75 @@
       }
     },
     {
+      "crystal_name": "Garden Quartz",
+      "card_image": "crystal-cards/garden-quartz-card.png",
+      "aliases": [
+        "Lodolite",
+        "Scenic Quartz",
+        "Shamanic Dream Quartz"
+      ],
+      "identity": {
+        "color_range": [
+          "clear to white tones",
+          "green tones",
+          "red tones",
+          "brown tones"
+        ],
+        "appearance_notes": "Clear to lightly smoky quartz with internal inclusions of chlorite, feldspar, hematite, and other trace minerals that form landscape-like scenes resembling gardens, mountains, or underwater worlds. Each piece is one-of-a-kind and is commonly cut as polished points, spheres, and freeforms to showcase the interior scene.",
+        "common_sources": [
+          "Brazil"
+        ]
+      },
+      "metaphysical": {
+        "core_themes": [
+          "Meditation",
+          "vision",
+          "manifestation",
+          "connection to nature",
+          "inner journey"
+        ],
+        "emotional_support": [
+          "Calm",
+          "Emotional balance (non-medical, personal practice)"
+        ],
+        "spiritual_themes": [
+          "Meditation and dream work (personal practice)",
+          "Mindfulness and reflection (personal practice)"
+        ],
+        "chakra_associations": [
+          "Crown",
+          "Third Eye",
+          "Heart"
+        ],
+        "zodiac_associations": [],
+        "common_uses": [
+          "Meditation",
+          "Altar display",
+          "Home decor"
+        ]
+      },
+      "seo": {
+        "primary_keyword": "Garden Quartz crystal",
+        "secondary_keywords": [
+          "Garden Quartz meaning",
+          "Garden Quartz properties",
+          "Garden Quartz metaphysical",
+          "Garden Quartz for sale",
+          "Lodolite",
+          "Scenic Quartz",
+          "Garden Quartz Quartz"
+        ],
+        "collection_tags": [
+          "crystals",
+          "gemstones",
+          "metaphysical",
+          "quartz"
+        ]
+      }
+    },
+    {
       "crystal_name": "Garnet",
+      "card_image": "crystal-cards/garnet-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6929,6 +7244,7 @@
     },
     {
       "crystal_name": "Garnet (Almandine)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -6985,6 +7301,7 @@
     },
     {
       "crystal_name": "Garnet (Andradite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7040,6 +7357,7 @@
     },
     {
       "crystal_name": "Garnet (Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7093,6 +7411,7 @@
     },
     {
       "crystal_name": "Garnet (Grossular)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7149,6 +7468,7 @@
     },
     {
       "crystal_name": "Garnet (Pyrope)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7206,6 +7526,7 @@
     },
     {
       "crystal_name": "Garnet (Spessartine)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7261,6 +7582,7 @@
     },
     {
       "crystal_name": "Garnet (Uvarovite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7317,7 +7639,74 @@
       }
     },
     {
+      "crystal_name": "Golden Healer Quartz",
+      "card_image": "crystal-cards/golden-healer-quartz-card.png",
+      "aliases": [
+        "Golden Healer",
+        "Hematoid Quartz (Golden)"
+      ],
+      "identity": {
+        "color_range": [
+          "golden tones",
+          "yellow tones",
+          "clear to white tones"
+        ],
+        "appearance_notes": "Clear quartz coated or included with iron oxide minerals such as goethite and hematite that give a warm golden to yellow hue, sometimes with rainbow flashes along internal fractures. Commonly cut as points, towers, spheres, and hearts that showcase the golden shimmer.",
+        "common_sources": [
+          "United States",
+          "Madagascar",
+          "Brazil"
+        ]
+      },
+      "metaphysical": {
+        "core_themes": [
+          "Healing",
+          "vitality",
+          "confidence",
+          "renewal",
+          "clarity"
+        ],
+        "emotional_support": [
+          "Confidence",
+          "Emotional balance (non-medical, personal practice)"
+        ],
+        "spiritual_themes": [
+          "Mindfulness and reflection (personal practice)"
+        ],
+        "chakra_associations": [
+          "Solar Plexus",
+          "Crown",
+          "All Chakras"
+        ],
+        "zodiac_associations": [],
+        "common_uses": [
+          "Meditation",
+          "Altar display",
+          "Carry stone",
+          "Jewelry"
+        ]
+      },
+      "seo": {
+        "primary_keyword": "Golden Healer Quartz crystal",
+        "secondary_keywords": [
+          "Golden Healer Quartz meaning",
+          "Golden Healer Quartz properties",
+          "Golden Healer Quartz metaphysical",
+          "Golden Healer Quartz for sale",
+          "Golden Healer",
+          "Golden Healer Quartz Quartz"
+        ],
+        "collection_tags": [
+          "crystals",
+          "gemstones",
+          "metaphysical",
+          "quartz"
+        ]
+      }
+    },
+    {
       "crystal_name": "Goldstone (Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7369,6 +7758,7 @@
     },
     {
       "crystal_name": "Goldstone (Red)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7423,6 +7813,7 @@
     },
     {
       "crystal_name": "Green Aventurine",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7477,6 +7868,7 @@
     },
     {
       "crystal_name": "Green Aventurine (Mica Rich)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7530,6 +7922,7 @@
     },
     {
       "crystal_name": "Green Calcite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7585,6 +7978,7 @@
     },
     {
       "crystal_name": "Green Fluorite",
+      "card_image": "crystal-cards/green-fluorite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7638,6 +8032,7 @@
     },
     {
       "crystal_name": "Green Kyanite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7689,6 +8084,7 @@
     },
     {
       "crystal_name": "Green Opal",
+      "card_image": "crystal-cards/green-opal-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7744,6 +8140,7 @@
     },
     {
       "crystal_name": "Green Tourmaline (Verdelite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7795,6 +8192,7 @@
     },
     {
       "crystal_name": "Healer’s Gold",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7847,6 +8245,7 @@
     },
     {
       "crystal_name": "Hematite",
+      "card_image": "crystal-cards/hematite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7900,6 +8299,7 @@
     },
     {
       "crystal_name": "Heulandite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -7956,6 +8356,7 @@
     },
     {
       "crystal_name": "Hiddenite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8009,7 +8410,69 @@
       }
     },
     {
+      "crystal_name": "Honey Calcite",
+      "card_image": "",
+      "aliases": [],
+      "identity": {
+        "color_range": [
+          "golden tones",
+          "amber tones",
+          "honey tones"
+        ],
+        "appearance_notes": "Translucent golden to amber variety of calcite with a warm honey color and soft internal glow. A calcium carbonate mineral with rhombohedral cleavage, commonly cut as towers, spheres, palm stones, and tumbles that highlight its warm light.",
+        "common_sources": [
+          "Mexico",
+          "Pakistan"
+        ]
+      },
+      "metaphysical": {
+        "core_themes": [
+          "Confidence",
+          "motivation",
+          "personal power",
+          "warmth",
+          "abundance"
+        ],
+        "emotional_support": [
+          "Confidence",
+          "Steadiness and confidence (non-medical, personal practice)"
+        ],
+        "spiritual_themes": [
+          "Mindfulness and reflection (personal practice)"
+        ],
+        "chakra_associations": [
+          "Solar Plexus",
+          "Sacral",
+          "Root"
+        ],
+        "zodiac_associations": [],
+        "common_uses": [
+          "Meditation",
+          "Altar display",
+          "Carry stone",
+          "Home decor"
+        ]
+      },
+      "seo": {
+        "primary_keyword": "Honey Calcite crystal",
+        "secondary_keywords": [
+          "Honey Calcite meaning",
+          "Honey Calcite properties",
+          "Honey Calcite metaphysical",
+          "Honey Calcite for sale",
+          "Honey Calcite Carbonate"
+        ],
+        "collection_tags": [
+          "crystals",
+          "gemstones",
+          "metaphysical",
+          "carbonate"
+        ]
+      }
+    },
+    {
       "crystal_name": "Howlite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8065,6 +8528,7 @@
     },
     {
       "crystal_name": "Howlite (Dyed)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8118,6 +8582,7 @@
     },
     {
       "crystal_name": "Hypersthene",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8170,6 +8635,7 @@
     },
     {
       "crystal_name": "Iolite",
+      "card_image": "crystal-cards/iolite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8222,6 +8688,7 @@
     },
     {
       "crystal_name": "Iolite (Cordierite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8273,6 +8740,7 @@
     },
     {
       "crystal_name": "Iolite (Water Sapphire)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8324,6 +8792,7 @@
     },
     {
       "crystal_name": "Jade",
+      "card_image": "crystal-cards/jade-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8378,6 +8847,7 @@
     },
     {
       "crystal_name": "Jasper",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8431,6 +8901,7 @@
     },
     {
       "crystal_name": "Jet",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8482,6 +8953,7 @@
     },
     {
       "crystal_name": "Kambaba Jasper",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8535,6 +9007,7 @@
     },
     {
       "crystal_name": "Kernite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8586,7 +9059,70 @@
       }
     },
     {
+      "crystal_name": "Kiwi Jasper",
+      "card_image": "",
+      "aliases": [
+        "Sesame Jasper"
+      ],
+      "identity": {
+        "color_range": [
+          "green tones",
+          "white tones",
+          "black tones"
+        ],
+        "appearance_notes": "Pale stone speckled with green and black inclusions reminiscent of kiwi fruit, typically a composite of feldspar with tourmaline and quartz. A trade-name stone with an opaque, earthy finish commonly cut as tumbles, spheres, palm stones, and freeforms.",
+        "common_sources": [
+          "Various worldwide sources (see mineralogy references)"
+        ]
+      },
+      "metaphysical": {
+        "core_themes": [
+          "Growth",
+          "renewal",
+          "emotional balance",
+          "healing",
+          "grounding"
+        ],
+        "emotional_support": [
+          "Emotional balance (non-medical, personal practice)",
+          "Calm"
+        ],
+        "spiritual_themes": [
+          "Mindfulness and reflection (personal practice)"
+        ],
+        "chakra_associations": [
+          "Heart",
+          "Root"
+        ],
+        "zodiac_associations": [],
+        "common_uses": [
+          "Meditation",
+          "Altar display",
+          "Carry stone",
+          "Jewelry"
+        ]
+      },
+      "seo": {
+        "primary_keyword": "Kiwi Jasper crystal",
+        "secondary_keywords": [
+          "Kiwi Jasper meaning",
+          "Kiwi Jasper properties",
+          "Kiwi Jasper metaphysical",
+          "Kiwi Jasper for sale",
+          "Sesame Jasper",
+          "Kiwi Jasper Jasper"
+        ],
+        "collection_tags": [
+          "crystals",
+          "gemstones",
+          "metaphysical",
+          "jasper"
+        ]
+      }
+    },
+    {
       "crystal_name": "Kunzite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8644,6 +9180,7 @@
     },
     {
       "crystal_name": "Kunzite (Green Hiddenite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8698,6 +9235,7 @@
     },
     {
       "crystal_name": "Kunzite (Lilac)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8754,6 +9292,7 @@
     },
     {
       "crystal_name": "Kunzite (Pink)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8810,6 +9349,7 @@
     },
     {
       "crystal_name": "Kyanite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8862,6 +9402,7 @@
     },
     {
       "crystal_name": "Kyanite (Green with Black)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8916,6 +9457,7 @@
     },
     {
       "crystal_name": "Kyanite (Green with Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -8973,6 +9515,7 @@
     },
     {
       "crystal_name": "Kyanite (Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9026,6 +9569,7 @@
     },
     {
       "crystal_name": "Labradorite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9080,6 +9624,7 @@
     },
     {
       "crystal_name": "Labradorite (Spectrolite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9133,6 +9678,7 @@
     },
     {
       "crystal_name": "Lapis Lazuli",
+      "card_image": "crystal-cards/lapis-lazuli-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9184,6 +9730,7 @@
     },
     {
       "crystal_name": "Lapis Lazuli (Pyrite Rich)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9237,6 +9784,7 @@
     },
     {
       "crystal_name": "Larimar",
+      "card_image": "crystal-cards/larimar-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9289,6 +9837,7 @@
     },
     {
       "crystal_name": "Lepidocrocite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9342,6 +9891,7 @@
     },
     {
       "crystal_name": "Lepidocrosite Quartz",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9395,6 +9945,7 @@
     },
     {
       "crystal_name": "Lepidolite",
+      "card_image": "crystal-cards/lepidolite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9452,6 +10003,7 @@
     },
     {
       "crystal_name": "Lepidolite (Pink)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9508,7 +10060,70 @@
       }
     },
     {
+      "crystal_name": "Magnesite",
+      "card_image": "",
+      "aliases": [],
+      "identity": {
+        "color_range": [
+          "white tones",
+          "cream tones"
+        ],
+        "appearance_notes": "White to cream magnesium carbonate mineral with a chalky, matte finish and occasional fine grey veining. Often formed in serpentine-rich deposits; commonly cut as tumbles, rounds, and beads and sometimes dyed to imitate other stones.",
+        "common_sources": [
+          "Austria",
+          "Brazil",
+          "Greece"
+        ]
+      },
+      "metaphysical": {
+        "core_themes": [
+          "Calm",
+          "meditation",
+          "emotional balance",
+          "mindfulness",
+          "peace"
+        ],
+        "emotional_support": [
+          "Calm",
+          "peace"
+        ],
+        "spiritual_themes": [
+          "Meditation and dream work (personal practice)",
+          "Mindfulness and reflection (personal practice)"
+        ],
+        "chakra_associations": [
+          "Crown",
+          "Third Eye",
+          "Heart"
+        ],
+        "zodiac_associations": [],
+        "common_uses": [
+          "Meditation",
+          "Altar display",
+          "Carry stone",
+          "Jewelry"
+        ]
+      },
+      "seo": {
+        "primary_keyword": "Magnesite crystal",
+        "secondary_keywords": [
+          "Magnesite meaning",
+          "Magnesite properties",
+          "Magnesite metaphysical",
+          "Magnesite for sale",
+          "Magnesite Carbonate"
+        ],
+        "collection_tags": [
+          "crystals",
+          "gemstones",
+          "metaphysical",
+          "carbonate"
+        ]
+      }
+    },
+    {
       "crystal_name": "Malachite",
+      "card_image": "crystal-cards/malachite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9560,6 +10175,7 @@
     },
     {
       "crystal_name": "Malachite (Azurite Mix)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9612,6 +10228,7 @@
     },
     {
       "crystal_name": "Malachite (Fibrous)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9665,6 +10282,7 @@
     },
     {
       "crystal_name": "Malachite with Azurite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9720,6 +10338,7 @@
     },
     {
       "crystal_name": "Marcasite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9771,6 +10390,7 @@
     },
     {
       "crystal_name": "Moldavite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9824,6 +10444,7 @@
     },
     {
       "crystal_name": "Mookaite Jasper",
+      "card_image": "crystal-cards/mookaite-jasper-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9875,6 +10496,7 @@
     },
     {
       "crystal_name": "Moonstone",
+      "card_image": "crystal-cards/moonstone-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9934,6 +10556,7 @@
     },
     {
       "crystal_name": "Moonstone (Black)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -9990,6 +10613,7 @@
     },
     {
       "crystal_name": "Moonstone (Cat’s Eye)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10046,6 +10670,7 @@
     },
     {
       "crystal_name": "Moonstone (Peach)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10106,6 +10731,7 @@
     },
     {
       "crystal_name": "Moonstone (Rainbow)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10165,6 +10791,7 @@
     },
     {
       "crystal_name": "Moonstone (White)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10219,6 +10846,7 @@
     },
     {
       "crystal_name": "Moss Agate",
+      "card_image": "crystal-cards/moss-agate-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10270,6 +10898,7 @@
     },
     {
       "crystal_name": "Moss Agate (Dendritic)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10321,6 +10950,7 @@
     },
     {
       "crystal_name": "Moss Agate (Green with White)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10373,6 +11003,7 @@
     },
     {
       "crystal_name": "Natrolite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10424,6 +11055,7 @@
     },
     {
       "crystal_name": "Nuummite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10477,6 +11109,7 @@
     },
     {
       "crystal_name": "Obsidian",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10529,6 +11162,7 @@
     },
     {
       "crystal_name": "Obsidian (Golden Sheen)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10581,6 +11215,7 @@
     },
     {
       "crystal_name": "Obsidian (Rainbow)",
+      "card_image": "crystal-cards/obsidian-rainbow-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10635,6 +11270,7 @@
     },
     {
       "crystal_name": "Obsidian (Silver Sheen)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10687,6 +11323,7 @@
     },
     {
       "crystal_name": "Ocean Jasper",
+      "card_image": "crystal-cards/ocean-jasper-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10740,6 +11377,7 @@
     },
     {
       "crystal_name": "Okenite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10796,6 +11434,7 @@
     },
     {
       "crystal_name": "Onyx (Black)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10847,6 +11486,7 @@
     },
     {
       "crystal_name": "Orange Calcite",
+      "card_image": "crystal-cards/orange-calcite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10898,6 +11538,7 @@
     },
     {
       "crystal_name": "Orpiment",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -10948,6 +11589,7 @@
     },
     {
       "crystal_name": "Pentagonite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11000,6 +11642,7 @@
     },
     {
       "crystal_name": "Peridot",
+      "card_image": "crystal-cards/peridot-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11056,6 +11699,7 @@
     },
     {
       "crystal_name": "Peridot (Olivine Crystal)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11111,6 +11755,7 @@
     },
     {
       "crystal_name": "Peridot (Olivine)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11168,6 +11813,7 @@
     },
     {
       "crystal_name": "Peruvian Blue Opal",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11223,6 +11869,7 @@
     },
     {
       "crystal_name": "Peruvian Opal",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11280,6 +11927,7 @@
     },
     {
       "crystal_name": "Petalite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11332,6 +11980,7 @@
     },
     {
       "crystal_name": "Petrified Wood",
+      "card_image": "crystal-cards/petrified-wood-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11383,6 +12032,7 @@
     },
     {
       "crystal_name": "Phosphosiderite",
+      "card_image": "crystal-cards/phosphosiderite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11438,6 +12088,7 @@
     },
     {
       "crystal_name": "Picasso Jasper",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11489,6 +12140,7 @@
     },
     {
       "crystal_name": "Picture Agate",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11542,6 +12194,7 @@
     },
     {
       "crystal_name": "Picture Jasper",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11592,6 +12245,7 @@
     },
     {
       "crystal_name": "Pietersite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11644,6 +12298,7 @@
     },
     {
       "crystal_name": "Polychrome Jasper",
+      "card_image": "",
       "aliases": [
         "Desert Jasper",
         "Royal Savannah Jasper"
@@ -11710,6 +12365,7 @@
     },
     {
       "crystal_name": "Pink Opal",
+      "card_image": "crystal-cards/pink-opal-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11769,6 +12425,7 @@
     },
     {
       "crystal_name": "Pink Tourmaline",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11825,6 +12482,7 @@
     },
     {
       "crystal_name": "Prehnite",
+      "card_image": "crystal-cards/prehnite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11878,6 +12536,7 @@
     },
     {
       "crystal_name": "Prehnite (Epidote Inclusions)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11933,6 +12592,7 @@
     },
     {
       "crystal_name": "Prehnite (Yellow Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -11986,6 +12646,7 @@
     },
     {
       "crystal_name": "Prehnite with Black Tourmaline",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12040,6 +12701,7 @@
     },
     {
       "crystal_name": "Prehnite with Epidote",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12096,6 +12758,7 @@
     },
     {
       "crystal_name": "Pyrite",
+      "card_image": "crystal-cards/pyrite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12147,6 +12810,7 @@
     },
     {
       "crystal_name": "Realgar",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12199,6 +12863,7 @@
     },
     {
       "crystal_name": "Red Jasper",
+      "card_image": "crystal-cards/red-jasper-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12249,6 +12914,7 @@
     },
     {
       "crystal_name": "Rhodizite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12300,6 +12966,7 @@
     },
     {
       "crystal_name": "Rhodochrosite",
+      "card_image": "crystal-cards/rhodochrosite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12357,6 +13024,7 @@
     },
     {
       "crystal_name": "Rhodonite",
+      "card_image": "crystal-cards/rhodonite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12414,6 +13082,7 @@
     },
     {
       "crystal_name": "Rhodonite (Pink with Black)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12472,6 +13141,7 @@
     },
     {
       "crystal_name": "Rhodonite (With Black Veins)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12529,6 +13199,7 @@
     },
     {
       "crystal_name": "Rose Quartz",
+      "card_image": "crystal-cards/rose-quartz-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12585,6 +13256,7 @@
     },
     {
       "crystal_name": "Ruby",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12642,6 +13314,7 @@
     },
     {
       "crystal_name": "Ruby (Pinkish Red)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12700,6 +13373,7 @@
     },
     {
       "crystal_name": "Ruby (Star Ruby)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12754,6 +13428,7 @@
     },
     {
       "crystal_name": "Rutilated Quartz",
+      "card_image": "crystal-cards/rutilated-quartz-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12806,6 +13481,7 @@
     },
     {
       "crystal_name": "Sapphire",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12861,6 +13537,7 @@
     },
     {
       "crystal_name": "Sapphire (Black)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12917,6 +13594,7 @@
     },
     {
       "crystal_name": "Sapphire (Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -12974,6 +13652,7 @@
     },
     {
       "crystal_name": "Sapphire (Padparadscha)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13031,6 +13710,7 @@
     },
     {
       "crystal_name": "Sapphire (Pink)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13089,6 +13769,7 @@
     },
     {
       "crystal_name": "Sapphire (Purple)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13148,6 +13829,7 @@
     },
     {
       "crystal_name": "Sapphire (Star)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13203,6 +13885,7 @@
     },
     {
       "crystal_name": "Sapphire (White)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13256,6 +13939,7 @@
     },
     {
       "crystal_name": "Sapphire (Yellow)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13311,6 +13995,7 @@
     },
     {
       "crystal_name": "Sardonyx",
+      "card_image": "crystal-cards/sardonyx-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13363,6 +14048,7 @@
     },
     {
       "crystal_name": "Scolecite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13418,6 +14104,7 @@
     },
     {
       "crystal_name": "Selenite",
+      "card_image": "crystal-cards/selenite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13470,6 +14157,7 @@
     },
     {
       "crystal_name": "Selenite (Peach)",
+      "card_image": "crystal-cards/selenite-peach-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13522,6 +14210,7 @@
     },
     {
       "crystal_name": "Selenite (Satin Spar)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13573,6 +14262,7 @@
     },
     {
       "crystal_name": "Septarian",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13626,6 +14316,7 @@
     },
     {
       "crystal_name": "Septarian Nodule",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13680,6 +14371,7 @@
     },
     {
       "crystal_name": "Seraphinite",
+      "card_image": "crystal-cards/seraphinite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13734,6 +14426,7 @@
     },
     {
       "crystal_name": "Serpentine",
+      "card_image": "crystal-cards/serpentine-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13786,6 +14479,7 @@
     },
     {
       "crystal_name": "Shungite",
+      "card_image": "crystal-cards/shungite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13837,6 +14531,7 @@
     },
     {
       "crystal_name": "Smithsonite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13894,6 +14589,7 @@
     },
     {
       "crystal_name": "Smoky Quartz",
+      "card_image": "crystal-cards/smoky-quartz-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -13946,6 +14642,7 @@
     },
     {
       "crystal_name": "Snowflake Obsidian",
+      "card_image": "crystal-cards/snowflake-obsidian-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14000,6 +14697,7 @@
     },
     {
       "crystal_name": "Sodalite",
+      "card_image": "crystal-cards/sodalite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14054,6 +14752,7 @@
     },
     {
       "crystal_name": "Sodalite (Hackmanite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14104,6 +14803,7 @@
     },
     {
       "crystal_name": "Sodalite (Sunset)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14158,6 +14858,7 @@
     },
     {
       "crystal_name": "Spinel",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14211,6 +14912,7 @@
     },
     {
       "crystal_name": "Spinel (Black Star)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14263,6 +14965,7 @@
     },
     {
       "crystal_name": "Spinel (Black)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14315,6 +15018,7 @@
     },
     {
       "crystal_name": "Spinel (Blue Star)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14367,6 +15071,7 @@
     },
     {
       "crystal_name": "Spinel (Blue-Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14423,6 +15128,7 @@
     },
     {
       "crystal_name": "Spinel (Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14475,6 +15181,7 @@
     },
     {
       "crystal_name": "Spinel (Brown)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14525,6 +15232,7 @@
     },
     {
       "crystal_name": "Spinel (Cobalt Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14577,6 +15285,7 @@
     },
     {
       "crystal_name": "Spinel (Color Varieties)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14629,6 +15338,7 @@
     },
     {
       "crystal_name": "Spinel (Colorless)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14679,6 +15389,7 @@
     },
     {
       "crystal_name": "Spinel (Gray)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14732,6 +15443,7 @@
     },
     {
       "crystal_name": "Spinel (Green Star)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14783,6 +15495,7 @@
     },
     {
       "crystal_name": "Spinel (Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14833,6 +15546,7 @@
     },
     {
       "crystal_name": "Spinel (Greenish Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14886,6 +15600,7 @@
     },
     {
       "crystal_name": "Spinel (Lavender)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14941,6 +15656,7 @@
     },
     {
       "crystal_name": "Spinel (Orange-Red)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -14996,6 +15712,7 @@
     },
     {
       "crystal_name": "Spinel (Orange)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15047,6 +15764,7 @@
     },
     {
       "crystal_name": "Spinel (Pink Star)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15103,6 +15821,7 @@
     },
     {
       "crystal_name": "Spinel (Pink-Red)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15158,6 +15877,7 @@
     },
     {
       "crystal_name": "Spinel (Pink)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15213,6 +15933,7 @@
     },
     {
       "crystal_name": "Spinel (Purple)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15269,6 +15990,7 @@
     },
     {
       "crystal_name": "Spinel (Red)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15323,6 +16045,7 @@
     },
     {
       "crystal_name": "Spinel (Reddish Brown)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15374,6 +16097,7 @@
     },
     {
       "crystal_name": "Spinel (Violet)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15429,6 +16153,7 @@
     },
     {
       "crystal_name": "Spinel (Yellow)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15479,6 +16204,7 @@
     },
     {
       "crystal_name": "Stichtite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15537,6 +16263,7 @@
     },
     {
       "crystal_name": "Stilbite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15592,7 +16319,67 @@
       }
     },
     {
+      "crystal_name": "Strawberry Quartz",
+      "card_image": "crystal-cards/strawberry-quartz-card.png",
+      "aliases": [],
+      "identity": {
+        "color_range": [
+          "pink tones",
+          "red tones"
+        ],
+        "appearance_notes": "Quartz with fine inclusions of hematite or lepidocrocite that give a pink to strawberry-red color, sometimes with internal sparkle. Keeps the hardness and clarity of quartz with a warm pink hue; commonly cut as tumbles, hearts, spheres, and towers.",
+        "common_sources": [
+          "Russia",
+          "Mexico",
+          "Brazil"
+        ]
+      },
+      "metaphysical": {
+        "core_themes": [
+          "Love",
+          "joy",
+          "gratitude",
+          "emotional healing",
+          "compassion"
+        ],
+        "emotional_support": [
+          "Emotional balance (non-medical, personal practice)",
+          "Joy"
+        ],
+        "spiritual_themes": [
+          "Mindfulness and reflection (personal practice)"
+        ],
+        "chakra_associations": [
+          "Heart"
+        ],
+        "zodiac_associations": [],
+        "common_uses": [
+          "Meditation",
+          "Altar display",
+          "Carry stone",
+          "Jewelry"
+        ]
+      },
+      "seo": {
+        "primary_keyword": "Strawberry Quartz crystal",
+        "secondary_keywords": [
+          "Strawberry Quartz meaning",
+          "Strawberry Quartz properties",
+          "Strawberry Quartz metaphysical",
+          "Strawberry Quartz for sale",
+          "Strawberry Quartz Quartz"
+        ],
+        "collection_tags": [
+          "crystals",
+          "gemstones",
+          "metaphysical",
+          "quartz"
+        ]
+      }
+    },
+    {
       "crystal_name": "Sugilite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15650,6 +16437,7 @@
     },
     {
       "crystal_name": "Sunstone",
+      "card_image": "crystal-cards/sunstone-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15705,6 +16493,7 @@
     },
     {
       "crystal_name": "Sunstone (Oregon)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15757,6 +16546,7 @@
     },
     {
       "crystal_name": "Tai Chi Jasper",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15812,6 +16602,7 @@
     },
     {
       "crystal_name": "Tanzanite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15869,6 +16660,7 @@
     },
     {
       "crystal_name": "Thulite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15924,6 +16716,7 @@
     },
     {
       "crystal_name": "Tiger's Eye",
+      "card_image": "crystal-cards/tigers-eye-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -15976,6 +16769,7 @@
     },
     {
       "crystal_name": "Topaz (Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16031,6 +16825,7 @@
     },
     {
       "crystal_name": "Topaz (Clear)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16086,6 +16881,7 @@
     },
     {
       "crystal_name": "Topaz (Golden)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16141,6 +16937,7 @@
     },
     {
       "crystal_name": "Topaz (Imperial)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16198,6 +16995,7 @@
     },
     {
       "crystal_name": "Topaz (Pink)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16257,6 +17055,7 @@
     },
     {
       "crystal_name": "Tourmaline (Black Schorl)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16309,6 +17108,7 @@
     },
     {
       "crystal_name": "Tourmaline (Blue Indicolite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16361,6 +17161,7 @@
     },
     {
       "crystal_name": "Tourmaline (Blue-Green)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16415,6 +17216,7 @@
     },
     {
       "crystal_name": "Tourmaline (Canary)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16466,6 +17268,7 @@
     },
     {
       "crystal_name": "Tourmaline (Green and Pink)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16522,6 +17325,7 @@
     },
     {
       "crystal_name": "Tourmaline (Green Chrome)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16573,6 +17377,7 @@
     },
     {
       "crystal_name": "Tourmaline (Paraiba)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16626,6 +17431,7 @@
     },
     {
       "crystal_name": "Tourmaline (Purple)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16683,6 +17489,7 @@
     },
     {
       "crystal_name": "Tourmaline (Red Rubellite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16739,6 +17546,7 @@
     },
     {
       "crystal_name": "Tourmaline (Rubellite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16794,6 +17602,7 @@
     },
     {
       "crystal_name": "Tourmaline (Watermelon Crystal)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16849,6 +17658,7 @@
     },
     {
       "crystal_name": "Tourmaline (Watermelon Slice)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16904,6 +17714,7 @@
     },
     {
       "crystal_name": "Turquoise",
+      "card_image": "crystal-cards/turquoise-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -16959,6 +17770,7 @@
     },
     {
       "crystal_name": "Ulexite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17010,6 +17822,7 @@
     },
     {
       "crystal_name": "Unakite",
+      "card_image": "crystal-cards/unakite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17066,6 +17879,7 @@
     },
     {
       "crystal_name": "Unakite Jasper",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17122,6 +17936,7 @@
     },
     {
       "crystal_name": "Vivianite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17177,6 +17992,7 @@
     },
     {
       "crystal_name": "Watermelon Tourmaline",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17233,6 +18049,7 @@
     },
     {
       "crystal_name": "Yellow Calcite",
+      "card_image": "crystal-cards/yellow-calcite-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17283,6 +18100,7 @@
     },
     {
       "crystal_name": "Yellow Jasper",
+      "card_image": "crystal-cards/yellow-jasper-card.png",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17334,6 +18152,7 @@
     },
     {
       "crystal_name": "Zeolite",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17385,6 +18204,7 @@
     },
     {
       "crystal_name": "Zircon",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17438,6 +18258,7 @@
     },
     {
       "crystal_name": "Zircon (Blue)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [
@@ -17490,6 +18311,7 @@
     },
     {
       "crystal_name": "Zoisite (Ruby in Zoisite)",
+      "card_image": "",
       "aliases": [],
       "identity": {
         "color_range": [

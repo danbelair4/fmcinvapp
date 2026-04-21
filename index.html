@@ -1673,6 +1673,8 @@
   const getSkuBaseFor = (user) => Number(USER_SKU_STARTS[user]) || 100000;
   const getSkuKeyFor  = (user) => `skuCounterGlobal:${user}`; // per-user counter key
   const CRYSTAL_LIBRARY_URL = 'crystal-library.json';
+  /** Optional: public site origin for crystal card PNGs (e.g. https://your-site.netlify.app). Leave empty to use this page’s origin (same host as index.html + crystal-cards/). */
+  const CARD_IMAGE_BASE_URL = '';
 
   function getCurrentPublishStatusValue(){
     return (document.querySelector('#publish-status .is-active')?.dataset.status || 'active').trim();
@@ -2271,6 +2273,17 @@
     "Zircon (Blue)":{"intentions":"Clarity, wisdom, protection, intuition","description":"Brilliant blue zircon gemstone that enhances clarity and insight.","category":"Silicate","chakra":"Throat, Third Eye","hardness":"6.5-7.5"},
     "Zircon":{"intentions":"Clarity, protection, grounding, prosperity","description":"Natural gemstone in many colors, enhances clarity and spiritual growth.","category":"Silicate","chakra":"Root, Crown","hardness":"6.5-7.5"},
     "Zoisite (Ruby in Zoisite)":{"intentions":"Passion, growth, healing, transformation","description":"Green zoisite with ruby inclusions, blending heart and root energy.","category":"Silicate","chakra":"Heart, Root","hardness":"6-7"},
+    "Blue Quartz":{"intentions":"Calm, communication, clarity, peace, truth","description":"Quartz with mineral inclusions such as dumortierite or tourmaline that lend a soft to vivid blue color.","category":"Quartz","chakra":"Throat, Third Eye","hardness":"7"},
+    "Bumblebee Jasper":{"intentions":"Confidence, courage, creativity, joy, manifestation","description":"Boldly banded Indonesian volcanic stone with vivid yellow, orange, and black layers; a trade-name stone rather than true jasper.","category":"Rock","chakra":"Solar Plexus, Sacral","hardness":"5-6"},
+    "Garden Quartz":{"intentions":"Meditation, vision, manifestation, connection to nature, inner journey","description":"Clear to smoky quartz with chlorite and feldspar inclusions forming landscape-like scenes.","category":"Quartz","chakra":"Crown, Third Eye, Heart","hardness":"7"},
+    "Lodolite":{"intentions":"Meditation, vision, manifestation, connection to nature, inner journey","description":"Clear to smoky quartz with chlorite and feldspar inclusions forming landscape-like scenes.","category":"Quartz","chakra":"Crown, Third Eye, Heart","hardness":"7"},
+    "Golden Healer Quartz":{"intentions":"Healing, vitality, confidence, renewal, clarity","description":"Clear quartz coated or included with iron oxide minerals that give a warm golden to yellow hue.","category":"Quartz","chakra":"Solar Plexus, Crown, All Chakras","hardness":"7"},
+    "Golden Healer":{"intentions":"Healing, vitality, confidence, renewal, clarity","description":"Clear quartz coated or included with iron oxide minerals that give a warm golden to yellow hue.","category":"Quartz","chakra":"Solar Plexus, Crown, All Chakras","hardness":"7"},
+    "Honey Calcite":{"intentions":"Confidence, motivation, personal power, warmth, abundance","description":"Translucent golden to amber variety of calcite with a warm honey color and soft internal glow.","category":"Carbonate","chakra":"Solar Plexus, Sacral, Root","hardness":"3"},
+    "Kiwi Jasper":{"intentions":"Growth, renewal, emotional balance, healing, grounding","description":"Pale stone speckled with green and black inclusions reminiscent of kiwi fruit; a trade-name composite.","category":"Jasper","chakra":"Heart, Root","hardness":"6-7"},
+    "Sesame Jasper":{"intentions":"Growth, renewal, emotional balance, healing, grounding","description":"Pale stone speckled with green and black inclusions reminiscent of kiwi fruit; a trade-name composite.","category":"Jasper","chakra":"Heart, Root","hardness":"6-7"},
+    "Magnesite":{"intentions":"Calm, meditation, emotional balance, mindfulness, peace","description":"White to cream magnesium carbonate mineral with a chalky, matte finish and occasional fine grey veining.","category":"Carbonate","chakra":"Crown, Third Eye, Heart","hardness":"3.5-4.5"},
+    "Strawberry Quartz":{"intentions":"Love, joy, gratitude, emotional healing, compassion","description":"Quartz with fine hematite or lepidocrocite inclusions that give a pink to strawberry-red color.","category":"Quartz","chakra":"Heart","hardness":"7"},
   };
 
   let CRYSTAL_NAMES_ALL = [];
@@ -2362,6 +2375,25 @@
     const key = String(crystalName || '').trim();
     if (!key) return null;
     return crystalProfileLookup[key] || null;
+  }
+
+  /** Public https URL for the library’s card_image path, or null. Used only when saving to Shopify (extra product media). */
+  function resolveCrystalCardHttpsUrl(crystalType){
+    const name = String(crystalType || '').trim();
+    if (!name) return null;
+    const profile = getCrystalProfile(name);
+    if (!profile || profile.card_image == null) return null;
+    const rel = String(profile.card_image).trim();
+    if (!rel) return null;
+    if (/^https?:\/\//i.test(rel)) return rel;
+    const origin = (CARD_IMAGE_BASE_URL && String(CARD_IMAGE_BASE_URL).trim())
+      || (typeof window !== 'undefined' && window.location && /^https?:$/i.test(window.location.protocol) ? window.location.origin : '');
+    if (!origin) return null;
+    try {
+      return new URL(rel.replace(/^\//, ''), origin + '/').href;
+    } catch (_) {
+      return null;
+    }
   }
 
   function buildColorPhrase(profile){
@@ -3081,11 +3113,22 @@ function setupPhotoHandler() {
     }
 
     const sanitizedPhotos = sanitizePhotosForPersist(currentPhotos.slice());
-    const validPhotoUrls = sanitizedPhotos.filter(function(p){ return p && isPublicPhotoUrl(p.url); });
+    let photosForPayload = sanitizedPhotos;
+    if (options.forShopify) {
+      const cardUrl = resolveCrystalCardHttpsUrl(crystalType);
+      if (cardUrl && isPublicPhotoUrl(cardUrl)) {
+        const norm = function(u){ return String(u || '').split('?')[0]; };
+        const dup = sanitizedPhotos.some(function(p){ return p && norm(p.url) === norm(cardUrl); });
+        if (!dup) {
+          photosForPayload = sanitizedPhotos.concat([{ name: 'Crystal reference card', url: cardUrl }]);
+        }
+      }
+    }
+    const validPhotoUrls = photosForPayload.filter(function(p){ return p && isPublicPhotoUrl(p.url); });
     const previewOnlyCount = (Array.isArray(currentPhotos) ? currentPhotos : []).filter(function(p){
       return p && p.localPreviewOnly;
     }).length;
-    if (options.forShopify) console.log('[shopify-save] sanitized photo payload', sanitizedPhotos);
+    if (options.forShopify) console.log('[shopify-save] sanitized photo payload', photosForPayload);
     if (options.forShopify && (Array.isArray(currentPhotos) ? currentPhotos.length : 0) > 0 && validPhotoUrls.length === 0) {
       alert('Photo upload failed. Preview exists locally, but no public uploaded image URL is available for Shopify.');
       console.warn('[shopify-save] blocked because only local previews exist', {
@@ -3120,7 +3163,7 @@ function setupPhotoHandler() {
       chakra: crystal.chakra || '',
       hardness: crystal.hardness || '',
       contentSource: generatedContent.source || 'fallback',
-      photos: sanitizedPhotos,
+      photos: photosForPayload,
       user: currentUser,
       dateAdded: new Date().toISOString(),
       barcode: `${sku}`,
