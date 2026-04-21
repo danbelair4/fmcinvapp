@@ -1396,7 +1396,8 @@
             </div>
             <div class="form-group">
               <label for="vendor">Wholesale Vendor</label>
-              <input id="vendor" placeholder="e.g., Crystal Suppliers LLC"/>
+              <datalist id="vendor-history-datalist"></datalist>
+              <input id="vendor" list="vendor-history-datalist" placeholder="e.g., Crystal Suppliers LLC" autocomplete="off"/>
             </div>
           </div>
 
@@ -1645,6 +1646,143 @@
     return (document.querySelector('#publish-status .is-active')?.dataset.status || 'active').trim();
   }
 
+  // ----- Local vendor memory (names + last-used origin / markup / publish per vendor) -----
+  const VENDOR_NAMES_KEY = 'fm_vendor_names';
+  const VENDOR_PREFS_KEY = 'fm_vendor_prefs';
+  let vendorFieldSessionTouched = { origin: false, markup: false, publish: false };
+  let suppressVendorPrefsApplication = false;
+
+  function resetVendorMemoryContext(){
+    vendorFieldSessionTouched = { origin: false, markup: false, publish: false };
+  }
+
+  function loadVendorNamesList(){
+    try {
+      const raw = JSON.parse(localStorage.getItem(VENDOR_NAMES_KEY) || '[]');
+      return Array.isArray(raw) ? raw.filter(function(s){ return typeof s === 'string' && s.trim(); }).map(function(s){ return s.trim(); }) : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function saveVendorNamesList(names){
+    const uniq = [];
+    const seen = Object.create(null);
+    (Array.isArray(names) ? names : []).forEach(function(n){
+      const t = String(n || '').trim();
+      const k = t.toLowerCase();
+      if (!t || seen[k]) return;
+      seen[k] = true;
+      uniq.push(t);
+    });
+    uniq.sort(function(a, b){ return a.localeCompare(b, undefined, { sensitivity: 'base' }); });
+    try { localStorage.setItem(VENDOR_NAMES_KEY, JSON.stringify(uniq)); } catch (_) {}
+    refreshVendorDatalist();
+  }
+
+  function rememberVendorName(name){
+    const v = String(name || '').trim();
+    if (!v) return;
+    const list = loadVendorNamesList();
+    let exists = false;
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].toLowerCase() === v.toLowerCase()) { exists = true; break; }
+    }
+    if (!exists) {
+      list.push(v);
+      saveVendorNamesList(list);
+    } else {
+      refreshVendorDatalist();
+    }
+  }
+
+  function refreshVendorDatalist(){
+    const dl = document.getElementById('vendor-history-datalist');
+    if (!dl) return;
+    dl.innerHTML = '';
+    loadVendorNamesList().forEach(function(name){
+      const opt = document.createElement('option');
+      opt.value = name;
+      dl.appendChild(opt);
+    });
+  }
+
+  function loadVendorPrefsMap(){
+    try {
+      const raw = JSON.parse(localStorage.getItem(VENDOR_PREFS_KEY) || '{}');
+      return raw && typeof raw === 'object' ? raw : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function resolveVendorPrefsKey(map, vendorTrimmed){
+    const t = String(vendorTrimmed || '').trim();
+    if (!t) return null;
+    if (Object.prototype.hasOwnProperty.call(map, t)) return t;
+    const lower = t.toLowerCase();
+    for (const k in map) {
+      if (Object.prototype.hasOwnProperty.call(map, k) && String(k).toLowerCase() === lower) return k;
+    }
+    return null;
+  }
+
+  function persistVendorPrefsSnapshot(){
+    const v = (document.getElementById('vendor')?.value || '').trim();
+    if (!v) return;
+    const map = loadVendorPrefsMap();
+    const key = resolveVendorPrefsKey(map, v) || v;
+    map[key] = {
+      originCountry: (document.getElementById('origin-country')?.value || '').trim(),
+      markup: (document.getElementById('markup')?.value || '').trim() || '3',
+      publishStatus: getCurrentPublishStatusValue(),
+    };
+    try { localStorage.setItem(VENDOR_PREFS_KEY, JSON.stringify(map)); } catch (_) {}
+  }
+
+  function applyVendorPrefsForName(vendorTrimmed){
+    const map = loadVendorPrefsMap();
+    const pk = resolveVendorPrefsKey(map, vendorTrimmed);
+    if (!pk || !map[pk]) return;
+    const p = map[pk];
+    suppressVendorPrefsApplication = true;
+    try {
+      if (!vendorFieldSessionTouched.origin && p.originCountry != null && String(p.originCountry).length) {
+        const oc = document.getElementById('origin-country');
+        if (oc) oc.value = String(p.originCountry);
+      }
+      if (!vendorFieldSessionTouched.markup && p.markup != null && String(p.markup).length) {
+        const mu = document.getElementById('markup');
+        if (mu) mu.value = String(p.markup);
+      }
+      if (!vendorFieldSessionTouched.publish && p.publishStatus) {
+        const st = String(p.publishStatus).toLowerCase() === 'draft' ? 'draft' : 'active';
+        document.querySelectorAll('#publish-status .seg-btn').forEach(function(b){ b.classList.remove('is-active'); });
+        document.querySelector('#publish-status .seg-btn[data-status="' + st + '"]')?.classList.add('is-active');
+      }
+      renderSessionContext();
+      syncOriginCountryChips();
+      if (typeof calculatePrice === 'function') calculatePrice();
+    } finally {
+      suppressVendorPrefsApplication = false;
+    }
+  }
+
+  function processVendorCommit(){
+    const vendorEl = document.getElementById('vendor');
+    if (!vendorEl) return;
+    const v = vendorEl.value.trim();
+    rememberVendorName(v);
+    if (v) {
+      applyVendorPrefsForName(v);
+      persistVendorPrefsSnapshot();
+    }
+  }
+
+  function scheduleVendorCommit(){
+    requestAnimationFrame(processVendorCommit);
+  }
+
   function isBatchModeEnabled(){
     return (document.querySelector('#batch-mode .is-active')?.dataset.batch || 'on') === 'on';
   }
@@ -1686,12 +1824,18 @@
   }
 
   function setOriginCountry(value){
+    if (!suppressVendorPrefsApplication) {
+      vendorFieldSessionTouched.origin = true;
+    }
     const input = document.getElementById('origin-country');
     if (!input) return;
     input.value = String(value || '');
     renderSessionContext();
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
+    if (!suppressVendorPrefsApplication) {
+      persistVendorPrefsSnapshot();
+    }
   }
 
   function renderSessionContext(){
@@ -3085,6 +3229,7 @@ function setupPhotoHandler() {
   }
 
   function clearSessionFieldsForNextItem(){
+    resetVendorMemoryContext();
     const vendorEl = document.getElementById('vendor');
     const originEl = document.getElementById('origin-country');
     const markupEl = document.getElementById('markup');
@@ -3407,6 +3552,7 @@ function clearForm(){
   }
 
 function clearAllFields(){
+    resetVendorMemoryContext();
     document.getElementById('crystal-type').value = '';
     document.getElementById('product-type').value = '';
     document.getElementById('carving-shape').value = '';
@@ -3963,9 +4109,15 @@ updatePricingLabels();
     if (typeof showUserPicker==='function') showUserPicker();
   });
 
-  ['vendor','origin-country'].forEach((id) => {
-    const el = $(id);
-    el?.addEventListener('input', renderSessionContext);
+  $('vendor')?.addEventListener('input', renderSessionContext);
+  $('vendor')?.addEventListener('change', scheduleVendorCommit);
+  $('vendor')?.addEventListener('blur', scheduleVendorCommit);
+  $('origin-country')?.addEventListener('input', function(){
+    if (!suppressVendorPrefsApplication) vendorFieldSessionTouched.origin = true;
+    renderSessionContext();
+  });
+  $('origin-country')?.addEventListener('blur', function(){
+    persistVendorPrefsSnapshot();
   });
   $('origin-country-chips')?.addEventListener('click', (e) => {
     const chip = e.target.closest('.country-chip');
@@ -3973,7 +4125,11 @@ updatePricingLabels();
     e.preventDefault();
     setOriginCountry(chip.dataset.country || '');
   });
-  $('markup')?.addEventListener('change', renderSessionContext);
+  $('markup')?.addEventListener('change', function(){
+    if (!suppressVendorPrefsApplication) vendorFieldSessionTouched.markup = true;
+    renderSessionContext();
+    persistVendorPrefsSnapshot();
+  });
   $('batch-mode')?.addEventListener('click', (e) => {
     const b = e.target.closest('.seg-btn'); if(!b) return;
     setBatchMode(b.dataset.batch === 'on');
@@ -4043,9 +4199,13 @@ updatePricingLabels();
       const b = e.target.closest('.seg-btn'); if(!b) return;
       wrap.querySelectorAll('.seg-btn').forEach(x=>x.classList.remove('is-active'));
       b.classList.add('is-active');
+      if (!suppressVendorPrefsApplication) vendorFieldSessionTouched.publish = true;
       renderSessionContext();
+      persistVendorPrefsSnapshot();
     });
   })();
+
+  refreshVendorDatalist();
 })();
 
 
